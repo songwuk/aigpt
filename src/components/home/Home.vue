@@ -1,9 +1,9 @@
 <template>
-  <div flex items-center justify-start flex-col class="w-full h-[652px]" style="background: linear-gradient(269deg, #1C82FE 0%, #5106FE 100%);">
+  <div flex sm:items-center justify-start flex-col items-start class="w-full h-[652px]" style="background: linear-gradient(269deg, #1C82FE 0%, #5106FE 100%);">
       <div class="mt-[90px] mb-[26px]">
         <span style="font-size: 48px;font-weight: bold;color: #FFFFFF;">Connect ChatGPT & AIGC to Web3</span>
       </div>
-      <div flex items-center justify-center>
+      <div flex sm:items-center sm:justify-center sm:flex-row justify-start items-start  flex-col>
         <img style=" margin-top: 4px;" class="w-[135px]" :src="AiGPT_1"/>
         <span style="margin: 17px 0 0 7px;" class="text-[24px] c-white">Powerd by</span>
         <img style="margin-left: 7px;"  class="w-[180px]" :src="OpenAi"
