@@ -1,0 +1,100 @@
+<template>
+  <div class="head" w-full flex="~" items-center sm:justify-center justify-start >
+    <section sm:flex-1 class="sm:ml-[61px] ml-[20px]"  flex items-center justify-start>
+      <a href="/chat" block class="w-[101px]">
+        <img cursor-pointer class="w-[101px]" :src="AiGPT" alt="logo">
+      </a>
+      <div class="ml-[43px]" sm:block hidden> 
+        <span cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]" v-for="(item, idx) in leftHead" :key="idx">{{ item }}</span>
+      </div>
+    </section>
+    <section relative sm:flex-1 sm:block hidden class="mr-[61px]"  sm:flex sm:items-center sm:justify-end>
+      <button  flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]">
+        <img class="w-[22px] mr-[10px]" :src="Upload" alt="language">
+        Submit
+      </button>
+      <div class="p-[1px] box-border rounded-[6px] mr-[20px]" style="background: linear-gradient(135deg, rgba(71, 21, 254, 1), rgba(9, 190, 253, 1))">
+        <button style="border: 1px solid transparent" class=" rounded-[6px] bg-black w-[109px] h-[32px] "> 892 Credits</button>
+      </div>
+      <button @click="getStart" class="mr-[20px] w-[109px] h-[32px] rounded-[6px]" style="background: linear-gradient(135deg, #5106FE 0%, #2A4DFF 100%);">Get Started</button>
+      <button flex items-center justify-center class="hover:c-[#05D4FD]">
+        <img class="w-[20px] mr-[10px]" :src="Global" alt="language">
+        English
+      </button>
+      <aside flex items-center justify-start flex-col absolute  class="w-[290px] h-[394px] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]" v-show="wallet">
+        <div flex items-center justify-start w-full>
+          <img class="w-[32px] mr-[10px]" :src="Walletpng" alt="Walletpng">
+          <span style="font-size: 14px;">lili2201@gmail.com</span>
+        </div>
+        <button style="width: 136px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);border-radius: 8px;" class="mt-[10px] mb-[11px]">Connect Wallet</button>
+        <span style="font-size: 12px; color: #C1C1C1;">Connect wallet to ask ChatGPT,Earn $AiGPT</span>
+        <div cursor-pointer relative class="mt-[19px]" w-full flex items-center justify-start  v-for="(item, index) in personalList" :key="index">
+          <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
+          <span>{{ item.name }}</span>
+          <i absolute right-0>
+            <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
+          </i>
+        </div>
+        <button flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;">
+          <img class="w-[14px] mr-[3px]" :src="SignOut" alt="SignOut">
+          Sign Out
+        </button>
+        <p cursor-pointer flex items-center justify-center class="mt-[14px]">
+          <img class="w-[19px] mr-[3px]" :src="Twitter" alt="Twitter">
+          <span underline>AIGBT DAO</span>
+        </p>
+      </aside>
+    </section>
+    <button sm:hidden block absolute  type="button" class="right-[0] -ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"><span class="sr-only" data-v-f9ee6f8f="">Open sidebar</span><svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" data-v-f9ee6f8f=""><line x1="3" y1="12" x2="21" y2="12" data-v-f9ee6f8f=""></line><line x1="3" y1="6" x2="21" y2="6" data-v-f9ee6f8f=""></line><line x1="3" y1="18" x2="21" y2="18" data-v-f9ee6f8f=""></line></svg></button>
+  </div>
+</template>
+<script setup>
+import AiGPT from './img/AiGPT.png'
+import Global from './img/global.png'
+import Upload from './img/upload.png'
+import Walletpng from './img/walletpng.png'
+import Avatar from './img/avatar.png'
+import Plan from './img/plan.png'
+import Wallet from './img/wallet.png'
+import IconBottom from './img/bottom.png'
+import IconRight from './img/right.png'
+import SignOut from './img/signout.png'
+import Twitter from './img/twitter.png'
+import { ref } from 'vue'
+const leftHead = ref([
+  'ChatGPT',
+  "GAI MAP",
+  "Pricing"
+])
+const personalList = ref([
+  {
+    name: 'Change Avatar',
+    img: Avatar,
+    icon: IconBottom,
+    type: 'b',
+  },
+  {
+    name: 'Airdrop Plan',
+    img: Plan,
+    icon: IconRight,
+    type: 'r'
+  },
+  {
+    name: 'Create a Wallet',
+    img: Wallet,
+    icon: IconRight,
+    type: 'r'
+  }
+])
+const wallet = ref(false)
+const getStart = () => {
+  wallet.value = !wallet.value
+}
+</script>
+<style scoped>
+.head {
+  height: 64px;
+  background-color: #131415;
+  color:white
+}
+</style>

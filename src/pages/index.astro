@@ -1,0 +1,33 @@
+---
+// Component Imports
+import Home from '../components/home/Home.vue';
+import Head from '../components/Head.vue';
+import Footer from '../components/Footer.vue';
+// Full Astro Component Syntax:
+// https://docs.astro.build/core-concepts/astro-components/
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<style>
+			html,
+			body {
+				font-family: system-ui;
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<Head client:visible></Head>
+			<Home client:visible></Home>
+			<Footer client:visible></Footer>
+		</main>
+	</body>
+</html>
