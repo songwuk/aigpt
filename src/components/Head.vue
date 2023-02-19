@@ -21,13 +21,20 @@
         <img class="w-[20px] mr-[10px]" :src="Global" alt="language">
         English
       </button>
-      <aside flex items-center justify-start flex-col absolute  class="w-[290px] h-[394px] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]" v-show="wallet">
+      <aside flex items-center justify-start flex-col absolute  class="w-[290px] h-[auto] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]" v-show="wallet">
         <div flex items-center justify-start w-full>
           <img class="w-[32px] mr-[10px]" :src="Walletpng" alt="Walletpng">
           <span style="font-size: 14px;">lili2201@gmail.com</span>
         </div>
-        <button style="width: 136px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);border-radius: 8px;" class="mt-[10px] mb-[11px]">Connect Wallet</button>
-        <span style="font-size: 12px; color: #C1C1C1;">Connect wallet to ask ChatGPT,Earn $AiGPT</span>
+        <button v-if="walletStatus" @click="connectWallet" style="width: 136px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);border-radius: 8px;" class="mt-[10px] mb-[11px]">Connect Wallet</button>
+        <div v-if="!walletStatus" cursor-pointer relative class="mt-[19px]" w-full flex items-center justify-start  v-for="(item, index) in connectList" :key="index">
+          <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
+          <span>{{ item.name }}</span>
+          <i absolute right-0>
+            <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
+          </i>
+        </div>
+        <span v-if="walletStatus" style="font-size: 12px; color: #C1C1C1;">Connect wallet to ask ChatGPT,Earn $AiGPT</span>
         <div cursor-pointer relative class="mt-[19px]" w-full flex items-center justify-start  v-for="(item, index) in personalList" :key="index">
           <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
           <span>{{ item.name }}</span>
@@ -35,7 +42,11 @@
             <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
           </i>
         </div>
-        <button flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;">
+        <button @click="disconnectWallet" v-if="!walletStatus" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;">
+          <img class="w-[14px] mr-[3px]" :src="Disconnect" alt="Disconnect">
+          Disconnect
+        </button>
+        <button :class="!walletStatus ? 'mt-[14px]' : 'mt-[29px]'" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;">
           <img class="w-[14px] mr-[3px]" :src="SignOut" alt="SignOut">
           Sign Out
         </button>
@@ -59,13 +70,17 @@ import Wallet from './img/wallet.png'
 import IconBottom from './img/bottom.png'
 import IconRight from './img/right.png'
 import SignOut from './img/signout.png'
+import Disconnect from './img/disconnect.png'
 import Twitter from './img/twitter.png'
+import Chain from './img/chain.png'
+import Fork from './img/fork.png'
 import { ref } from 'vue'
 const leftHead = ref([
   'ChatGPT',
   "GAI MAP",
   "Pricing"
 ])
+const walletStatus = ref(true)
 const personalList = ref([
   {
     name: 'Change Avatar',
@@ -86,9 +101,27 @@ const personalList = ref([
     type: 'r'
   }
 ])
+const connectList = ref([
+  {
+    name: '0xecbe…0923',
+    img: Fork,
+  },
+  {
+    name: 'BNB Smart Chain',
+    img: Chain,
+    icon: IconRight,
+    type: 'r',
+  }
+])
 const wallet = ref(false)
 const getStart = () => {
   wallet.value = !wallet.value
+}
+const connectWallet = () => {
+  walletStatus.value = false
+}
+const disconnectWallet = () => {
+  walletStatus.value = true
 }
 </script>
 <style scoped>

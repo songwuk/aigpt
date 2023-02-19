@@ -10,13 +10,17 @@ const showList = ref([
   'Stop generating',
   'Share Conversation',
 ])
+const leftShow = ref(false)
+const clickshow = () => {
+  leftShow.value = !leftShow.value
+}
 </script>
 
 <template>
   <div class="overflow-hidden w-full h-full relative">
     <div class="flex h-full flex-1 flex-col md:pl-[260px]">
       <div class="sticky top-0 z-10 flex items-center border-b border-white/20 bg-gray-800 pl-1 pt-1 text-gray-200 sm:pl-3 md:hidden">
-        <button type="button" class="-ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white dark:hover:text-white">
+        <button @click="clickshow" type="button" class="-ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white dark:hover:text-white">
           <span class="sr-only">Open sidebar</span>
           <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
             <line x1="3" y1="12" x2="21" y2="12" />
@@ -161,8 +165,8 @@ const showList = ref([
           </div>
         </div>
         <div v-if="!showAnswer" class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
-          <div flex="~ gap8" justify-center items-center md:flex-row flex-col md:max-w-full max-w-3xl>
-            <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss">
+          <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full>
+            <div  v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px]">
               <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 ? StopGenerating : ShareConversation " alt="">
               {{ item }}
             </div>
@@ -298,6 +302,7 @@ const showList = ref([
         </div>
       </div>
     </div>
+    <div v-show="leftShow" id="headlessui-portal-root"><div data-headlessui-portal=""><button type="button" aria-hidden="true" style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px;"></button><div><div class="relative z-40 md:hidden" id="headlessui-dialog-:rn:" role="dialog" aria-modal="true" data-headlessui-state="open"><div class="fixed inset-0 bg-gray-600 bg-opacity-75 opacity-100"></div><div class="fixed inset-0 z-40 flex"><div class="relative flex w-full max-w-xs flex-1 flex-col bg-gray-900 translate-x-0" id="headlessui-dialog-panel-:ro:" data-headlessui-state="open"><div class="absolute top-0 right-0 -mr-12 pt-2 opacity-100"><button @click="clickshow" type="button" class="ml-1 flex h-10 w-10 items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" tabindex="0"><span class="sr-only">Close sidebar</span><svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-white" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20"><nav class="flex h-full flex-1 flex-col space-y-1 p-2"><a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>New chat</a><div class="flex-col flex-1 overflow-y-auto border-b border-white/20"><div class="flex flex-col gap-2 text-gray-100 text-sm h-full justify-center items-center"><div class="p-3 italic text-gray-500">Unable to load history<button class="btn flex justify-center gap-2 btn-dark btn-small m-auto mt-2">Retry</button></div></div></div><a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>Updates &amp; FAQ</a><a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>Log out</a></nav></div></div><div class="w-14 flex-shrink-0"></div></div></div></div><button type="button" aria-hidden="true" style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px;"></button></div></div>
   </div>
 </template>
 
@@ -311,7 +316,6 @@ const showList = ref([
 }
 .showListCss {
   border-radius: 8px;
-  font-size: 16px;
   padding: 9px 14px 8px 14px;
   border: 1px solid #979797;text-align:center;cursor: pointer;
 }
