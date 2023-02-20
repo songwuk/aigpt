@@ -17,12 +17,10 @@
   "devDependencies": {
     "@astrojs/vue": "^2.0.1",
     "@songwuk/eslint-config": "^0.0.10",
-    "@typescript-eslint/parser": "^5.38.0",
     "@unocss/astro": "^0.49.7",
     "@unocss/reset": "^0.49.7",
     "astro": "^2.0.14",
     "eslint": "^8.24.0",
-    "eslint-plugin-astro": "^0.21.0",
     "unocss": "^0.49.7"
   }
 }
