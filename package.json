@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.10",
+    "@vueuse/core": "^9.13.0",
+    "html-to-image": "^1.11.11",
+    "untyper": "^0.0.4",
     "vue": "^3.2.37"
   },
   "devDependencies": {

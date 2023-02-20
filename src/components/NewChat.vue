@@ -114,7 +114,7 @@ const clickshow = () => {
                     </div>
                   </div>
                 </div>
-                <div class="w-full h-32 md:h-48 flex-shrink-0" />
+                <div class="w-full h-48 md:h-52 flex-shrink-0" />
               </div>
               <div v-else class="flex flex-col items-center text-sm dark:bg-gray-800">
                 <div class="w-full border-b border-black/10 dark:border-gray-900/50 text-gray-800 dark:text-gray-100 group dark:bg-gray-800">
@@ -165,7 +165,7 @@ const clickshow = () => {
           </div>
         </div>
         <div v-if="!showAnswer" class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
-          <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full>
+          <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px]">
             <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px]">
               <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 ? StopGenerating : ShareConversation " alt="">
               {{ item }}

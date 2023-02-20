@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+
 import AiGPT_1 from '../img/AiGPT_1.png'
 import OpenAi from '../img/OpenAi.png'
 import Examples from '../img/examples.png'
@@ -22,6 +23,13 @@ const homeList = ref([
     img: Limitations,
   },
 ])
+const textareaask = ref('')
+const submit = async (event) => {
+  if (event.keyCode === 13 && !event.ctrlKey) {
+    event.preventDefault()
+    window.location.href = '/chat'
+  }
+}
 </script>
 
 <template>
@@ -50,13 +58,15 @@ const homeList = ref([
     </div>
     <div class="w-[900px] mt-[34px]">
       <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
-        <textarea placeholder="Ask chatGPT anything" tabindex="0" data-id="root" style="outline: none;border: none; max-height:200px;height:24px;overflow-y:hidden;" rows="1" class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0" />
-        <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent">
-          <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" data-v-f9ee6f8f="">
-            <line x1="22" y1="2" x2="11" y2="13" data-v-f9ee6f8f="" />
-            <polygon points="22 2 15 22 11 13 2 9 22 2" data-v-f9ee6f8f="" />
-          </svg>
-        </button>
+        <textarea v-model="textareaask" placeholder="Ask chatGPT anything" tabindex="0" data-id="root" style="outline: none;border: none; max-height:200px;height:24px;overflow-y:hidden;" rows="1" class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0" @keydown="submit" />
+        <a href="/chat">
+          <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent">
+            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" data-v-f9ee6f8f="">
+              <line x1="22" y1="2" x2="11" y2="13" data-v-f9ee6f8f="" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" data-v-f9ee6f8f="" />
+            </svg>
+          </button>
+        </a>
       </div>
     </div>
   </div>
