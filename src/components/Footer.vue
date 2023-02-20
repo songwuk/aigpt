@@ -17,6 +17,7 @@ const leftFooter = ref([
         <span v-for="(item, idx) in leftFooter" :key="idx" cursor-pointer class="mr-[28px] c-[#6D6D6D] hover:c-[#05D4FD]">{{ item }}</span>
       </div>
     </section>
+    <span flex items-center justify-center flex-1 class="c-[#6D6D6D]">Copyright © 2023 AIGPT.me All Rights Reserved</span>
     <section flex-1 class="mr-[64px]" flex items-center justify-end>
       <img cursor-pointer class="w-[30px] mr-[24px]" :src="Twitter" alt="Twitter">
       <img cursor-pointer class="w-[26px] mr-[24px]" :src="Discord" alt="Discord">

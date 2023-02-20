@@ -67,11 +67,13 @@ const disconnectWallet = () => {
 <template>
   <div class="head" w-full flex="~" items-center sm:justify-center justify-start>
     <section sm:flex-1 class="sm:ml-[61px] ml-[20px]" flex items-center justify-start>
-      <a href="/chat" block class="w-[101px]">
-        <img cursor-pointer class="w-[101px]" :src="AiGPT" alt="logo">
-      </a>
+      <!-- <a href="/chat" block class="w-[101px]"> -->
+      <img cursor-pointer class="w-[101px]" :src="AiGPT" alt="logo">
+      <!-- </a> -->
       <div class="ml-[43px]" sm:block hidden>
-        <span v-for="(item, idx) in leftHead" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]">{{ item }}</span>
+        <span v-for="(item, idx) in leftHead" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]">
+          <a :href="idx === 0 ? '/chat' : 'javascript:void()'"> {{ item }}</a>
+        </span>
       </div>
     </section>
     <section relative sm:flex-1 sm:block hidden class="mr-[61px]" sm:flex sm:items-center sm:justify-end>

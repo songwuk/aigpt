@@ -2,6 +2,7 @@
 // Component Imports
 import Home from '../components/home/Home.vue';
 import Head from '../components/Head.vue';
+import Content from '../components/Content.vue';
 import Footer from '../components/Footer.vue';
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -27,6 +28,7 @@ import Footer from '../components/Footer.vue';
 		<main>
 			<Head client:visible></Head>
 			<Home client:visible></Home>
+			<Content client:visible></Content>
 			<Footer client:visible></Footer>
 		</main>
 	</body>
