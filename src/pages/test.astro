@@ -1,6 +1,6 @@
 ---
 // Component Imports
-import Test from '../components/test/Test.vue';
+import Share from '../components/share/chat.vue';
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
 ---
@@ -23,7 +23,24 @@ import Test from '../components/test/Test.vue';
 	</head>
 	<body>
 		<main>
-			<Test client:visible></Test>
+			<Share client:visible></Share>
 		</main>
 	</body>
 </html>
+<script is:inline >
+	const theme = (() => {
+		if(typeof localStorage !== 'undefined' && localStorage.getItem('theme')){
+			return localStorage.getItem('theme')
+		}
+		if(window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			return 'dark'
+		}
+		return 'light'
+	})()
+	
+	if(theme === 'light'){
+		document.documentElement.classList.remove('dark')
+	} else {
+		document.documentElement.classList.add('dark')
+	}
+</script>
