@@ -195,7 +195,7 @@ const goInto = () => {
       <section class="ml-[22px] mt-[25px]" w-full>
         <span c-white>{{ clickBarStatus }}</span>
         <div class="mt-24px">
-          <div relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
+          <div cursor-pointer relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
             <div class="w-[320px] h-118px rounded-[10px]" />
             <div absolute top-0 left-0 right-0 z-2>
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
