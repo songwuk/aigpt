@@ -128,6 +128,10 @@ const searchAll = (name) => {
   clickBarStatus.value = name
 }
 const startStatus = ref(false)
+const goInto = () => {
+  localStorage.setItem('setDetail', 1)
+  window.location.href = '/detail'
+}
 </script>
 
 <template>
@@ -175,7 +179,7 @@ const startStatus = ref(false)
       flex items-start justify-start style="font-family: Helvetica;"
     >
       <aside v-show="leftshow" class="pr-[19px] w-50 2xl:text-lg 2xl:w-[236px] border-r b-r-[#6D6D6D]" c-white>
-        <div v-for="(item, index) in leftStatus" :key="index" cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
+        <div v-for="(item, index) in leftStatus" :key="index" sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
           <div flex items-center justify-between>
             <span>{{ item.name }}</span>
             <i class="pr-[1px]"><img class="w-[10px]" :src="Right" alt="Right"></i>
@@ -191,7 +195,7 @@ const startStatus = ref(false)
       <section class="ml-[22px] mt-[25px]" w-full>
         <span c-white>{{ clickBarStatus }}</span>
         <div class="mt-24px">
-          <div relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);">
+          <div relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
             <div class="w-[320px] h-118px rounded-[10px]" />
             <div absolute top-0 left-0 right-0 z-2>
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
