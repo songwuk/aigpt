@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { Carousel, Slide } from '@jambonn/vue-concise-carousel'
+import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
+import { ref } from 'vue'
 import See from '../img/see.png'
 import Like from '../img/like.png'
 import Facebook from '../img/facebook.png'
@@ -9,6 +11,9 @@ import Twitter from '../img/twitter.png'
 import StartOff from '../img/shoucang_2.png'
 import ShareConversation from '../img/ShareConversation.png'
 import Right from '../img/right.png'
+import Right1 from '../img/right_1.png'
+import Left1 from '../img/left_1.png'
+import Game from '../img/game.png'
 const leftStatus = ref([
   {
     name: 'Model',
@@ -81,12 +86,20 @@ const leftStatus = ref([
     bar: false,
   },
 ])
+const detailLine = 'WithGen-1Runwayislaunching Video to Video,a form of generative Al that uses l out ofexisting ones.Runwayis also the original startup behind Stable Diffusion Al systemsfor image and video synthesis are quickly becoming more precise, realis the forefront ofthese developments and is dedicated to ensuring the future of are empowering for all.'
 const forList = ref([
   'Categories',
   'Application',
   'Generative AI',
   'Model',
 ])
+const carousel = ref('')
+const forward = () => {
+  carousel.value.handleNavigation('forward')
+}
+const backward = () => {
+  carousel.value.handleNavigation('backward')
+}
 </script>
 
 <template>
@@ -103,10 +116,11 @@ const forList = ref([
       color: #FFFFFF;"
   >
     <span
-      text-center
+      sm:text-center
+      text-left
     >Revolutionary Generative AI, Empowered Workflows</span>
   </div>
-  <div class="bg-[#201f24] 2xl:pl-[158px] 2xl:pr-[161px] pl-[2vw] pr-[2vw]">
+  <div w-full class="bg-[#201f24] 2xl:pl-[158px] 2xl:pr-[161px] pl-[2vw] pr-[2vw]  pb-200px">
     <div class="leftBottom">
       <div flex items-center justify-between>
         <div class="w-170px h-170px rounded-[16px] mt-[-80px]" style="border: 2px solid #FFFFFF;" />
@@ -151,7 +165,7 @@ const forList = ref([
     <div
       flex items-start justify-start style="font-family: Helvetica;" class=" mb160px"
     >
-      <aside shrink-0 class="2xl:text-lg mt-18px mb-11px 2xl:w-300px w-50" c-white>
+      <aside sm:shrink-0 class="2xl:text-lg mt-18px mb-11px xl:w-300px sm:w-50" c-white>
         <span block class="text-18px mb-11px">TAGS</span>
         <aside flex item-center justify-start flex-wrap>
           <span v-for="(item, index) in forList" :key="index" block :class="item === 'Application' ? 'Application' : ''" class="mb-17px mr-10px bg-[#BEE3F8]  rounded-15px py-5px px-12px text-16px">{{ item }}</span>
@@ -163,7 +177,7 @@ const forList = ref([
           View Website
         </button>
       </aside>
-      <section class="2xl:ml-[22px] mt-[18px] ml-0" w-full>
+      <section class="2xl:ml-[22px] mt-[18px]" sm:w-full w-auto>
         <div flex items-center justify-start>
           <span class="c-#979797 text-14px">APPS</span>
           <i class="mx-6px">
@@ -174,18 +188,32 @@ const forList = ref([
         <h2 class="mt-35px text-26px mb-19px">
           About
         </h2>
-        <p class="text-left">
-          WithGen-1Runwayislaunching&nbsp;Video&nbsp;to&nbsp;Video,&nbsp;a&nbsp;form&nbsp;of&nbsp;generative&nbsp;Al&nbsp;that&nbsp;uses&nbsp;l<br>out&nbsp;ofexisting&nbsp;ones.Runwayis&nbsp;also&nbsp;the&nbsp;original&nbsp;startup&nbsp;behind&nbsp;Stable&nbsp;Diffusion<br>Al&nbsp;systemsfor&nbsp;image&nbsp;and&nbsp;video&nbsp;synthesis&nbsp;are&nbsp;quickly&nbsp;becoming&nbsp;more&nbsp;precise,&nbsp;realis&nbsp;the&nbsp;forefront&nbsp;ofthese&nbsp;developments&nbsp;and&nbsp;is&nbsp;dedicated&nbsp;to&nbsp;ensuring&nbsp;the&nbsp;future&nbsp;of&nbsp;cre&nbsp;empowering&nbsp;for&nbsp;all.
-        </p>
+        <p class="text-left" v-html="detailLine" />
       </section>
     </div>
-    <div class="2xl:ml-300px ml-50">
-      img
+    <div
+      relative
+      class="2xl:ml-352px sm:ml-55 2xl:w-1160px 2xl:h-676px sm:w-200 sm:h-100 w-full"
+    >
+      <Carousel ref="carousel" :per-page="1" pagination-active-color="#05D4FD" :adjustable-height="true">
+        <Slide>
+          <img :src="Game" alt="Game">
+        </Slide>
+        <Slide>
+          <img :src="Game" alt="Game">
+        </Slide>
+      </Carousel>
+      <i sm:block hidden absolute left-0 class="top-[50%] mt-[-22.5px] ml-[-6%]" cursor-pointer @click="backward">
+        <img class="2xl:w-45px w-30px" :src="Left1">
+      </i>
+      <i sm:block hidden absolute right-0 class="top-[50%] mt-[-22.5px] mr-[-6%]" cursor-pointer @click="forward">
+        <img class="2xl:w-45px w-30px" :src="Right1">
+      </i>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style>
 .leftBottom {
   border-bottom: 1px solid #6D6D6D;
 }
@@ -195,5 +223,8 @@ const forList = ref([
 }
 .Application {
   background: #FFB9B7 !important;
+}
+.VueCarousel-dot-container {
+  margin-top: 0 !important;
 }
 </style>
