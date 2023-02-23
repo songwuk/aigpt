@@ -8,6 +8,7 @@ import Discord from '../img/discord.png'
 import Twitter from '../img/twitter.png'
 import StartOff from '../img/shoucang_2.png'
 import ShareConversation from '../img/ShareConversation.png'
+import Right from '../img/right.png'
 const leftStatus = ref([
   {
     name: 'Model',
@@ -80,9 +81,12 @@ const leftStatus = ref([
     bar: false,
   },
 ])
-onMounted(() => {
-  console.log(localStorage.getItem('setDetail'))
-})
+const forList = ref([
+  'Categories',
+  'Application',
+  'Generative AI',
+  'Model',
+])
 </script>
 
 <template>
@@ -145,22 +149,38 @@ onMounted(() => {
       <span block class="text-18px mb-26px">Aweb natives community to support web3 projects worldwidell AMA. Partnership & Giveaway</span>
     </div>
     <div
-      flex items-start justify-start style="font-family: Helvetica;"
+      flex items-start justify-start style="font-family: Helvetica;" class=" mb160px"
     >
-      <aside class="pr-[19px] w-50 2xl:text-lg 2xl:w-[236px]" c-white>
-        <span>TAGS</span>
-        <aside>
-          <span>sdsdsd</span>
+      <aside shrink-0 class="2xl:text-lg mt-18px mb-11px 2xl:w-300px w-50" c-white>
+        <span block class="text-18px mb-11px">TAGS</span>
+        <aside flex item-center justify-start flex-wrap>
+          <span v-for="(item, index) in forList" :key="index" block :class="item === 'Application' ? 'Application' : ''" class="mb-17px mr-10px bg-[#BEE3F8]  rounded-15px py-5px px-12px text-16px">{{ item }}</span>
         </aside>
+        <button
+          class="w-158px h-40px rounded-8px"
+          style="background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);"
+        >
+          View Website
+        </button>
       </aside>
-      <section class="ml-[22px] mt-[25px]" w-full>
-        <span c-white>{{ clickBarStatus }}</span>
-        <div class="mt-24px">
-          <div cursor-pointer relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
-            <span>sdsdsdsd</span>
-          </div>
+      <section class="2xl:ml-[22px] mt-[18px] ml-0" w-full>
+        <div flex items-center justify-start>
+          <span class="c-#979797 text-14px">APPS</span>
+          <i class="mx-6px">
+            <img class="w-8px" :src="Right" alt="Right">
+          </i>
+          <span class="c-#05D4FD text-14px">GEN-1</span>
         </div>
+        <h2 class="mt-35px text-26px mb-19px">
+          About
+        </h2>
+        <p class="text-left">
+          WithGen-1Runwayislaunching&nbsp;Video&nbsp;to&nbsp;Video,&nbsp;a&nbsp;form&nbsp;of&nbsp;generative&nbsp;Al&nbsp;that&nbsp;uses&nbsp;l<br>out&nbsp;ofexisting&nbsp;ones.Runwayis&nbsp;also&nbsp;the&nbsp;original&nbsp;startup&nbsp;behind&nbsp;Stable&nbsp;Diffusion<br>Al&nbsp;systemsfor&nbsp;image&nbsp;and&nbsp;video&nbsp;synthesis&nbsp;are&nbsp;quickly&nbsp;becoming&nbsp;more&nbsp;precise,&nbsp;realis&nbsp;the&nbsp;forefront&nbsp;ofthese&nbsp;developments&nbsp;and&nbsp;is&nbsp;dedicated&nbsp;to&nbsp;ensuring&nbsp;the&nbsp;future&nbsp;of&nbsp;cre&nbsp;empowering&nbsp;for&nbsp;all.
+        </p>
       </section>
+    </div>
+    <div class="2xl:ml-300px ml-50">
+      img
     </div>
   </div>
 </template>
@@ -172,5 +192,8 @@ onMounted(() => {
 .shareImg i {
   margin: 0 14px;
   cursor: pointer;
+}
+.Application {
+  background: #FFB9B7 !important;
 }
 </style>
