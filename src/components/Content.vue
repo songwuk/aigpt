@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, unref, watchEffect } from 'vue'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -18,6 +18,8 @@ import See from './img/see.png'
 import Like from './img/like.png'
 import Start from './img/start.png'
 import StartOff from './img/startOff.png'
+import NoHistory from './img/no_history.png'
+import NoFavorite from './img/no_favorite.png'
 const stable = ref([
   {
     name: 'Categories',
@@ -113,9 +115,6 @@ const leftStatus = ref([
   },
 ])
 const categories = ref('')
-const changeOnce = () => {
-
-}
 const leftshow = ref(true)
 const leftOff = () => {
   leftshow.value = !leftshow.value
@@ -132,36 +131,76 @@ const goInto = () => {
   localStorage.setItem('setDetail', 1)
   window.location.href = '/detail'
 }
+const clickButton = ref([
+  'AI Copywriter 23',
+  'Aontent Generation 87',
+  'Aoneral 51',
+  'AI Coneral 51',
+  'Bontent General 51',
+  'Goneral 52',
+  'HI Coneralkkkw 53',
+  'Foneral 23',
+  'FI Coneral 51',
+  'Bontent General 2',
+  'EI Coneral 51',
+  'DI Coneralkkkw 56',
+  'Content Generation 51',
+])
+const categoriesShow = ref(false)
+const trendingShow = ref(false)
+const favoriteShow = ref(false)
+const historyShow = ref(false)
+const trendingShowf = () => {
+  trendingShow.value = !trendingShow.value
+  favoriteShow.value = false
+  historyShow.value = false
+  clickBarStatus.value = 'Trending'
+}
+const favoriteShowf = () => {
+  trendingShow.value = false
+  favoriteShow.value = !favoriteShow.value
+  historyShow.value = false
+  clickBarStatus.value = 'Favorite'
+}
+const historyShowf = () => {
+  trendingShow.value = false
+  favoriteShow.value = false
+  historyShow.value = !historyShow.value
+  clickBarStatus.value = 'History'
+}
 </script>
 
 <template>
   <div class="bg-[#201f24] 2xl:pl-[158px] 2xl:pr-[161px] pl-[2vw] pr-[2vw]" w-full>
-    <div class="leftBottom pt-[27px] pb-[19px]" flex items-center justify-start>
+    <div class="leftBottom pt-[27px] pb-[19px]" flex items-center justify-start relative>
       <div flex items-center justify-center @click="leftOff">
         <span cursor-pointer flex items-center justify-center block class=" bg-[#475369] rounded-[23px] 2xl:w-[72px] 2xl:h-[46px] w-12 h-8">
           <img class="w-[20px] h-[20px]" :src="leftshow ? LeftOff : Left" alt="Left">
         </span>
       </div>
       <div flex items-center justify-center class="2xl:ml-36px ml-1">
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="changeOnce">
-          <img class="w-[16px]" :src="FenLei" alt="FenLei">
-          <span class="ml-[16px] mr-[9px]">Categories</span>
-          <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i>
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="categoriesShow = !categoriesShow">
+          <img class="w-[16px]" :src="categoriesShow ? FenLei : FenLeiOff" alt="FenLei">
+          <span class="ml-[16px] mr-[9px]" :class="categoriesShow ? 'c-[#05D4FD]' : 'c-white' ">Categories</span>
+          <i>
+            <img v-if="categoriesShow" class="w-[14px]" :src="Bottom" alt="Bottom">
+            <img v-else class="w-[8px]" :src="Right" alt="Right">
+          </i>
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="changeOnce">
-          <img class="w-[20px]" :src="FilterOff" alt="FilterOff">
-          <span class="ml-[16px] mr-[9px]">Trending</span>
-          <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i>
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="trendingShowf">
+          <img class="w-[20px]" :src="trendingShow ? Filter : FilterOff" alt="FilterOff">
+          <span class="ml-[16px] mr-[9px]" :class="trendingShow ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
+          <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="changeOnce">
-          <img class="w-[27px]" :src="ShoucangOff" alt="ShoucangOff">
-          <span class="ml-[16px] mr-[9px]">Favorite</span>
-          <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i>
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
+          <img class="w-[27px]" :src=" favoriteShow ? Shoucang : ShoucangOff" alt="ShoucangOff">
+          <span class="ml-[16px] mr-[9px]" :class="favoriteShow ? 'c-[#05D4FD]' : 'c-white' ">Favorite</span>
+          <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="changeOnce">
-          <img class="w-[26px]" :src="JurassicWaitOff" alt="JurassicWaitOff">
-          <span class="ml-[16px] mr-[9px]">History</span>
-          <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i>
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="historyShowf">
+          <img class="w-[26px]" :src="historyShow ? JurassicWait : JurassicWaitOff" alt="JurassicWaitOff">
+          <span class="ml-[16px] mr-[9px]" :class="historyShow ? 'c-[#05D4FD]' : 'c-white' ">History</span>
+          <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
       </div>
       <aside w-full>
@@ -174,11 +213,27 @@ const goInto = () => {
           >
         </div>
       </aside>
+      <div v-show="categoriesShow" z-10 absolute class="top-[85px] 2xl:left-[108px] left-12 2xl:w-[calc(100%-108px)]  w-[calc(100%-3rem)]  rounded-10px " style="background-color: #33333E;">
+        <button
+          style="width: 190px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);" c-white
+          class="ml-[24px] mt-[24px] rounded-8px text-[18px]"
+        >
+          All Use Cases 681
+        </button>
+        <div class="mt-[31px] ml-[24px] pb-10px" flex items-center justify-start flex-wrap flex-row>
+          <span
+            v-for="(it, idx) in clickButton"
+            :key="idx" cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
+            class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
+            text-center
+          >{{ it }}</span>
+        </div>
+      </div>
     </div>
     <div
       flex items-start justify-start style="font-family: Helvetica;"
     >
-      <aside v-show="leftshow" class="pr-[19px] w-50 2xl:text-lg 2xl:w-[236px] border-r b-r-[#6D6D6D]" c-white>
+      <aside v-show="leftshow" class="pr-[19px] w-50 2xl:text-lg 2xl:w-[236px] border-r b-r-[#6D6D6D] h-750px" c-white>
         <div v-for="(item, index) in leftStatus" :key="index" sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
           <div flex items-center justify-between>
             <span>{{ item.name }}</span>
@@ -192,9 +247,9 @@ const goInto = () => {
           </aside>
         </div>
       </aside>
-      <section class="ml-[22px] mt-[25px]" w-full>
+      <section class="ml-[22px] mt-[25px] h-750px" w-full relative>
         <span c-white>{{ clickBarStatus }}</span>
-        <div class="mt-24px">
+        <div v-if="trendingShow" class="mt-24px">
           <div cursor-pointer relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
             <div class="w-[320px] h-118px rounded-[10px]" />
             <div absolute top-0 left-0 right-0 z-2>
@@ -226,6 +281,16 @@ const goInto = () => {
                 Arrakis is a protocol specialized in
               </div>
             </div>
+          </div>
+        </div>
+        <div absolute class="left-50% top-50% " style=" transform: translate(-50%,-50%);">
+          <div v-if="historyShow" flex items-center justify-center flex-col>
+            <img class="w-110px" :src="NoHistory" alt="">
+            <span class="text-20px mt-16px" c-white>No History</span>
+          </div>
+          <div v-if="favoriteShow" flex items-center justify-center flex-col>
+            <img class="w-110px" :src="NoFavorite" alt="">
+            <span class="text-20px mt-16px" c-white>No Favorite</span>
           </div>
         </div>
       </section>

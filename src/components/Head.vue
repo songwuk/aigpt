@@ -2,7 +2,9 @@
 import { ref } from 'vue'
 import AiGPT from './img/AiGPT.png'
 import Global from './img/global.png'
+import GlobalHover from './img/global_1.png'
 import Upload from './img/upload.png'
+import UploadHover from './img/upload_1.png'
 import Walletpng from './img/walletpng.png'
 import Avatar from './img/avatar.png'
 import Plan from './img/plan.png'
@@ -62,6 +64,20 @@ const connectWallet = () => {
 const disconnectWallet = () => {
   walletStatus.value = true
 }
+const eng = ref('')
+const GlobalHoverf = () => {
+  eng.value.setAttribute('src', GlobalHover)
+}
+const GlobalUnhoverf = () => {
+  eng.value.setAttribute('src', Global)
+}
+const sub = ref('')
+const UploadHoverf = () => {
+  sub.value.setAttribute('src', UploadHover)
+}
+const UploadUnhoverf = () => {
+  sub.value.setAttribute('src', Upload)
+}
 </script>
 
 <template>
@@ -80,8 +96,8 @@ const disconnectWallet = () => {
       </div>
     </section>
     <section relative sm:flex-1 sm:block hidden class="mr-[61px]" sm:flex sm:items-center sm:justify-end>
-      <button flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]">
-        <img class="w-[22px] mr-[10px]" :src="Upload" alt="language">
+      <button flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]" @mouseover="UploadHoverf" @mouseout="UploadUnhoverf">
+        <img ref="sub" class="w-[22px] mr-[10px]" :src="Upload" alt="language">
         Submit
       </button>
       <div class="p-[1px] box-border rounded-[6px] mr-[20px]" style="background: linear-gradient(135deg, rgba(71, 21, 254, 1), rgba(9, 190, 253, 1))">
@@ -92,8 +108,8 @@ const disconnectWallet = () => {
       <button class="mr-[20px] w-[109px] h-[32px] rounded-[6px]" style="background: linear-gradient(135deg, #5106FE 0%, #2A4DFF 100%);" @click="getStart">
         Get Started
       </button>
-      <button flex items-center justify-center class="hover:c-[#05D4FD]">
-        <img class="w-[20px] mr-[10px]" :src="Global" alt="language">
+      <button flex items-center justify-center class="hover:c-[#05D4FD]" @mouseover="GlobalHoverf" @mouseout="GlobalUnhoverf">
+        <img ref="eng" class="w-[20px] mr-[10px]" :src="Global" alt="language">
         English
       </button>
       <aside v-show="wallet" flex items-center justify-start flex-col absolute class="w-[290px] h-[auto] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]">

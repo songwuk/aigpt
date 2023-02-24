@@ -34,10 +34,10 @@ const submit = async (event) => {
 
 <template>
   <div flex sm:items-center justify-start flex-col items-start class="w-full h-[652px]" style="background: linear-gradient(269deg, #1C82FE 0%, #5106FE 100%);">
-    <div class="mt-[90px] mb-[26px]">
+    <div class="mt-[90px] mb-[26px]" text-center>
       <span style="font-size: 48px;font-weight: bold;color: #FFFFFF;">Connect ChatGPT & AIGC to Web3</span>
     </div>
-    <div flex sm:items-center sm:justify-center sm:flex-row justify-start items-start flex-col>
+    <div flex items-center justify-center sm:flex-row flex-col w-full>
       <img style=" margin-top: 4px;" class="w-[135px]" :src="AiGPT_1">
       <span style="margin: 17px 0 0 7px;" class="text-[24px] c-white">Powerd by</span>
       <img style="margin-left: 7px;" class="w-[180px]" :src="OpenAi">
