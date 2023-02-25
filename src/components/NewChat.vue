@@ -1,5 +1,5 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang='ts'>
+import { onMounted, ref, watch } from 'vue'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
 import ShareConversation from './img/ShareConversation.png'
@@ -14,11 +14,46 @@ const leftShow = ref(false)
 const clickshow = () => {
   leftShow.value = !leftShow.value
 }
+const isMounted = ref<boolean>(false)
+const themes = ref<Array<string>>(['light', 'dark'])
+const theme = ref<string | null | undefined>(null)
+const setTheme = async (themeStatus?: string) => {
+  const themsStatus = async () => {
+    if (import.meta.env.SSR)
+      return undefined
+
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme'))
+      return localStorage.getItem('theme')
+
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+      return 'dark'
+
+    return 'light'
+  }
+  theme.value = themeStatus || await themsStatus()
+}
+onMounted(async () => {
+  await setTheme()
+  isMounted.value = true
+})
+watch(theme, (themeNew) => {
+  const root = document && document.documentElement
+  if (themeNew === 'light')
+    root.classList.remove('dark')
+
+  else
+    root.classList.add('dark')
+})
+const toggleTheme = () => {
+  const t = theme.value === 'light' ? 'dark' : 'light'
+  localStorage.setItem('theme', t)
+  setTheme(t)
+}
 </script>
 
 <template>
-  <div class="overflow-hidden w-full h-full relative">
-    <div class="flex h-full flex-1 flex-col md:pl-[260px]">
+  <div class="overflow-hidden w-full relative h-[calc(100%-64px)]">
+    <div class="flex  h-full flex-1 flex-col md:pl-[260px]">
       <div class="sticky top-0 z-10 flex items-center border-b border-white/20 bg-gray-800 pl-1 pt-1 text-gray-200 sm:pl-3 md:hidden">
         <button type="button" class="-ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white dark:hover:text-white" @click="clickshow">
           <span class="sr-only">Open sidebar</span>
@@ -39,8 +74,8 @@ const clickshow = () => {
         </button>
       </div>
       <main class="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
-        <div class="flex-1 overflow-hidden">
-          <div class="vue-scroll-to-bottom--css h-full dark:bg-gray-800">
+        <div class="flex-1 overflow-hidden bg-white">
+          <div class="vue-scroll-to-bottom--css h-full dark:bg-gray-800 bg-">
             <div class="vue-scroll-to-bottom--css">
               <div v-if="!showAnswer" class="flex flex-col items-center text-sm dark:bg-gray-800">
                 <div class="text-gray-800 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100">
@@ -165,7 +200,7 @@ const clickshow = () => {
           </div>
         </div>
         <div v-if="!showAnswer" class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
-          <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px]">
+          <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px] dark:c-white c-black">
             <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px]">
               <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 ? StopGenerating : ShareConversation " alt="">
               {{ item }}
@@ -211,7 +246,7 @@ const clickshow = () => {
         </div>
       </main>
     </div>
-    <div class="dark hidden bg-gray-900 md:fixed md:inset-y-0 md:flex md:w-[260px] md:flex-col">
+    <div class="dark hidden bg-gray-900 md:fixed md:inset-y-0 md:flex md:w-[260px] md:flex-col mt-64px">
       <div class="flex h-full min-h-0 flex-col ">
         <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
           <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
@@ -274,18 +309,10 @@ const clickshow = () => {
                 <line x1="10" y1="11" x2="10" y2="17" />
                 <line x1="14" y1="11" x2="14" y2="17" />
               </svg>Clear conversations</a>
-            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-              <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>Light mode</a>
+            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" @click="toggleTheme">
+              <div v-if="theme === 'light'" flex class=" w-16px" i-carbon-sun />
+              <div v-else-if="theme === 'dark'" flex class=" w-16px" i-carbon-moon />
+              Light mode</a>
             <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
               <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -306,7 +333,8 @@ const clickshow = () => {
       <div data-headlessui-portal="">
         <button type="button" aria-hidden="true" style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px;" /><div>
           <div id="headlessui-dialog-:rn:" class="relative z-40 md:hidden" role="dialog" aria-modal="true" data-headlessui-state="open">
-            <div class="fixed inset-0 bg-gray-600 bg-opacity-75 opacity-100" /><div class="fixed inset-0 z-40 flex">
+            <div class="fixed inset-0 bg-gray-600 bg-opacity-75 opacity-100 top-64px" />
+            <div class="fixed left-0 right-0 bottom-0 z-40 flex top-64px">
               <div id="headlessui-dialog-panel-:ro:" class="relative flex w-full max-w-xs flex-1 flex-col bg-gray-900 translate-x-0" data-headlessui-state="open">
                 <div class="absolute top-0 right-0 -mr-12 pt-2 opacity-100">
                   <button type="button" class="ml-1 flex h-10 w-10 items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" tabindex="0" @click="clickshow">

@@ -167,7 +167,7 @@ const tags = ref([
         </p>
       </aside>
     </section>
-    <div sm:hidden block absolute right-1>
+    <div sm:hidden block absolute right-1 z-111>
       <Menu as="template">
         <div>
           <MenuButton
