@@ -85,7 +85,7 @@ const UploadUnhoverf = () => {
     <section sm:flex-1 class="sm:ml-[61px] ml-[20px]" flex items-center justify-start>
       <a href="/" block>
         <div relative>
-          <img cursor-pointer class="w-[101px]" :src="AiGPT" alt="logo">
+          <img sm:cursor-pointer class="w-[101px]" :src="AiGPT" alt="logo">
           <span style="line-height: 10px;" absolute class="top-[-4px] right-[-46px] text-[10px] c-[#05D4FD] rounded-[8px] border-1 border-[#05D4FD] px-[6px] py-[3px]">BELA</span>
         </div>
       </a>

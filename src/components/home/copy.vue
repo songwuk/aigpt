@@ -42,10 +42,10 @@ const submit = async (event) => {
       <span style="margin: 17px 0 0 7px;" class="text-[24px] c-white">Powerd by</span>
       <img style="margin-left: 7px;" class="w-[180px]" :src="OpenAi">
     </div>
-    <div relative flex items-center justify-center class="sm:w-[900px] sm:h-[220px] mt-[51px] w-full h-500px" style="">
-      <div absolute top-0 left-0 style="opacity: 0.33; border-radius: 10px; background: #09159F;" class="sm:w-[900px] sm:h-[220px] w-full h-500px" />
-      <div class="kill sm:w-[900px] sm:h-[220px] w-full h-auto " absolute top-0 left-0 z-2 flex items-center justify-center sm:flex-row flex-col>
-        <section v-for="(item, index) in homeList" :key="index" class="sm:my-0 my-10px" c-white flex items-center justify-center flex-col style="opacity:1">
+    <div relative flex items-center justify-center class="sm:w-[900px] sm:h-[220px] mt-[51px] w-full h-450px" style="">
+      <div absolute top-0 left-0 style="opacity: 0.33; border-radius: 10px; background: #09159F;" class="sm:w-[900px] sm:h-[220px] w-full h-450px" />
+      <div class="kill sm:w-[900px] sm:h-[220px] w-full h-auto" absolute top-0 left-0 z-2 flex items-center justify-center sm:flex-row flex-col>
+        <section v-for="(item, index) in homeList" :key="index" c-white flex items-center justify-center flex-col style="opacity:1">
           <img class="w-[46px]" :src="item.img" alt="">
           <h4 font-bold class="mt-[20px] mb-[13px]" style="font-size: 18px">
             {{ item.name }}

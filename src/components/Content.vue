@@ -172,14 +172,14 @@ const historyShowf = () => {
 
 <template>
   <div class="bg-[#201f24] 2xl:pl-[158px] 2xl:pr-[161px] pl-[2vw] pr-[2vw]" w-full>
-    <div class="leftBottom pt-[27px] pb-[19px]" flex items-center justify-start relative>
+    <div class="leftBottom pt-[27px] pb-[19px]" flex sm:items-center justify-start relative sm:flex-row flex-col items-start>
       <div flex items-center justify-center @click="leftOff">
-        <span cursor-pointer flex items-center justify-center block class=" bg-[#475369] rounded-[23px] 2xl:w-[72px] 2xl:h-[46px] w-12 h-8">
+        <span sm:cursor-pointer flex items-center justify-center block class=" bg-[#475369] rounded-[23px] 2xl:w-[72px] 2xl:h-[46px] w-12 h-8">
           <img class="w-[20px] h-[20px]" :src="leftshow ? LeftOff : Left" alt="Left">
         </span>
       </div>
-      <div flex items-center justify-center class="2xl:ml-36px ml-1">
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="categoriesShow = !categoriesShow">
+      <div flex items-center justify-center sm:flex-nowrap flex-wrap class="2xl:ml-36px sm:ml-1 ml-0 sm:my-0 my-10px">
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="categoriesShow = !categoriesShow">
           <img class="w-[16px]" :src="categoriesShow ? FenLei : FenLeiOff" alt="FenLei">
           <span class="ml-[16px] mr-[9px]" :class="categoriesShow ? 'c-[#05D4FD]' : 'c-white' ">Categories</span>
           <i>
@@ -187,17 +187,17 @@ const historyShowf = () => {
             <img v-else class="w-[8px]" :src="Right" alt="Right">
           </i>
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="trendingShowf">
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="trendingShowf">
           <img class="w-[20px]" :src="trendingShow ? Filter : FilterOff" alt="FilterOff">
           <span class="ml-[16px] mr-[9px]" :class="trendingShow ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
           <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
           <img class="w-[27px]" :src=" favoriteShow ? Shoucang : ShoucangOff" alt="ShoucangOff">
           <span class="ml-[16px] mr-[9px]" :class="favoriteShow ? 'c-[#05D4FD]' : 'c-white' ">Favorite</span>
           <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10" cursor-pointer flex items-center justify-center c-white @click="historyShowf">
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="historyShowf">
           <img class="w-[26px]" :src="historyShow ? JurassicWait : JurassicWaitOff" alt="JurassicWaitOff">
           <span class="ml-[16px] mr-[9px]" :class="historyShow ? 'c-[#05D4FD]' : 'c-white' ">History</span>
           <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
@@ -207,7 +207,7 @@ const historyShowf = () => {
         <div class="px-4 py-1 pr-8" baseline flex items-center justify-center style="height: 46px;background: #3C3C3E;border-radius: 26px;">
           <input v-model="categories" class="c-[#6D6D6D]" placeholder="Search for apps,categories" style="background: #3C3C3E;" outline-none border-none w-full type="text">
           <img
-            cursor-pointer
+            sm:cursor-pointer
             class="w-[22px]"
             :src="Search"
           >
@@ -223,7 +223,7 @@ const historyShowf = () => {
         <div class="mt-[31px] ml-[24px] pb-10px" flex items-center justify-start flex-wrap flex-row>
           <span
             v-for="(it, idx) in clickButton"
-            :key="idx" cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
+            :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
             class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
             text-center
           >{{ it }}</span>
@@ -234,7 +234,7 @@ const historyShowf = () => {
       flex items-start justify-start style="font-family: Helvetica;"
     >
       <aside v-show="leftshow" class="pr-[19px] w-50 2xl:text-lg 2xl:w-[236px] border-r b-r-[#6D6D6D] h-750px" c-white>
-        <div v-for="(item, index) in leftStatus" :key="index" sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
+        <div v-for="(item, index) in leftStatus" :key="index" sm:sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
           <div flex items-center justify-between>
             <span>{{ item.name }}</span>
             <i class="pr-[1px]"><img class="w-[10px]" :src="Right" alt="Right"></i>
@@ -247,23 +247,22 @@ const historyShowf = () => {
           </aside>
         </div>
       </aside>
-      <section class="ml-[22px] mt-[25px] h-750px" w-full relative>
+      <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarStatus }}</span>
-        <div v-if="trendingShow" class="mt-24px">
-          <div cursor-pointer relative c-white class="w-[320px] h-118px rounded-[10px]" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
-            <div class="w-[320px] h-118px rounded-[10px]" />
-            <div absolute top-0 left-0 right-0 z-2>
+        <div v-if="trendingShow" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
+          <div sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px " style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
+            <div class="bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
                   :src="See"
                   class="w-16px mr-4px"
                 >22</span>
-                <span cursor-pointer flex items-center justify-center><img
+                <span sm:cursor-pointer flex items-center justify-center><img
                   :src="Like"
                   class="w-14px mr-4px ml-8px"
                 >21</span>
                 <img
-                  cursor-pointer
+                  sm:cursor-pointer
                   :src="startStatus ? Start : StartOff"
                   class="w-16px ml-8px"
                   @click="startStatus = !startStatus"
@@ -277,20 +276,51 @@ const historyShowf = () => {
                 >
                 <span class="ml-11px">Quest 3</span>
               </div>
-              <div class="ml-18px mt-12px">
-                Arrakis is a protocol specialized in
+              <div class="ml-18px mt-12px py-5px">
+                Arrakis is a protocol specialized inArrakis is a protocol specialized inArrakis is a protocol specialized inArrakis is a protocol specialized in
+              </div>
+            </div>
+          </div>
+          <div v-for="(item, index) in 10" :key="index" sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
+            <div class=" border-1  rounded-[10px] b-[transparent] ">
+              <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
+                <span flex items-center justify-center><img
+                  :src="See"
+                  class="w-16px mr-4px"
+                >22{{ item }}</span>
+                <span sm:cursor-pointer flex items-center justify-center><img
+                  :src="Like"
+                  class="w-14px mr-4px ml-8px"
+                >21</span>
+                <img
+                  sm:cursor-pointer
+                  :src="startStatus ? Start : StartOff"
+                  class="w-16px ml-8px"
+                  @click="startStatus = !startStatus"
+                >
+              </div>
+              <div class="ml-18px" flex items-center justify-start>
+                <img
+                  class="w-[32px]"
+                  :src="Quest"
+                  alt="Quest"
+                >
+                <span class="ml-11px">Quest 3</span>
+              </div>
+              <div class="ml-18px mt-12px py-5px">
+                Arrakis is a protocol specialized inArrakis
               </div>
             </div>
           </div>
         </div>
         <div absolute class="left-50% top-50% " style=" transform: translate(-50%,-50%);">
           <div v-if="historyShow" flex items-center justify-center flex-col>
-            <img class="w-110px" :src="NoHistory" alt="">
-            <span class="text-20px mt-16px" c-white>No History</span>
+            <img class="sm:w-110px w-40px" :src="NoHistory" alt="">
+            <span class="sm:text-20px text-16px mt-16px" c-white>No History</span>
           </div>
           <div v-if="favoriteShow" flex items-center justify-center flex-col>
-            <img class="w-110px" :src="NoFavorite" alt="">
-            <span class="text-20px mt-16px" c-white>No Favorite</span>
+            <img class="sm:w-110px w-40px" :src="NoFavorite" alt="">
+            <span class="sm:text-20px text-16px mt-16px" c-white>No Favorite</span>
           </div>
         </div>
       </section>
