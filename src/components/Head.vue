@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { Menu, MenuButton, MenuItem, MenuItems, TransitionRoot } from '@headlessui/vue'
 import AiGPT from './img/AiGPT.png'
 import Global from './img/global.png'
 import GlobalHover from './img/global_1.png'
@@ -78,6 +79,20 @@ const UploadHoverf = () => {
 const UploadUnhoverf = () => {
   sub.value.setAttribute('src', Upload)
 }
+const tags = ref([
+  {
+    name: 'ChatGPT',
+    href: '/chat',
+  },
+  {
+    name: 'GAI MAP',
+    href: 'javascript:void()',
+  },
+  {
+    name: 'Pricing',
+    href: 'javascript:void()',
+  },
+])
 </script>
 
 <template>
@@ -152,9 +167,43 @@ const UploadUnhoverf = () => {
         </p>
       </aside>
     </section>
-    <button sm:hidden block absolute type="button" class="right-[0] -ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-      <span class="sr-only" data-v-f9ee6f8f="">Open sidebar</span><svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" data-v-f9ee6f8f=""><line x1="3" y1="12" x2="21" y2="12" data-v-f9ee6f8f="" /><line x1="3" y1="6" x2="21" y2="6" data-v-f9ee6f8f="" /><line x1="3" y1="18" x2="21" y2="18" data-v-f9ee6f8f="" /></svg>
-    </button>
+    <div sm:hidden block absolute right-1>
+      <Menu as="template">
+        <div>
+          <MenuButton
+            class=" rounded-md border -ml-0.5 -mt-0.5 border-zinc-400 inline-flex h-10 w-10 items-center justify-center rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all"
+          >
+            <div i-carbon-menu aria-hidden="true" />
+          </MenuButton>
+        </div>
+        <TransitionRoot
+          enter="transition ease-out duration-100"
+          enter-from="transition opacity-0 scale-95"
+          enter-to="transition opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leave-from="transition opacity-100 scale-100"
+          leave-to="transition opacity-0 scale-95"
+        >
+          <MenuItems
+            class="absolute right-0 z-10 mt-2 w-24 origin-top-right rounded-md border
+            c-white
+        border-zinc-400 dark:border-zinc-700 bg-zinc-800 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none divide-zinc-400 dark:divide-zinc-700"
+          >
+            <div className="py-1">
+              <div v-for="(item, index) in tags" :key="index">
+                <MenuItem v-slot="{ active }">
+                  <a
+                    class="block px-4 py-2 text-sm" :class="[{ 'bg-orange-200 dark:bg-zinc-700': active }]" :href="item.href"
+                  >
+                    {{ item.name }}
+                  </a>
+                </MenuItem>
+              </div>
+            </div>
+          </MenuItems>
+        </TransitionRoot>
+      </Menu>
+    </div>
   </div>
 </template>
 

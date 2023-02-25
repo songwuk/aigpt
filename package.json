@@ -11,7 +11,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.7.10",
+    "@headlessui/vue": "^1.7.11",
+    "@iconify-json/carbon": "^1.1.8",
     "@jambonn/vue-concise-carousel": "^2.1.29",
     "@vueuse/core": "^9.13.0",
     "html-to-image": "^1.11.11",

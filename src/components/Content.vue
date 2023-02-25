@@ -1,5 +1,5 @@
 <script setup>
-import { ref, unref, watchEffect } from 'vue'
+import { onMounted, ref } from 'vue'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -168,6 +168,30 @@ const historyShowf = () => {
   historyShow.value = !historyShow.value
   clickBarStatus.value = 'History'
 }
+
+const trending = ref([
+  {
+    name: 'Trending',
+    href: 'javascript:void(0)',
+  },
+  {
+    name: 'Latest',
+    href: 'javascript:void(0)',
+  },
+  {
+    name: 'Like',
+    href: 'javascript:void(0)',
+  },
+])
+const showdot = ref(null)
+const dotfn = (idx) => {
+  showdot.value = idx
+}
+onMounted(() => {
+  document.querySelector('body').addEventListener('click', () => {
+    trendingShow.value = false
+  }, false)
+})
 </script>
 
 <template>
@@ -187,10 +211,30 @@ const historyShowf = () => {
             <img v-else class="w-[8px]" :src="Right" alt="Right">
           </i>
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="trendingShowf">
-          <img class="w-[20px]" :src="trendingShow ? Filter : FilterOff" alt="FilterOff">
-          <span class="ml-[16px] mr-[9px]" :class="trendingShow ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
+        <span relative class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click.stop="trendingShowf">
+          <img class="w-[20px]" :src="trendingShow || showdot !== null ? Filter : FilterOff" alt="FilterOff">
+          <span class="ml-[16px] mr-[9px]" :class="trendingShow || showdot !== null ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
           <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
+          <div
+            v-show="trendingShow"
+            class="absolute right-0 z-10 mt-40 origin-top-right rounded-md border border-transparent
+            c-white bg-zinc-800 shadow-xl ring-black focus:outline-none divide-zinc-400 dark:divide-zinc-700"
+          >
+            <div className="py-1">
+              <div v-for="(item, index) in trending" :key="index">
+                <div>
+                  <a
+                    class="block px-4 py-2 text-sm hover:c-[#05D4FD] hover:dark:c-zinc-700"
+                    :class="index === showdot ? 'c-[#05D4FD]' : 'c-white'"
+                    flex items-center justify-between :href="item.href" @click="dotfn(index)"
+                  >
+                    {{ item.name }}
+                    <span v-show="index === showdot" block class="w-[8px] h-[8px] ml-20px bg-[#05D4FD] rounded-full" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </span>
         <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
           <img class="w-[27px]" :src=" favoriteShow ? Shoucang : ShoucangOff" alt="ShoucangOff">
@@ -250,7 +294,7 @@ const historyShowf = () => {
       <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarStatus }}</span>
         <div v-if="trendingShow" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px " style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
+          <div sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px " @click="goInto">
             <div class="bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img

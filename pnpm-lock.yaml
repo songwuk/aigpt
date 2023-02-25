@@ -3,7 +3,8 @@ lockfileVersion: 5.3
 specifiers:
   '@astrojs/vue': ^2.0.1
   '@babel/core': ^7.0.0-0
-  '@headlessui/vue': ^1.7.10
+  '@headlessui/vue': ^1.7.11
+  '@iconify-json/carbon': ^1.1.8
   '@jambonn/vue-concise-carousel': ^2.1.29
   '@songwuk/eslint-config': ^0.0.10
   '@unocss/astro': ^0.49.7
@@ -19,7 +20,8 @@ specifiers:
   vue: ^3.2.37
 
 dependencies:
-  '@headlessui/vue': registry.npmmirror.com/@headlessui/vue/1.7.10_vue@3.2.47
+  '@headlessui/vue': registry.npmmirror.com/@headlessui/vue/1.7.11_vue@3.2.47
+  '@iconify-json/carbon': registry.npmmirror.com/@iconify-json/carbon/1.1.16
   '@jambonn/vue-concise-carousel': registry.npmmirror.com/@jambonn/vue-concise-carousel/2.1.29_vue@3.2.47
   '@vueuse/core': 9.13.0_vue@3.2.47
   html-to-image: 1.11.11
@@ -912,11 +914,11 @@ packages:
       - supports-color
     dev: true
 
-  registry.npmmirror.com/@headlessui/vue/1.7.10_vue@3.2.47:
-    resolution: {integrity: sha512-qAov7JULOBBes5CU+MiGpwMKoXxLHXS703WEZkOPxYjPD2p7f286ozlFxw7JjA2MmVgbnis2Wvgg/4hT7nRFIg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@headlessui/vue/-/vue-1.7.10.tgz}
-    id: registry.npmmirror.com/@headlessui/vue/1.7.10
+  registry.npmmirror.com/@headlessui/vue/1.7.11_vue@3.2.47:
+    resolution: {integrity: sha512-VsNqx9Lc1ftOyIazBF9EX5BS4WYwwaFX+1jBWXQakeH1o4xnoZKlBSlvEgmAnFLO9GDVmn7kKVOWfFgQn2aRZA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@headlessui/vue/-/vue-1.7.11.tgz}
+    id: registry.npmmirror.com/@headlessui/vue/1.7.11
     name: '@headlessui/vue'
-    version: 1.7.10
+    version: 1.7.11
     engines: {node: '>=10'}
     peerDependencies:
       vue: ^3.2.0
@@ -950,11 +952,18 @@ packages:
     version: 1.2.1
     dev: true
 
+  registry.npmmirror.com/@iconify-json/carbon/1.1.16:
+    resolution: {integrity: sha512-AD8bcnRSGA0WfcGEass2FbA0sagrUzrpFx5WchuDy3uf7yKBWumdypdQK121DH321fQDl5+zZQ26T6gC9knwUQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify-json/carbon/-/carbon-1.1.16.tgz}
+    name: '@iconify-json/carbon'
+    version: 1.1.16
+    dependencies:
+      '@iconify/types': registry.npmmirror.com/@iconify/types/2.0.0
+    dev: false
+
   registry.npmmirror.com/@iconify/types/2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify/types/-/types-2.0.0.tgz}
     name: '@iconify/types'
     version: 2.0.0
-    dev: true
 
   registry.npmmirror.com/@iconify/utils/2.1.4:
     resolution: {integrity: sha512-7vzsYIvxv5Hng0MNEtSSnyMBD/+zqnORqmKiYsSgpMBGSz1r93URgBZHPYCZ1/gpoaVstYW4/SVLGCMJBNMCLQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify/utils/-/utils-2.1.4.tgz}
