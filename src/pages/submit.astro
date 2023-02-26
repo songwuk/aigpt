@@ -2,6 +2,7 @@
 // Component Imports
 import Head from '../components/Head.vue';
 import Submit from '../components/submit/index.vue';
+import Footer from '../components/Footer.vue';
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
 ---
@@ -26,6 +27,7 @@ import Submit from '../components/submit/index.vue';
 		<main style="height: 100%">
 			<Head client:visible ></Head>
 			<Submit client:visible ></Submit>
+			<Footer client:visible></Footer>
 		</main>
 	</body>
 </html>

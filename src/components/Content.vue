@@ -379,4 +379,8 @@ onMounted(() => {
 .leftBar:not(:last-child) {
   border-bottom: 1px solid #6D6D6D;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
 </style>
