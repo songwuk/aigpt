@@ -6,22 +6,31 @@ import {
 } from '@headlessui/vue'
 import Upload from '../img/upload_img.png'
 import Del from '../img/del.png'
-
+import { productssave, uploadFile } from '../../url'
 import Discord_2 from '../img/discord_2.png'
 import Facebook_2 from '../img/facebook_2.png'
 import Instagram_2 from '../img/instagram_2.png'
 import Twitter_2 from '../img/twitter_2.png'
-const plan = ref('owner')
+const isOwner = ref(true)
+const email = ref('songwen8519761@126.com')
+const given_name = ref('John')
+const family_name = ref('Doe')
+const product_name = ref('product Name')
+const product_url = ref('https://songwuk.cc')
+const product_categry = ref('Select one of our categories that best fit your product')
+const product_model = ref('AI')
+const product_applications = ref('')
+const product_generative_ai = ref('')
+const product_short_desc = ref('')
+const product_detail = ref('')
+const product_review_url = ref('')
+const facebook = ref('https://songwuk.cc')
+const twitter = ref('https://songwuk.cc')
+const discord = ref('https://songwuk.cc')
+const instagram = ref('https://songwuk.cc')
+
 const Policies = ref('')
 const Privacy = ref('')
-const Category = ref('')
-const Model = ref('')
-const Applications = ref('')
-const GenerativeAI = ref('')
-const Facebook = ref('')
-const Twitter = ref('')
-const Discord = ref('')
-const Instagram = ref('')
 const deleteFn = () => {
 
 }
@@ -42,27 +51,69 @@ const uploadImg_3 = () => {
   if (fileElem.value)
     fileElem.value.click()
 }
+const file1 = ref('')
+const file2 = ref('')
+const file3 = ref('')
 const upload_1 = ref('')
 const upload_2 = ref('')
 const upload_3 = ref('')
-const handleFiles = () => {
+const handleFiles = async () => {
   const img = new Image()
-  img.src = window.URL.createObjectURL(fileElem.value.files[0])
-  img.height = 60
-  img.onload = function () {
-    window.URL.revokeObjectURL(img.src)
+  img.file = fileElem.value.files[0]
+  const reader = new FileReader()
+  reader.onload = function (e) {
+    if (clickUpload.value === 'upload_1') {
+      file1.value = fileElem.value.files[0]
+      upload_1.value = e.target.result
+    }
+    else if (clickUpload.value === 'upload_2') {
+      file2.value = fileElem.value.files[0]
+      upload_2.value = e.target.result
+    }
+    else if (clickUpload.value === 'upload_3') {
+      file3.value = fileElem.value.files[0]
+      upload_3.value = e.target.result
+    }
   }
-  if (clickUpload.value === 'upload_1')
-    upload_1.value = img.src
-
-  else if (clickUpload.value === 'upload_2')
-    upload_2.value = img.src
-
-  else if (clickUpload.value === 'upload_3')
-    upload_3.value = img.src
+  reader.readAsDataURL(fileElem.value.files[0])
+  // img.src = window.URL.createObjectURL(fileElem.value.files[0])
+  // img.height = 60
+  // img.onload = function () {
+  //   window.URL.revokeObjectURL(img.src)
+  // }
 }
-const submitProject = () => {
+const submitProject = async () => {
+  if (!Policies.value || !Privacy.value) {
+    alert('must agree')
+    return false
+  }
 
+  const product_logo = file1.value
+  const files = {
+    product_logo,
+    product_imgs1: file2.value,
+    product_imgs2: file3.value,
+  }
+  const { data } = await productssave({
+    isOwner: isOwner.value,
+    email: email.value,
+    given_name: given_name.value,
+    family_name: family_name.value,
+    product_name: product_name.value,
+    product_url: product_url.value,
+    product_categry: product_categry.value,
+    product_model: product_model.value,
+    product_applications: product_applications.value,
+    product_generative_ai: product_generative_ai.value,
+    product_short_desc: product_short_desc.value,
+    product_detail: product_detail.value,
+    product_review_url: product_review_url.value,
+    facebook: facebook.value,
+    twitter: twitter.value,
+    discord: discord.value,
+    instagram: instagram.value,
+  }, files)
+  console.log(JSON.parse(data.value))
 }
 </script>
 
@@ -112,12 +163,12 @@ const submitProject = () => {
         * Are You the Owner/Admin?
       </h4>
       <div flex items-center justify-center sm:flex-row flex-col class="mb-34px">
-        <RadioGroup v-model="plan" w-full flex sm:items-center items-start justify-start sm:flex-row flex-col>
-          <RadioGroupOption v-slot="{ checked }" cursor-pointer value="owner" flex sm:items-center items-start justify-start sm:flex-row flex-col class="sm:mr-100px">
+        <RadioGroup v-model="isOwner " w-full flex sm:items-center items-start justify-start sm:flex-row flex-col>
+          <RadioGroupOption v-slot="{ checked }" cursor-pointer :value="true" flex sm:items-center items-start justify-start sm:flex-row flex-col class="sm:mr-100px">
             <span :class="checked ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" />
             <span>Yes I'm the admin/owner.</span>
           </RadioGroupOption>
-          <RadioGroupOption v-slot="{ checked }" cursor-pointer value="supporter" flex sm:items-center items-start justify-start sm:flex-row flex-col>
+          <RadioGroupOption v-slot="{ checked }" cursor-pointer :value="false" flex sm:items-center items-start justify-start sm:flex-row flex-col>
             <span :class="checked ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" />
             <span>No. I'm just a supporter.</span>
           </RadioGroupOption>
@@ -128,6 +179,7 @@ const submitProject = () => {
       </h4>
       <div mb-34px>
         <input
+          v-model="email"
           class="w-336px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
           placeholder="mumulin1022@gmail.com"
         >
@@ -137,6 +189,7 @@ const submitProject = () => {
       </h4>
       <div mb-34px>
         <input
+          v-model="given_name"
           class="w-336px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
           placeholder="John"
         >
@@ -146,6 +199,7 @@ const submitProject = () => {
       </h4>
       <div mb-34px>
         <input
+          v-model="family_name"
           class="w-336px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
           placeholder="Doe"
         >
@@ -181,6 +235,7 @@ const submitProject = () => {
           </h4>
           <div mb-30px>
             <input
+              v-model="product_name"
               class="w-full h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
               placeholder="product Name"
             >
@@ -190,6 +245,7 @@ const submitProject = () => {
           </h4>
           <div>
             <input
+              v-model="product_url"
               class="w-full h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
               placeholder="A URL to visit your product"
             >
@@ -239,7 +295,7 @@ const submitProject = () => {
           </h4>
           <div mb-34px>
             <select
-              v-model="Category" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+              v-model="product_categry" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
               placeholder="Select one of our categories that best fit your product"
             >
               <option value="" disabled selected hidden>
@@ -260,7 +316,7 @@ const submitProject = () => {
           </h4>
           <div mb-34px>
             <select
-              v-model="Model" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+              v-model="product_model" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
               placeholder="Select one of models that best fit your product"
             >
               <option value="" disabled selected hidden>
@@ -281,7 +337,7 @@ const submitProject = () => {
           </h4>
           <div mb-34px>
             <select
-              v-model="Applications" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+              v-model="product_applications" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
               placeholder="Select one of application that best fit your product"
             >
               <option value="" disabled selected hidden>
@@ -302,7 +358,7 @@ const submitProject = () => {
           </h4>
           <div mb-34px>
             <select
-              v-model="GenerativeAI" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+              v-model="product_generative_ai" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
               placeholder="Select one of generative AI that best fit your product"
             >
               <option value="" disabled selected hidden>
@@ -326,6 +382,7 @@ const submitProject = () => {
           </h4>
           <div w-full relative>
             <input
+              v-model="product_short_desc"
               class="w-full h-42px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
               placeholder="This is to provide an idea of what does your product do. A go Dod short summary will entice users to click and visit your page"
             >
@@ -338,7 +395,7 @@ const submitProject = () => {
             <span class="text-16px c-#80809F font-400">Max of 2500 Characters</span>
           </h4>
           <div w-full relative>
-            <textarea class="max-h-115px resize-none w-full h-115px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" placeholder="A detailed summary will better explain your products to the audi ences.Our users will see this in your dedicated product page." />
+            <textarea v-model="product_detail" class="max-h-115px resize-none w-full h-115px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" placeholder="A detailed summary will better explain your products to the audi ences.Our users will see this in your dedicated product page." />
             <span absolute class=" right-12px bottom-12px c-[#979797] text-16px">0/70</span>
           </div>
         </div>
@@ -348,6 +405,7 @@ const submitProject = () => {
           </h4>
           <div w-full>
             <input
+              v-model="product_review_url"
               class="w-full h-42px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" type="text"
               placeholder="Aurl link to an article about your product that you want us to know."
             >
@@ -362,7 +420,7 @@ const submitProject = () => {
           <div mb-34px relative>
             <img absolute class="w-13px left-19px top-50%  translate-y-[-50%]" :src="Facebook_2" alt="Facebook">
             <input
-              v-model="Facebook" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
+              v-model="facebook" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
               type="text"
               placeholder="Add your product's Facebook URL"
             >
@@ -372,7 +430,7 @@ const submitProject = () => {
           <div mb-34px relative>
             <img absolute class="w-24px left-19px top-50%  translate-y-[-50%]" :src="Twitter_2" alt="Twitter">
             <input
-              v-model="Twitter" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
+              v-model="twitter" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
               type="text"
               placeholder="Add your product's Twitter URL"
             >
@@ -382,7 +440,7 @@ const submitProject = () => {
           <div mb-34px relative>
             <img absolute class="w-24px left-19px top-50%  translate-y-[-50%]" :src="Discord_2" alt="Discord">
             <input
-              v-model="Discord" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
+              v-model="discord" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
               type="text"
               placeholder="Add your product's Discord URL"
             >
@@ -392,7 +450,7 @@ const submitProject = () => {
           <div mb-34px relative>
             <img absolute class="w-22px left-19px top-50%  translate-y-[-50%]" :src="Instagram_2" alt="Instagram">
             <input
-              v-model="Instagram" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
+              v-model="instagram" class="w-501px h-34px rounded-6px indent-50px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;"
               type="text"
               placeholder="Add your product's Instagram URL"
             >
