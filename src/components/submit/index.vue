@@ -114,6 +114,8 @@ const submitProject = async () => {
     instagram: instagram.value,
   }, files)
   console.log(JSON.parse(data.value))
+  if (JSON.parse(data.value) && JSON.parse(data.value).code === 0)
+    window.location.href = '/'
 }
 </script>
 

@@ -131,6 +131,7 @@ const goInto = () => {
   localStorage.setItem('setDetail', 1)
   window.location.href = '/detail'
 }
+const showdot = ref(null)
 const clickButton = ref([
   'AI Copywriter 23',
   'Aontent Generation 87',
@@ -158,6 +159,7 @@ const trendingShowf = () => {
 }
 const favoriteShowf = () => {
   trendingShow.value = false
+  showdot.value = null
   favoriteShow.value = !favoriteShow.value
   historyShow.value = false
   clickBarStatus.value = 'Favorite'
@@ -165,6 +167,7 @@ const favoriteShowf = () => {
 const historyShowf = () => {
   trendingShow.value = false
   favoriteShow.value = false
+  showdot.value = null
   historyShow.value = !historyShow.value
   clickBarStatus.value = 'History'
 }
@@ -183,7 +186,7 @@ const trending = ref([
     href: 'javascript:void(0)',
   },
 ])
-const showdot = ref(null)
+
 const dotfn = (idx) => {
   showdot.value = idx
 }

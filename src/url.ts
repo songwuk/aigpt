@@ -19,12 +19,12 @@ const useFetchOptions = createFetch({
       }
     },
   },
-  fetchOptions: {
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  },
+  // fetchOptions: {
+  //   mode: 'cors',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  // },
 })
 export function uploadFile(file: File) {
   const fd = new FormData()
@@ -51,8 +51,8 @@ export function productssave(params: any, files: any) {
   return useFetchOptions(`/products/save?${url.substring(1)}`, {
     method: 'POST',
     body: fd,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    // headers: {
+    //   'Content-Type': 'application/x-www-form-urlencoded',
+    // },
   })
 }
