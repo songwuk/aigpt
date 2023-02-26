@@ -147,13 +147,15 @@ const clickButton = ref([
   'DI Coneralkkkw 56',
   'Content Generation 51',
 ])
+const trendingDotShow = ref(false)
 const categoriesShow = ref(false)
 const trendingShow = ref(false)
 const favoriteShow = ref(false)
 const historyShow = ref(false)
 const trendingShowf = () => {
-  trendingShow.value = !trendingShow.value
+  trendingShow.value = true
   favoriteShow.value = false
+  trendingDotShow.value = true
   historyShow.value = false
   clickBarStatus.value = 'Trending'
 }
@@ -186,14 +188,15 @@ const trending = ref([
     href: 'javascript:void(0)',
   },
 ])
-
 const dotfn = (idx) => {
   showdot.value = idx
+  trendingShow.value = true
+  trendingDotShow.value = false
 }
 onMounted(() => {
-  document.querySelector('body').addEventListener('click', () => {
-    trendingShow.value = false
-  }, false)
+  // document.querySelector('body').addEventListener('click', () => {
+  //   trendingShow.value = false
+  // }, false)
 })
 </script>
 
@@ -224,12 +227,12 @@ onMounted(() => {
             c-white bg-zinc-800 shadow-xl ring-black focus:outline-none divide-zinc-400 dark:divide-zinc-700"
           >
             <div className="py-1">
-              <div v-for="(item, index) in trending" :key="index">
+              <div v-for="(item, index) in trending" v-show="trendingDotShow" :key="index">
                 <div>
                   <a
                     class="block px-4 py-2 text-sm hover:c-[#05D4FD] hover:dark:c-zinc-700"
                     :class="index === showdot ? 'c-[#05D4FD]' : 'c-white'"
-                    flex items-center justify-between :href="item.href" @click="dotfn(index)"
+                    flex items-center justify-between :href="item.href" @click.stop="dotfn(index)"
                   >
                     {{ item.name }}
                     <span v-show="index === showdot" block class="w-[8px] h-[8px] ml-20px bg-[#05D4FD] rounded-full" />
