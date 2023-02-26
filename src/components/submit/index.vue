@@ -31,9 +31,7 @@ const instagram = ref('https://songwuk.cc')
 
 const Policies = ref('')
 const Privacy = ref('')
-const deleteFn = () => {
 
-}
 const clickUpload = ref('')
 const fileElem = ref('')
 const uploadImg = () => {
@@ -76,11 +74,6 @@ const handleFiles = async () => {
     }
   }
   reader.readAsDataURL(fileElem.value.files[0])
-  // img.src = window.URL.createObjectURL(fileElem.value.files[0])
-  // img.height = 60
-  // img.onload = function () {
-  //   window.URL.revokeObjectURL(img.src)
-  // }
 }
 const submitProject = async () => {
   if (!Policies.value || !Privacy.value) {
@@ -116,6 +109,15 @@ const submitProject = async () => {
   console.log(JSON.parse(data.value))
   if (JSON.parse(data.value) && JSON.parse(data.value).code === 0)
     window.location.href = '/'
+}
+
+const deleteFn1 = () => {
+  file2.value = ''
+  upload_2.value = ''
+}
+const deleteFn2 = () => {
+  file3.value = ''
+  upload_3.value = ''
 }
 </script>
 
@@ -270,7 +272,7 @@ const submitProject = async () => {
         >
           <img v-if="upload_2" w-full object-fill :src="upload_2" alt="upload_2">
           <img v-if="!upload_2" :src="Upload" alt="Upload" class="w-160px mb-20px">
-          <img v-if="!upload_2" absolute class="w-24px right-[20px] top-[20px]" :src="Del" alt="Del" @click="deleteFn">
+          <img absolute class="w-24px right-[20px] top-[20px] z-10" :src="Del" alt="Del" @click.stop="deleteFn1">
           <div v-if="!upload_2" class="text-[16px] " flex items-center justify-center flex-col>
             <span class="c-#6A6A6E">Ideal dimensions 750*450 px.</span>
           </div>
@@ -284,7 +286,7 @@ const submitProject = async () => {
         >
           <img v-if="upload_3" w-full object-fill :src="upload_3" alt="upload_3">
           <img v-if="!upload_3" :src="Upload" alt="Upload" class="w-160px mb-20px">
-          <img v-if="!upload_3" absolute class="w-24px right-[20px] top-[20px]" :src="Del" alt="Del">
+          <img absolute class="w-24px right-[20px] top-[20px] z-10" :src="Del" alt="Del" @click.stop="deleteFn2">
           <div v-if="!upload_3" class="text-[16px] " flex items-center justify-center flex-col>
             <span class="c-#6A6A6E">Ideal dimensions 750*450 px.</span>
           </div>
