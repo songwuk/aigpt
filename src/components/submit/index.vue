@@ -6,7 +6,7 @@ import {
 } from '@headlessui/vue'
 import Upload from '../img/upload_img.png'
 import Del from '../img/del.png'
-import { productssave, uploadFile } from '../../url'
+import { productsSave } from '../../url'
 import Discord_2 from '../img/discord_2.png'
 import Facebook_2 from '../img/facebook_2.png'
 import Instagram_2 from '../img/instagram_2.png'
@@ -87,7 +87,7 @@ const submitProject = async () => {
     product_imgs1: file2.value,
     product_imgs2: file3.value,
   }
-  const { data } = await productssave({
+  const { data } = await productsSave({
     isOwner: isOwner.value,
     email: email.value,
     given_name: given_name.value,
@@ -106,7 +106,6 @@ const submitProject = async () => {
     discord: discord.value,
     instagram: instagram.value,
   }, files)
-  console.log(JSON.parse(data.value))
   if (JSON.parse(data.value) && JSON.parse(data.value).code === 0)
     window.location.href = '/'
 }

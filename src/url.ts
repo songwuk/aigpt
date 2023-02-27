@@ -37,7 +37,7 @@ export function uploadFile(file: File) {
     },
   })
 }
-export function productssave(params: any, files: any) {
+export function productsSave(params: any, files: any) {
   const fd = new FormData()
   if (files.product_logo)
     fd.append('product_logo', files.product_logo)
