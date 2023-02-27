@@ -1,19 +1,27 @@
 import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
 const url = ref('https://test-api.aigpt.me')
+function getParams(params) {
+  let data = ''
+  for (const iterator of params) {
+    for (const key in iterator)
+      data += `${key}=${decodeURIComponent(iterator[key])}&`
+  }
+  return data.slice(0, -1)
+}
 const useFetchOptions = createFetch({
   baseUrl: unref(url),
   options: {
-    async afterFetch<T>({ response, data }: { response: Response; data: T | null }) {
+    async afterFetch({ response, data }: { response: Response; data: string | null }) {
       return {
         response,
-        data,
+        data: JSON.parse(data),
       }
     },
-    async onFetchError<T>({ data, response, error }: { data: T | null; response: Response | null; error: any }) {
+    async onFetchError({ data, response, error }: { data: string | null; response: Response | null; error: any }) {
       await new Promise(resolve => setTimeout(resolve, 500))
       return {
-        data,
+        data: JSON.parse(data),
         response,
         error,
       }
@@ -102,9 +110,10 @@ export function loadChatGroup() {
  * @param params
  * @returns
  */
-export function openaiComletions(params) {
-  return useFetchOptions('/openai/comletions', {
+export function openaiComletions(...params: any[]) {
+  const data = getParams(params)
+  return useFetchOptions(`/openai/completions?${data}`, {
     method: 'GET',
-    body: JSON.stringify(params),
   })
 }
+
