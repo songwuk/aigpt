@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { openaiComletions } from '../url'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
@@ -47,9 +47,21 @@ const setTheme = async (themeStatus?: string) => {
 const chatValue = ref('')
 const stopClick = ref(false)
 const errorValue = ref(false)
+
+const scrollToMe = ref<HTMLElement | null>(null)
+const scrollToBottom = () => {
+  const bottomElement = scrollToMe.value.scrollHeight - scrollToMe.value.clientHeight
+  // // 将页面滑动到底部
+  scrollToMe.value.scrollTo({
+    top: bottomElement,
+    behavior: 'smooth', // 可选项，平滑滚动
+  })
+}
 onMounted(async () => {
   await setTheme()
   isMounted.value = true
+  await nextTick()
+  scrollToBottom()
 })
 const openaiChat = async () => {
   if (stopClick.value)
@@ -131,7 +143,7 @@ const toggleTheme = () => {
       <main class="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
         <div class="flex-1 overflow-hidden bg-white">
           <div class="vue-scroll-to-bottom--css h-full dark:bg-gray-800 bg-">
-            <div class="vue-scroll-to-bottom--css">
+            <div ref="scrollToMe" class="vue-scroll-to-bottom--css">
               <div v-if="showAnswer" class="flex flex-col items-center text-sm dark:bg-gray-800">
                 <div class="text-gray-800 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100">
                   <h1 class="text-4xl font-semibold text-center mt-8 sm:mt-[9vh] ml-auto mr-auto mb-10 sm:mb-14 flex gap-2 items-center justify-center">
@@ -274,7 +286,7 @@ const toggleTheme = () => {
         </div>
         <div class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
           <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px] dark:c-white c-black">
-            <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px]">
+            <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px] py-8px px-14px" @click="scrollToBottom">
               <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 ? StopGenerating : ShareConversation " alt="">
               {{ item }}
             </div>
@@ -442,7 +454,6 @@ const toggleTheme = () => {
 }
 .showListCss {
   border-radius: 8px;
-  padding: 9px 14px 8px 14px;
   border: 1px solid #979797;text-align:center;cursor: pointer;
 }
 .showListCss img {
