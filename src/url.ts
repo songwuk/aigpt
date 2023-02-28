@@ -86,7 +86,7 @@ export function pushShare(params) {
   })
 }
 /**
- * 根据分组来获取所以的记录
+ * 根据分组来获取所有的记录支持分页
  * @param { Object } params
  * @returns
  */
@@ -97,7 +97,7 @@ export function getPageOfChat(params) {
   })
 }
 /**
- * 获取所以的分组列表
+ * 获取所有的分组列表
  * @returns
  */
 export function loadChatGroup() {
