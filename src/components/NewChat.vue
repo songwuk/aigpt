@@ -66,24 +66,31 @@ onMounted(async () => {
 const openaiChat = async () => {
   if (stopClick.value)
     return false
-  document.documentElement.scrollTop = null
-  document.body.scrollTop = null
+  await nextTick()
+  scrollToBottom()
   const chatObj = {
     chatGroup: chatValue.value,
     prompt: chatValue.value,
   }
   stopClick.value = true
+  showAnswer.value = false
+  list.value.push({
+    prompt: chatValue.value,
+    answer: '_',
+  })
   chatValue.value = ''
+  const lastNum = list.value[list.value.length - 1]
   const { data, error } = await openaiComletions(chatObj)
   const dataSource = data.value as any
   if (dataSource && dataSource.code === 0) {
-    list.value.push(dataSource.data)
-    list.value = list.value.map((item: any) => {
-      item.answer = item.answer.replace(/^\n\n/i, '')
-      return item
-    })
+    const obj_chat_group = lastNum
+    list.value[list.value.length - 1] = {
+      prompt: obj_chat_group.prompt,
+      answer: dataSource.data.answer.replace(/^\n\n/i, ''),
+    }
+    await nextTick()
+    scrollToBottom()
     stopClick.value = false
-    showAnswer.value = false
   }
   else {
     errorValue.value = true
@@ -279,7 +286,7 @@ const toggleTheme = () => {
                     </div>
                   </div>
                 </template>
-                <div class="w-full h-32 md:h-48 flex-shrink-0" />
+                <div class="w-full h-52 md:h-68 flex-shrink-0" />
               </div>
             </div>
           </div>
