@@ -1,16 +1,25 @@
 <script setup lang='ts'>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import * as htmlToImage from 'html-to-image'
 import { openaiComletions } from '../url'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
 import ShareConversation from './img/ShareConversation.png'
+const refPng = ref<HTMLElement | null>(null)
 const list = ref([])
 const scrollTop = ref(0)
 const showAnswer = ref(true)
 const showList = ref([
-  'Save Conversation',
-  'Stop generating',
-  'Share Conversation',
+  {
+    name: 'Save Conversation',
+    key: 0,
+  }, {
+    name: 'Stop generating',
+    key: 1,
+  }, {
+    name: 'Share Conversation',
+    key: 2,
+  },
 ])
 const onScroll = () => {
   scrollTop.value = document.documentElement.scrollTop || document.body.scrollTop
@@ -63,6 +72,7 @@ onMounted(async () => {
   await nextTick()
   scrollToBottom()
 })
+
 const openaiChat = async () => {
   if (stopClick.value)
     return false
@@ -122,6 +132,33 @@ const toggleTheme = () => {
   const t = theme.value === 'light' ? 'dark' : 'light'
   localStorage.setItem('theme', t)
   setTheme(t)
+}
+
+async function createImage(dataUrl: string) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.crossOrigin = 'anonymous'
+    img.decoding = 'sync'
+    img.src = dataUrl
+  }) as Promise<Record<string, any>>
+}
+const toPng = async () => {
+  if (list.value.length === 0)
+    return false
+
+  const dataUrl = await htmlToImage.toPng(refPng.value!)
+  const mathRandom = Math.random().toString(36)
+  const alink = document.createElement('a')
+  const { src } = await createImage(dataUrl) as HTMLImageElement
+  alink.href = src
+  alink.download = `${mathRandom}.png`
+  alink.click()
+}
+const clickMethods = async (id) => {
+  if (id === 0)
+    await toPng()
 }
 </script>
 
@@ -219,7 +256,7 @@ const toggleTheme = () => {
                 </div>
                 <div class="w-full h-48 md:h-52 flex-shrink-0" />
               </div>
-              <div v-else class="flex flex-col items-center text-sm dark:bg-gray-800">
+              <div v-else ref="refPng" class="flex flex-col items-center text-sm dark:bg-gray-800">
                 <template v-for="(item, index) in list" :key="index">
                   <div class="w-full border-b border-black/10 dark:border-gray-900/50 text-gray-800 dark:text-gray-100 group dark:bg-gray-800">
                     <div class="text-base gap-4 md:gap-6 m-auto md:max-w-2xl lg:max-w-2xl xl:max-w-3xl p-4 md:py-6 flex lg:px-0">
@@ -232,12 +269,6 @@ const toggleTheme = () => {
                         <div class="flex flex-grow flex-col gap-3">
                           <div class="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap" v-html="item.prompt" />
                         </div>
-                        <!-- list -->
-                        <!-- <div class="text-gray-400 flex self-end lg:self-center justify-center mt-2 gap-3 md:gap-4 lg:gap-1 lg:absolute lg:top-0 lg:translate-x-full lg:right-0 lg:mt-0 lg:pl-2 visible">
-                        <button class="p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400 md:invisible md:group-hover:visible">
-                          <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
-                        </button>
-                      </div> -->
                         <div class="flex justify-between" />
                       </div>
                     </div>
@@ -273,15 +304,6 @@ const toggleTheme = () => {
                             <div class="markdown prose w-full break-words dark:prose-invert dark" v-html="item.answer" />
                           </div>
                         </div>
-                      <!-- <div class="flex justify-between">
-                        <div class="text-gray-400 flex self-end lg:self-center justify-center mt-2 gap-3 md:gap-4 lg:gap-1 lg:absolute lg:top-0 lg:translate-x-full lg:right-0 lg:mt-0 lg:pl-2 visible">
-                          <button class="p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400">
-                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" /></svg>
-                          </button><button class="p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400">
-                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" /></svg>
-                          </button>
-                        </div>
-                      </div> -->
                       </div>
                     </div>
                   </div>
@@ -293,9 +315,9 @@ const toggleTheme = () => {
         </div>
         <div class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
           <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px] dark:c-white c-black">
-            <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px] py-8px px-14px" @click="scrollToBottom">
+            <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px] py-8px px-14px" @click="clickMethods(item.key)">
               <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 ? StopGenerating : ShareConversation " alt="">
-              {{ item }}
+              {{ item.name }}
             </div>
           </div>
           <form class="stretch mx-2 flex flex-row gap-3 pt-1 last:mb-2 md:last:mb-6 lg:mx-auto lg:max-w-3xl lg:pt-3">
