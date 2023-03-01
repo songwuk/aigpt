@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { loadChatGroup, openaiComletions, pushShare } from '../url'
 import SaveConversation from './img/SaveConversation.png'
@@ -11,7 +11,6 @@ import Discord from './img/discord_3.png'
 const refPng = ref<HTMLElement | null>(null)
 const list = ref([])
 const historyData = ref([])
-const scrollTop = ref(0)
 const showAnswer = ref(true)
 const showList = ref([
   {
@@ -25,15 +24,6 @@ const showList = ref([
     key: 2,
   },
 ])
-const onScroll = () => {
-  scrollTop.value = document.documentElement.scrollTop || document.body.scrollTop
-}
-onMounted(() => {
-  window.addEventListener('scroll', onScroll, false)
-})
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', onScroll, false)
-})
 
 const leftShow = ref(false)
 const clickshow = () => {
