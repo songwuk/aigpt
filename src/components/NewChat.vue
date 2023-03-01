@@ -2,12 +2,15 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { loadChatGroup, openaiComletions, pushShare } from '../url'
+import { setcursoranimation } from '../animate'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
 import ShareConversation from './img/ShareConversation.png'
 import NewChat from './img/newchat.png'
 import Upgrade from './img/upgrade.png'
 import Discord from './img/discord_3.png'
+const cursorPoniter = ref('_')
+const cursor = ref<HTMLElement | null>(null)
 const refPng = ref<HTMLElement | null>(null)
 const list = ref([])
 const historyData = ref([])
@@ -91,8 +94,6 @@ watch(chatValue, (newValue) => {
 const openaiChat = async () => {
   if (stopClick.value)
     return false
-  await nextTick()
-  scrollToBottom()
   const chatObj = {
     chatGroup: chatGroup.value,
     prompt: chatValue.value,
@@ -101,9 +102,13 @@ const openaiChat = async () => {
   showAnswer.value = false
   list.value.push({
     prompt: chatValue.value,
-    answer: '_',
+    answer: cursorPoniter.value,
   })
   chatValue.value = ''
+  await nextTick()
+  scrollToBottom()
+  console.log(cursor.value, 'cursor.value')
+  setcursoranimation(cursor.value[0])
   const lastNum = list.value[list.value.length - 1]
   const { data, error } = await openaiComletions(chatObj)
   const dataSource = data.value as any
@@ -329,7 +334,8 @@ const pageChat = () => {
                       <div class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                         <div class="flex flex-grow flex-col gap-3">
                           <div class="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap">
-                            <div class="markdown prose w-full break-words dark:prose-invert dark" v-html="item.answer" />
+                            <span v-if="item.answer === cursorPoniter" ref="cursor" class="font-700 text-24px">{{ item.answer }}</span>
+                            <div v-else class="markdown prose w-full break-words dark:prose-invert dark" v-html="item.answer" />
                           </div>
                         </div>
                       </div>
