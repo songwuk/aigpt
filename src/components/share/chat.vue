@@ -1,17 +1,17 @@
 <script setup>
-import { ref } from 'vue'
-const list = ref([
-  {
-    q: ' Web search results: [1] &quot;Road Trip Route Planner, Map and Trip Guides | Roadtrippers &copy; Mapbox &copy; OpenStreetMap Routing by HERE &copy;2021 learn more. Start New Trip Sign Up Log In Start New Trip Trip Guides Sign Up Log In About Roadtrippers Plus Magazine Contact Help&quot; URL: https://maps.roadtrippers.com/ [2] &quot;Build your perfect road trip Tell us where you want to go and what youd like to see and do. Roadtrippers will help you find all the best stops along the way. Places to Camp Sights Attractions The Great Outdoors Bars Restaurants Hotels Unique Stays Activities Experiences Fuel Rest Stops Shopping See whats on your route. Explore the map&quot; URL: https://roadtrippers.com/ [3] &quot;The Loneliest Road Running coast-to-coast from San Francisco to Ocean City, Maryland, The Loneliest Road in America is a 3,200-mile odyssey from sea to shining sea. US-50 passes through a dozen different states, four state capitals, and the nations capital, Washington, D.C.&quot; URL: https://www.roadtripusa.com/ Current date: 17/02/2023 Instructions: Using the provided web search results, write a comprehensive reply to the given query. Make sure to cite results using [[number](URL)] notation after the reference. If the provided search results refer to multiple subjects with the same name, write separate answers for each subject. Query: road trip',
-    a: `<p>A road trip is a great way to explore different parts of the country, and there are several resources available online to help plan your trip. Here are a few options:</p>
-                  <ol>
-                    <li><p>Roadtrippers [<a href="https://maps.roadtrippers.com/" target="_new">1</a>] is a website and app that allows you to plan your road trip by selecting your starting and ending points and adding any stops along the way. The site provides maps and guides to help you find the best places to visit, such as campsites, attractions, restaurants, and hotels. Roadtrippers also offers a paid service, Roadtrippers Plus, which provides additional features such as offline maps, customized itineraries, and exclusive discounts.</p></li>
-                    <li><p>Another option for planning a road trip is the website Roadtrippers.com [<a href="https://roadtrippers.com/" target="_new">2</a>], which allows you to input your desired route and interests, and provides a personalized itinerary with recommended stops along the way. Roadtrippers also includes reviews and ratings from other travelers to help you make informed decisions about where to go and what to do.</p></li>
-                    <li><p>For those looking for a more adventurous and off-the-beaten-path road trip, the website Road Trip USA [<a href="https://www.roadtripusa.com/" target="_new">3</a>] offers a guide to driving the &quot;Loneliest Road in America,&quot; US-50, which spans from San Francisco to Ocean City, Maryland. The site provides detailed information about the route, including recommended stops and attractions, as well as practical advice for road tripping, such as how to prepare your vehicle and what to pack.</p></li>
-                  </ol>
-                  <p>Overall, there are plenty of online resources available to help plan your road trip and make the most of your journey.</p>`,
-  },
-])
+import { onMounted, ref } from 'vue'
+import { shareList } from '../../url'
+const list = ref([])
+onMounted(async () => {
+  const search = window.location.search
+  if (search) {
+    const id = search.split('id=')[1]
+    const { data } = await shareList(id)
+    const dataSource = data.value
+    if (dataSource && dataSource.code === 0)
+      list.value = dataSource.data.content ?? []
+  }
+})
 </script>
 
 <template>
@@ -21,7 +21,9 @@ const list = ref([
       <div class="relative dark:bg-[#343541] text-gray-700 w-full border-b dark:border-gray-700 border-gray-200">
         <div class="relative mx-auto max-w-screen-xl dark:text-gray-100 text-gray-700 w-full px-4 py-10">
           <div class="w-full max-w-screen-md flex flex-1 mx-auto gap-[1.5rem] leading-[1.75]">
-            <img alt="Avatar of the person chatting" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAAAAAAAAAAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAeAB4DASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAABgcAAggE/8QAKhAAAgIBAwMDAwUBAAAAAAAAAQIDBBEABRIGITEHE0EiMnEUM1FhgcH/xAAYAQADAQEAAAAAAAAAAAAAAAABAwUCBP/EACYRAAEDBAAEBwAAAAAAAAAAAAEDBBEAAgUSFCExURMiQWFxkcH/2gAMAwEAAhEDEQA/ANkQwxQRJDDEkccahERFAVVAwAAPAxq30jz21Pj/ADQHc3PdK8Bkk3mW1+pT3ZajkBq7r2PdcMsfIgFcEjBYZ8a5nDoNgJBM9qeigVuho5M9f3EhSZDI+eKE4ZsfwPnV8D5A0pNku9R2rO3WJYIqLXK8ksc0VWZnLgnhGEkULHyU/a3fABGQDps1DYNaI2uJm4AScRgcvkayzd8TbtrFF024a7XaasPGhLra1PS3HaLDUZLm3q0xvRQ95RFhfrVfLkHAKjvhiRkjB7uuupZOkulru+QVksSxRhYo3+3mxABP9DvrPmyetG92t8t2Oq1NkSiERrXwFrjPHiinA459w489x3PwrIuLU9UiOd35VjF4Zw9bK5BGCml1+fYU/o+pKe4TUL9OnuLVrEYdZpKckaxjOebcgDjizf8AcaIKF2luVYWqFqOeFmdeaHK8lYqw/IKkH8aVXS3qDvMPqdD0ariXZ7dJ7KCUEzQTABlCsD+2Ry5A5IJ7HHbTaVcDAOhjbUk0z4cnn61PyiSyV9hVjzWgiO0kc/qv/9k=" width="28" height="28" decoding="async" data-nimg="1" class="mr-2 rounded-sm h-[28px]" style="color:transparent">
+            <div class="bg-[#5436DA] rounded-sm text-white flex justify-center items-center relative tracking-widest h-8 w-8 text-xs">
+              <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+            </div>
             <div class="flex flex-col">
               <p class="pb-2">
                 {{ item.q }}

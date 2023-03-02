@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-
 import AiGPT_1 from '../img/AiGPT_1.png'
 import OpenAi from '../img/OpenAi.png'
 import Examples from '../img/examples.png'

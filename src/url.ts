@@ -1,6 +1,5 @@
 import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
-console.log(import.meta.env)
 const url = ref(import.meta.env.PUBLIC_POKEAPI)
 function getParams(params) {
   let data = ''
@@ -22,7 +21,7 @@ const useFetchOptions = createFetch({
     async onFetchError({ data, response, error }: { data: string | null; response: Response | null; error: any }) {
       await new Promise(resolve => setTimeout(resolve, 500))
       return {
-        data: JSON.parse(data),
+        data,
         response,
         error,
       }
@@ -46,6 +45,12 @@ export function uploadFile(file: File) {
     },
   })
 }
+/**
+ * 产品提交接口
+ * @param params
+ * @param files
+ * @returns
+ */
 export function productsSave(params: any, files: any) {
   const fd = new FormData()
   if (files.product_logo)
@@ -83,7 +88,17 @@ export function getShare(id: string) {
 export function pushShare(params) {
   return useFetchOptions('/share/save', {
     method: 'POST',
-    body: JSON.parse(params),
+    body: JSON.stringify(params),
+  })
+}
+/**
+ * 获取分享的列表
+ * @param id
+ * @returns
+ */
+export function shareList(id) {
+  return useFetchOptions(`/share/${id}`, {
+    method: 'GET',
   })
 }
 /**
@@ -94,7 +109,11 @@ export function pushShare(params) {
 export function getPageOfChat(params) {
   return useFetchOptions('/openai/pageOfChat', {
     method: 'POST',
-    body: JSON.parse(params),
+    body: JSON.stringify({
+      page: 1,
+      size: 1000,
+      ...params,
+    }),
   })
 }
 /**
