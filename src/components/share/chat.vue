@@ -30,13 +30,13 @@ onMounted(async () => {
               </p>
             </div>
           </div>
-          <div class="hidden absolute top-10 right-0 lg:flex -space-x-1 items-center justify-start lg:w-40 xl:w-60">
+          <!-- <div class="hidden absolute top-10 right-0 lg:flex -space-x-1 items-center justify-start lg:w-40 xl:w-60">
             <button class="h-9 w-9 flex items-center justify-center rounded-full overflow-hidden border border-gray-200 shadow-sm bg-white text-[11px] text-gray-500 font-medium" style="opacity: 1; transform: none;">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
               </svg>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="relative dark:bg-[#343541] text-gray-700 w-full border-b dark:border-gray-700 border-gray-200 bg-gray-100 dark:bg-[#434654]">
@@ -53,13 +53,13 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div class="hidden absolute top-10 right-0 lg:flex -space-x-1 items-center justify-start lg:w-40 xl:w-60">
+          <!-- <div class="hidden absolute top-10 right-0 lg:flex -space-x-1 items-center justify-start lg:w-40 xl:w-60">
             <button class="h-9 w-9 flex items-center justify-center rounded-full overflow-hidden border border-gray-200 shadow-sm bg-white text-[11px] text-gray-500 font-medium" style="opacity: 1; transform: none;">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
               </svg>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
