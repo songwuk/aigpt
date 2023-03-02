@@ -6,7 +6,7 @@ const beforePoint = (cb) => {
     })
   })
 }
-export function setcursoranimation(cursor: HTMLElement | null, opts: { speed?: number } = {}): Animation {
+export function setcursoranimation(cursor: HTMLElement | null, opts: { speed?: number } = { speed: 900 }): Animation {
   if (!window.Animation)
     throw new Error('Browser does not support Animation')
   // TODO
@@ -17,7 +17,7 @@ export function setcursoranimation(cursor: HTMLElement | null, opts: { speed?: n
     iterations: Infinity,
     easing: 'ease-in-out',
     fill: 'forwards',
-    duration: 900,
+    duration: speed,
   })
   animation.pause()
   const _id = random()
