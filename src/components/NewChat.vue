@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
@@ -181,7 +181,7 @@ const toPng = async () => {
 }
 const copyLink = (link) => {
   const isSafari = navigator.userAgent.match(/iPad|iPhone|iPod|Macintosh/i)
-  if (navigator.clipboard && isSafari) {
+  if (navigator.clipboard || isSafari) {
     navigator.clipboard
       .writeText(link)
       .then((_) => {
@@ -330,7 +330,7 @@ const newchat = () => {
                 </div>
                 <div class="w-full h-48 md:h-52 flex-shrink-0" />
               </div>
-              <div v-else ref="refPng" class="flex flex-col items-center text-sm dark:bg-gray-800">
+              <div v-else ref="refPng" class="flex bg-white flex-col items-center text-sm dark:bg-gray-800">
                 <template v-for="(item, index) in list" :key="index">
                   <div class="w-full border-b border-black/10 dark:border-gray-900/50 text-gray-800 dark:text-gray-100 group dark:bg-gray-800">
                     <div class="text-base gap-4 md:gap-6 m-auto md:max-w-2xl lg:max-w-2xl xl:max-w-3xl p-4 md:py-6 flex lg:px-0">
@@ -398,7 +398,7 @@ const newchat = () => {
           <form class="stretch mx-2 flex flex-row gap-3 pt-1 last:mb-2 md:last:mb-6 lg:mx-auto lg:max-w-3xl lg:pt-3">
             <div class="relative flex h-full flex-1 md:flex-col">
               <div class="flex ml-1 mt-1.5 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center" />
-              <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
+              <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 text-black dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
                 <textarea v-model="chatValue" style="max-height: 200px; height: 24px; overflow-y: hidden;" class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0" @keydown="submitChat" />
                 <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent" @click.stop.prevent="openaiChat">
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
