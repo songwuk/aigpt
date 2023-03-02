@@ -228,6 +228,12 @@ const pageChat = async (chatGroup) => {
     scrollToBottom()
   }
 }
+const newchat = () => {
+  list.value = []
+  showAnswer.value = true
+  updateCount.value = 0
+  scrollToBottom()
+}
 </script>
 
 <template>
@@ -245,7 +251,7 @@ const pageChat = async (chatGroup) => {
         <h1 class="flex-1 text-center text-base font-normal">
           New chat
         </h1>
-        <button type="button" class="px-3">
+        <button type="button" class="px-3" @click="newchat">
           <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -416,7 +422,7 @@ const pageChat = async (chatGroup) => {
       <div class="flex h-full min-h-0 flex-col ">
         <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
           <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
-            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20">
+            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20" @click.stop="newchat">
               <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
