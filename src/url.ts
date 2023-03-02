@@ -89,6 +89,9 @@ export function pushShare(params) {
   return useFetchOptions('/share/save', {
     method: 'POST',
     body: JSON.stringify(params),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
 }
 /**
