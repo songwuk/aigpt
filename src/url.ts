@@ -1,6 +1,7 @@
 import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
-const url = ref('https://test-api.aigpt.me')
+console.log(import.meta.env)
+const url = ref(import.meta.env.PUBLIC_POKEAPI)
 function getParams(params) {
   let data = ''
   for (const iterator of params) {

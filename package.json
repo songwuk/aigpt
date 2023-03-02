@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev --port 4000",
     "start": "astro dev",
-    "build": "astro build",
+    "buildDev": "astro build --mode test",
+    "buildPrd": "astro build --mode prd",
     "preview": "astro preview",
     "astro": "astro"
   },
