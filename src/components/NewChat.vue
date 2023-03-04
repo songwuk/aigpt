@@ -203,10 +203,14 @@ const copyLink = (link) => {
  */
 const stopGenerating = async () => {
   console.log(controller)
-  controller.abort()
+  if (controller.canAbort)
+    controller.abort()
+
+  else
+    console.log('重新发')
 }
 const clickMethods = async (id) => {
-  if (id === 1)
+  if (id === 1 && list.value.length !== 0)
     await stopGenerating()
   if (list.value.length === 0 || stopClick.value)
     return false
