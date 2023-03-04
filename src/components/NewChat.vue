@@ -1,10 +1,11 @@
 <script setup lang='ts'>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, toRef, watch, watchEffect } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
+import Regenerate from './img/regenerate.png'
 import ShareConversation from './img/ShareConversation.png'
 import NewChat from './img/newchat.png'
 import Upgrade from './img/upgrade.png'
@@ -21,6 +22,7 @@ const showList = ref([
     key: 0,
   }, {
     name: 'Stop generating',
+    name2: 'Regenerate response',
     key: 1,
   }, {
     name: 'Share Conversation',
@@ -32,6 +34,7 @@ const leftShow = ref(false)
 const clickshow = () => {
   leftShow.value = !leftShow.value
 }
+
 const isMounted = ref<boolean>(false)
 const themes = ref<Array<string>>(['light', 'dark'])
 const theme = ref<string | null | undefined>(null)
@@ -63,7 +66,11 @@ const scrollToBottom = () => {
     behavior: 'smooth', // 可选项，平滑滚动
   })
 }
-
+const controller = reactive<Record<string, any>>({
+  abort: () => {},
+  data: null,
+  canAbort: computed(() => false),
+})
 const loadingGroup = async () => {
   const { data } = await loadChatGroup()
   const chatDataSource = data.value as any
@@ -77,18 +84,14 @@ onMounted(async () => {
   scrollToBottom()
   loadingGroup()
 })
+
 const updateCount = ref(0)
 const maxUpdateCount = ref(1)
-const chatGroup = ref('') // 每次会话唯一
-watch(chatValue, (newValue) => {
-  if (updateCount.value >= maxUpdateCount.value) {
-    // nextTick(() => {
-    //   chatGroup.value = newValue
-    // })
-  }
-  else {
+const chatGroup = ref(0) // 每次会话唯一
+watch(chatValue, () => {
+  if (updateCount.value < maxUpdateCount.value) {
     updateCount.value++
-    chatGroup.value = newValue
+    chatGroup.value = Date.now()
   }
 })
 const openaiChat = async () => {
@@ -108,31 +111,31 @@ const openaiChat = async () => {
   await nextTick()
   scrollToBottom()
   setcursoranimation(cursor.value[0])
-  const lastNum = list.value[list.value.length - 1]
-  const { data } = await openaiComletions(chatObj)
-  const dataSource = data.value as any
-  if (dataSource && dataSource.code === 0) {
-    const obj_chat_group = lastNum
-    list.value[list.value.length - 1] = {
-      prompt: obj_chat_group.prompt,
-      answer: dataSource.data.answer.replace(/^\n\n/i, ''),
-    }
-    await nextTick()
-    scrollToBottom()
-    stopClick.value = false
-  }
-  else {
-    errorValue.value = true
-  }
+  const { data, abort, canAbort } = openaiComletions(chatObj)
+  controller.canAbort = canAbort
+  controller.abort = abort
+  controller.data = data
 }
-const leftButton = ref([
-  'Clear conversations',
-  'Upgrade plan',
-  'Light mode',
-  'AIGPT Discord',
-  'Updates & FAQ',
-  'Log out',
-])
+watchEffect(async () => {
+  if (!controller.canAbort && controller.data) {
+    const lastNum = list.value[list.value.length - 1]
+    const dataSource = controller.data as any
+    if (dataSource && dataSource.code === 0) {
+      const obj_chat_group = lastNum
+      list.value[list.value.length - 1] = {
+        prompt: obj_chat_group.prompt,
+        answer: dataSource.data.answer.replace(/^\n\n/i, ''),
+      }
+      await nextTick()
+      scrollToBottom()
+      stopClick.value = false
+      controller.data = null
+    }
+    else {
+      errorValue.value = true
+    }
+  }
+})
 const submitChat = async (event) => {
   if (event.keyCode === 13 && !event.ctrlKey) {
     event.preventDefault()
@@ -199,14 +202,16 @@ const copyLink = (link) => {
  * 请求停止的按钮
  */
 const stopGenerating = async () => {
-  console.log('stopGenerating')
+  console.log(controller)
+  controller.abort()
 }
 const clickMethods = async (id) => {
+  if (id === 1)
+    await stopGenerating()
   if (list.value.length === 0 || stopClick.value)
     return false
 
   if (id === 0) { await toPng() }
-  else if (id === 1) { await stopGenerating() }
   else if (id === 2) {
     const { data } = await pushShare(list.value)
     const dataSource = data.value as any
@@ -331,7 +336,7 @@ const newchat = () => {
                 <div class="w-full h-48 md:h-52 flex-shrink-0" />
               </div>
               <div v-else ref="refPng" class="flex bg-white flex-col items-center text-sm dark:bg-gray-800">
-                <template v-for="(item, index) in list" :key="index">
+                <template v-for="(item, idx) in list" :key="idx">
                   <div class="w-full border-b border-black/10 dark:border-gray-900/50 text-gray-800 dark:text-gray-100 group dark:bg-gray-800">
                     <div class="text-base gap-4 md:gap-6 m-auto md:max-w-2xl lg:max-w-2xl xl:max-w-3xl p-4 md:py-6 flex lg:px-0">
                       <div class="w-[30px] flex flex-col relative items-end">
@@ -391,8 +396,8 @@ const newchat = () => {
         <div class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
           <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px] dark:c-white c-black">
             <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px] py-8px px-14px" @click="clickMethods(item.key)">
-              <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 ? StopGenerating : ShareConversation " alt="">
-              {{ item.name }}
+              <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 && controller.canAbort ? StopGenerating : index === 1 && !controller.canAbort ? Regenerate : ShareConversation " alt="">
+              {{ index === 0 ? item.name : index === 1 && controller.canAbort ? item.name : index === 1 && !controller.canAbort ? item.name2 : item.name }}
             </div>
           </div>
           <form class="stretch mx-2 flex flex-row gap-3 pt-1 last:mb-2 md:last:mb-6 lg:mx-auto lg:max-w-3xl lg:pt-3">
@@ -472,6 +477,7 @@ const newchat = () => {
         </div>
       </div>
     </div>
+
     <div v-show="leftShow" id="headlessui-portal-root">
       <div data-headlessui-portal="">
         <button type="button" aria-hidden="true" style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px;" /><div>
