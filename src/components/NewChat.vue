@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, nextTick, onMounted, reactive, ref, toRef, watch, watchEffect } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
@@ -56,7 +56,6 @@ const setTheme = async (themeStatus?: string) => {
 const chatValue = ref('')
 const stopClick = ref(false)
 const errorValue = ref(false)
-
 const scrollToMe = ref<HTMLElement | null>(null)
 const scrollToBottom = () => {
   const bottomElement = scrollToMe.value.scrollHeight - scrollToMe.value.clientHeight
@@ -184,7 +183,7 @@ const toPng = async () => {
 }
 const copyLink = (link) => {
   const isSafari = navigator.userAgent.match(/iPad|iPhone|iPod|Macintosh/i)
-  if (navigator.clipboard || isSafari) {
+  if (navigator.clipboard && isSafari) {
     navigator.clipboard
       .writeText(link)
       .then((_) => {
@@ -197,15 +196,41 @@ const copyLink = (link) => {
         console.log('复制失败', err)
       })
   }
+  else {
+    // 创建text area
+    const textArea = document.createElement('textarea')
+    textArea.value = link
+    // 使text area不在viewport，同时设置不可见
+    textArea.style.position = 'absolute'
+    textArea.style.opacity = '0'
+    textArea.style.left = '-999999px'
+    textArea.style.top = '-999999px'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+    new Promise((resolve, reject) => {
+      // 执行复制命令并移除文本框
+      textArea.remove()
+      if (document.execCommand('copy'))
+        resolve(true)
+      else
+        reject(new Error('error'))
+    })
+      .then((res) => {
+        console.log('复制成功')
+        alert('copy successfully')
+      })
+      .catch((err) => {
+        console.log(err, '复制失败')
+      })
+  }
 }
 /**
  * 请求停止的按钮
  */
 const stopGenerating = async () => {
-  console.log(controller)
   if (controller.canAbort)
     controller.abort()
-
   else
     console.log('重新发')
 }
@@ -237,11 +262,13 @@ const pageChat = async (chatGroup) => {
     scrollToBottom()
   }
 }
+
 const newchat = () => {
   list.value = []
   showAnswer.value = true
   updateCount.value = 0
   scrollToBottom()
+  window.location.href = `/chat?chatid=${Date.now()}`
 }
 </script>
 

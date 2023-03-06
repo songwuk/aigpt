@@ -5,7 +5,11 @@ const list = ref([])
 onMounted(async () => {
   const search = window.location.search
   if (search) {
-    const id = search.split('id=')[1]
+    let id = search.split('id=')[1]
+    if (!id)
+      id = localStorage.getItem(id)
+    else
+      localStorage.setItem('id', id)
     const { data } = await shareList(id)
     const dataSource = data.value
     if (dataSource && dataSource.code === 0)
