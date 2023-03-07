@@ -133,13 +133,13 @@ onMounted(async () => {
   if (chatDataSource && chatDataSource.code === 0) {
     clickButton.value = chatDataSource.data.categry
     leftStatus.value[0].children = chatDataSource.data.model.map((item, index) => {
-      return { key: `${item.chatGroup}model${index}`, ...item }
+      return { key: `${item.name}model${index}`, ...item }
     })
     leftStatus.value[1].children = chatDataSource.data.generativeAi.map((item, index) => {
-      return { key: `${item.chatGroup}generativeAi${index}`, ...item }
+      return { key: `${item.name}generativeAi${index}`, ...item }
     })
     leftStatus.value[2].children = chatDataSource.data.applications.map((item, index) => {
-      return { key: `${item.chatGroup}applications${index}`, ...item }
+      return { key: `${item.name}applications${index}`, ...item }
     })
   }
 })
@@ -221,7 +221,7 @@ onMounted(async () => {
             :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
             class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
             text-center
-          >{{ it.chatGroup }} {{ it.count }}</span>
+          >{{ it.name }} {{ it.count }}</span>
         </div>
       </div>
     </div>
@@ -235,8 +235,8 @@ onMounted(async () => {
             <i class="pr-[1px]"><img class="w-[10px]" :src="Right" alt="Right"></i>
           </div>
           <aside v-if="item.bar" class="2xl:ml-13px 2xl:text-sm c-[#D8D8D8] ml-5">
-            <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.key ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.key, it.chatGroup)">
-              <span> {{ it.chatGroup }}</span>
+            <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.key ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.key, it.name)">
+              <span> {{ it.name }}</span>
               <span> {{ it.count }}</span>
             </div>
           </aside>
