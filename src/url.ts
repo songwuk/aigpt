@@ -1,5 +1,6 @@
 import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
+import type { OpenAiFetchController, OpenaiComletions } from './types'
 const url = ref(import.meta.env.PUBLIC_POKEAPI)
 function getParams(params) {
   let data = ''
@@ -133,10 +134,21 @@ export function loadChatGroup() {
  * @param params
  * @returns
  */
-export function openaiComletions(...params: any[]) {
+export function openaiComletions(...params: OpenaiComletions[]): OpenAiFetchController {
   const data = getParams(params)
   return useFetchOptions(`/openai/completions?${data}`, {
     method: 'GET',
+  })
+}
+
+/**
+ * 获取首页产品数据
+ * @returns
+ */
+export function productsPage(params: Record<string, any>) {
+  return useFetchOptions('/products/page', {
+    method: 'POST',
+    body: JSON.stringify({ ...params }),
   })
 }
 

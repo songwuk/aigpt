@@ -1,9 +1,12 @@
+<!-- eslint-disable no-console -->
 <script setup lang='ts'>
 import { computed, nextTick, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import * as htmlToImage from 'html-to-image'
+import * as _ from 'lodash'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
 import type { OpenAiFetchController } from '../types'
+import { getAskContent, removeAskContent } from './localAsk'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
 import Regenerate from './img/regenerate.png'
@@ -36,7 +39,6 @@ const clickshow = () => {
   leftShow.value = !leftShow.value
 }
 
-const isMounted = ref<boolean>(false)
 const themes = ref<Array<string>>(['light', 'dark'])
 const theme = ref<string | null | undefined>(null)
 const setTheme = async (themeStatus?: string) => {
@@ -81,23 +83,17 @@ const loadingGroup = async () => {
     })
   }
 }
-onMounted(async () => {
-  await setTheme()
-  isMounted.value = true
-  await nextTick()
-  scrollToBottom()
-  loadingGroup()
-})
 
 const updateCount = ref(0)
 const maxUpdateCount = ref(1)
 const chatGroup = ref(0) // 每次会话唯一
-watch(chatValue, () => {
+watch(chatValue, _.debounce((newVal, oldVal) => {
+  console.log(chatGroup, 'chatValue', newVal, oldVal)
   if (updateCount.value < maxUpdateCount.value) {
     updateCount.value++
     chatGroup.value = Date.now()
   }
-})
+}, 1000))
 const cursorAnimationDom = ref<null | Animation>(null)
 const openaiChat = async () => {
   if (stopClick.value)
@@ -283,6 +279,19 @@ const newchat = () => {
   scrollToBottom()
   window.location.href = `/chat?chatid=${Date.now()}`
 }
+
+onMounted(async () => {
+  await setTheme()
+  await nextTick()
+  scrollToBottom()
+  loadingGroup()
+  if (getAskContent()) {
+    chatValue.value = getAskContent()
+    chatGroup.value = Date.now()
+    removeAskContent()
+    await openaiChat()
+  }
+})
 </script>
 
 <template>
