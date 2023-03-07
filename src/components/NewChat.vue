@@ -5,7 +5,7 @@ import * as htmlToImage from 'html-to-image'
 import * as _ from 'lodash'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
-import type { OpenAiFetchController } from '../types'
+import type { ReturnData } from '../types'
 import { getAskContent, removeAskContent } from './localAsk'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
@@ -74,7 +74,7 @@ const openAiFetchController = reactive({
   canAbort: computed(() => ref(false)),
 })
 const loadingGroup = async () => {
-  const { data } = await loadChatGroup<Record<string, any>>()
+  const { data } = await loadChatGroup<ReturnData>()
   const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
     historyData.value = []
@@ -96,7 +96,7 @@ watch(chatValue, _.debounce((newVal, oldVal) => {
 }, 1000))
 const cursorAnimationDom = ref<null | Animation>(null)
 const openaiChat = async () => {
-  if (stopClick.value)
+  if (stopClick.value || !chatValue.value)
     return false
   const chatObj = {
     chatGroup: chatGroup.value,
@@ -112,7 +112,7 @@ const openaiChat = async () => {
   await nextTick()
   scrollToBottom()
   cursorAnimationDom.value = setcursoranimation(cursor.value[0])
-  const { data, abort, canAbort } = openaiComletions<Record<string, any>>(chatObj)
+  const { data, abort, canAbort } = openaiComletions(chatObj)
   openAiFetchController.canAbort = canAbort
   openAiFetchController.abort = abort
   openAiFetchController.data = data
@@ -459,7 +459,7 @@ onMounted(async () => {
               <div class="flex ml-1 mt-1.5 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center" />
               <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 text-black dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
                 <textarea v-model="chatValue" style="max-height: 200px; height: 24px; overflow-y: hidden;" class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0" @keydown="submitChat" />
-                <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent" @click.stop.prevent="openaiChat">
+                <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 sm:hover:bg-gray-100 dark:hover:text-gray-400 sm:dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent" @click.stop.prevent="openaiChat">
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <line x1="22" y1="2" x2="11" y2="13" />
                     <polygon points="22 2 15 22 11 13 2 9 22 2" />

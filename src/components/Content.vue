@@ -1,5 +1,6 @@
-<script setup>
+<script setup lang='ts'>
 import { onMounted, ref } from 'vue'
+import type { ReturnData } from '../types'
 import { productsLoadCateg } from '../url'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
@@ -74,7 +75,6 @@ const searchAll = (name) => {
 }
 const startStatus = ref(false)
 const goInto = () => {
-  localStorage.setItem('setDetail', 1)
   window.location.href = '/detail'
 }
 const showdot = ref(null)
@@ -126,7 +126,7 @@ const dotfn = (idx) => {
   trendingDotShow.value = false
 }
 onMounted(async () => {
-  const { data } = await productsLoadCateg()
+  const { data } = await productsLoadCateg<ReturnData>()
   const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
     clickButton.value = chatDataSource.data.categry

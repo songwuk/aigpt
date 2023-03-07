@@ -174,7 +174,7 @@ const submitPath = () => {
       <Menu as="template">
         <div>
           <MenuButton
-            class=" rounded-md border -ml-0.5 -mt-0.5 border-zinc-400 inline-flex h-10 w-10 items-center justify-center rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all"
+            class=" rounded-md border -ml-0.5 -mt-0.5 border-zinc-400 inline-flex h-8 w-8 items-center justify-center rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all"
           >
             <div i-carbon-menu aria-hidden="true" />
           </MenuButton>
