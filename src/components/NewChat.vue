@@ -73,8 +73,12 @@ const controller = reactive<Record<string, any>>({
 const loadingGroup = async () => {
   const { data } = await loadChatGroup()
   const chatDataSource = data.value as any
-  if (chatDataSource && chatDataSource.code === 0)
-    historyData.value = chatDataSource.data.map(item => item.chatGroup)
+  if (chatDataSource && chatDataSource.code === 0) {
+    historyData.value = []
+    chatDataSource.data.map(item => item.chatGroup).forEach((item) => {
+      historyData.value.unshift(item)
+    })
+  }
 }
 onMounted(async () => {
   await setTheme()
@@ -93,6 +97,7 @@ watch(chatValue, () => {
     chatGroup.value = Date.now()
   }
 })
+const cursorAnimationDom = ref<null | Animation>(null)
 const openaiChat = async () => {
   if (stopClick.value)
     return false
@@ -109,7 +114,7 @@ const openaiChat = async () => {
   chatValue.value = ''
   await nextTick()
   scrollToBottom()
-  setcursoranimation(cursor.value[0])
+  cursorAnimationDom.value = setcursoranimation(cursor.value[0])
   const { data, abort, canAbort } = openaiComletions(chatObj)
   controller.canAbort = canAbort
   controller.abort = abort
@@ -209,12 +214,12 @@ const copyLink = (link) => {
     textArea.focus()
     textArea.select()
     new Promise((resolve, reject) => {
-      // 执行复制命令并移除文本框
-      textArea.remove()
       if (document.execCommand('copy'))
         resolve(true)
       else
         reject(new Error('error'))
+      // 执行复制命令并移除文本框
+      textArea.remove()
     })
       .then((res) => {
         console.log('复制成功')
@@ -229,10 +234,17 @@ const copyLink = (link) => {
  * 请求停止的按钮
  */
 const stopGenerating = async () => {
-  if (controller.canAbort)
+  if (controller.canAbort) {
     controller.abort()
-  else
-    console.log('重新发')
+    cursorAnimationDom.value.cancel()
+    list.value[list.value.length - 1].answer = 'stopGenerating'
+  }
+  else {
+    stopClick.value = false
+    errorValue.value = false
+    chatValue.value = list.value[list.value.length - 1].prompt
+    await openaiChat()
+  }
 }
 const clickMethods = async (id) => {
   if (id === 1 && list.value.length !== 0)
@@ -412,6 +424,7 @@ const newchat = () => {
                         <div class="flex flex-grow flex-col gap-3">
                           <div class="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap">
                             <span v-if="item.answer === cursorPoniter" ref="cursor" class="font-700 text-24px">{{ item.answer }}</span>
+                            <span v-else-if="item.answer === 'stopGenerating'" class="font-700 text-24px" />
                             <div v-else class="markdown prose w-full break-words dark:prose-invert dark" v-html="item.answer" />
                           </div>
                         </div>
