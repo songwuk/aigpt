@@ -68,14 +68,14 @@ const scrollToBottom = () => {
     behavior: 'smooth', // 可选项，平滑滚动
   })
 }
-const openAiFetchController = reactive<OpenAiFetchController>({
+const openAiFetchController = reactive({
   abort: () => {},
   data: null,
-  canAbort: computed(() => false),
+  canAbort: computed(() => ref(false)),
 })
 const loadingGroup = async () => {
-  const { data } = await loadChatGroup()
-  const chatDataSource = data.value as any
+  const { data } = await loadChatGroup<Record<string, any>>()
+  const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
     historyData.value = []
     chatDataSource.data.map(item => item.chatGroup).forEach((item) => {
@@ -112,7 +112,7 @@ const openaiChat = async () => {
   await nextTick()
   scrollToBottom()
   cursorAnimationDom.value = setcursoranimation(cursor.value[0])
-  const { data, abort, canAbort } = openaiComletions(chatObj)
+  const { data, abort, canAbort } = openaiComletions<Record<string, any>>(chatObj)
   openAiFetchController.canAbort = canAbort
   openAiFetchController.abort = abort
   openAiFetchController.data = data

@@ -1,6 +1,7 @@
 import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
-import type { OpenAiFetchController, OpenaiComletions } from './types'
+import type { UseFetchReturn } from '@vueuse/core'
+import type { OpenaiComletions } from './types'
 const url = ref(import.meta.env.PUBLIC_POKEAPI)
 function getParams(params) {
   let data = ''
@@ -124,7 +125,7 @@ export function getPageOfChat(params) {
  * 获取所有的分组列表
  * @returns
  */
-export function loadChatGroup() {
+export function loadChatGroup<T>(): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/openai/loadChatGroup', {
     method: 'GET',
   })
@@ -134,7 +135,7 @@ export function loadChatGroup() {
  * @param params
  * @returns
  */
-export function openaiComletions(...params: OpenaiComletions[]): OpenAiFetchController {
+export function openaiComletions<T>(...params: OpenaiComletions[]): Pick<UseFetchReturn<T>, 'data' | 'abort' | 'canAbort'> {
   const data = getParams(params)
   return useFetchOptions(`/openai/completions?${data}`, {
     method: 'GET',
@@ -152,3 +153,12 @@ export function productsPage(params: Record<string, any>) {
   })
 }
 
+/**
+ * 获取首页菜单列表
+ * @returns
+ */
+export function productsLoadCateg<T>(): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/products/loadCateg', {
+    method: 'GET',
+  })
+}

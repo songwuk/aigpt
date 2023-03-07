@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { productsLoadCateg } from '../url'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -45,72 +46,17 @@ const stable = ref([
 const leftStatus = ref([
   {
     name: 'Model',
-    children: [
-      {
-        name: 'ChatGPT',
-        num: 1,
-      },
-      {
-        name: 'OpenAI CLIP',
-        num: 22,
-      },
-      {
-        name: 'DALL·E',
-        num: 1,
-      },
-    ],
+    children: [],
     bar: false,
   },
   {
     name: 'Generative AI',
-    children: [
-      {
-        name: 'Text to Text',
-        num: 1,
-      },
-      {
-        name: 'Text to Image',
-        num: 22,
-      },
-      {
-        name: 'Text to Video',
-        num: 22,
-      },
-      {
-        name: 'Text to Code',
-        num: 22,
-      },
-      {
-        name: 'Text to Audio',
-        num: 22,
-      },
-      {
-        name: 'Text to 3D',
-        num: 22,
-      },
-    ],
+    children: [],
     bar: false,
   },
   {
     name: 'Application',
-    children: [
-      {
-        name: 'Website',
-        num: 1,
-      },
-      {
-        name: 'Apps',
-        num: 22,
-      },
-      {
-        name: 'Web3',
-        num: 22,
-      },
-      {
-        name: 'Chrome Extension',
-        num: 1,
-      },
-    ],
+    children: [],
     bar: false,
   },
 ])
@@ -132,21 +78,7 @@ const goInto = () => {
   window.location.href = '/detail'
 }
 const showdot = ref(null)
-const clickButton = ref([
-  'AI Copywriter 23',
-  'Aontent Generation 87',
-  'Aoneral 51',
-  'AI Coneral 51',
-  'Bontent General 51',
-  'Goneral 52',
-  'HI Coneralkkkw 53',
-  'Foneral 23',
-  'FI Coneral 51',
-  'Bontent General 2',
-  'EI Coneral 51',
-  'DI Coneralkkkw 56',
-  'Content Generation 51',
-])
+const clickButton = ref([])
 const trendingDotShow = ref(false)
 const categoriesShow = ref(false)
 const trendingShow = ref(false)
@@ -193,10 +125,15 @@ const dotfn = (idx) => {
   trendingShow.value = true
   trendingDotShow.value = false
 }
-onMounted(() => {
-  // document.querySelector('body').addEventListener('click', () => {
-  //   trendingShow.value = false
-  // }, false)
+onMounted(async () => {
+  const { data } = await productsLoadCateg()
+  const chatDataSource = data.value
+  if (chatDataSource && chatDataSource.code === 0) {
+    clickButton.value = chatDataSource.data.categry
+    leftStatus.value[0].children = chatDataSource.data.model
+    leftStatus.value[1].children = chatDataSource.data.generativeAi
+    leftStatus.value[2].children = chatDataSource.data.applications
+  }
 })
 </script>
 
@@ -276,7 +213,7 @@ onMounted(() => {
             :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
             class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
             text-center
-          >{{ it }}</span>
+          >{{ it.chatGroup }} {{ it.count }}</span>
         </div>
       </div>
     </div>
@@ -291,8 +228,8 @@ onMounted(() => {
           </div>
           <aside v-if="item.bar" class="2xl:ml-13px 2xl:text-sm c-[#D8D8D8] ml-5">
             <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.name ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.name)">
-              <span> {{ it.name }}</span>
-              <span> {{ it.num }}</span>
+              <span> {{ it.chatGroup }}</span>
+              <span> {{ it.count }}</span>
             </div>
           </aside>
         </div>
