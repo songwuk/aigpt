@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, reactive, ref, watch, watchEffect } from
 import * as htmlToImage from 'html-to-image'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
+import type { OpenAiFetchController } from '../types'
 import SaveConversation from './img/SaveConversation.png'
 import StopGenerating from './img/StopGenerating.png'
 import Regenerate from './img/regenerate.png'
@@ -65,7 +66,7 @@ const scrollToBottom = () => {
     behavior: 'smooth', // 可选项，平滑滚动
   })
 }
-const controller = reactive<Record<string, any>>({
+const openAiFetchController = reactive<OpenAiFetchController>({
   abort: () => {},
   data: null,
   canAbort: computed(() => false),
@@ -116,14 +117,14 @@ const openaiChat = async () => {
   scrollToBottom()
   cursorAnimationDom.value = setcursoranimation(cursor.value[0])
   const { data, abort, canAbort } = openaiComletions(chatObj)
-  controller.canAbort = canAbort
-  controller.abort = abort
-  controller.data = data
+  openAiFetchController.canAbort = canAbort
+  openAiFetchController.abort = abort
+  openAiFetchController.data = data
 }
 watchEffect(async () => {
-  if (!controller.canAbort && controller.data) {
+  if (!openAiFetchController.canAbort && openAiFetchController.data) {
     const lastNum = list.value[list.value.length - 1]
-    const dataSource = controller.data as any
+    const dataSource = openAiFetchController.data as any
     if (dataSource && dataSource.code === 0) {
       const obj_chat_group = lastNum
       list.value[list.value.length - 1] = {
@@ -133,7 +134,7 @@ watchEffect(async () => {
       await nextTick()
       scrollToBottom()
       stopClick.value = false
-      controller.data = null
+      openAiFetchController.data = null
     }
     else {
       errorValue.value = true
@@ -234,8 +235,8 @@ const copyLink = (link) => {
  * 请求停止的按钮
  */
 const stopGenerating = async () => {
-  if (controller.canAbort) {
-    controller.abort()
+  if (openAiFetchController.canAbort) {
+    openAiFetchController.abort()
     cursorAnimationDom.value.cancel()
     list.value[list.value.length - 1].answer = 'stopGenerating'
   }
@@ -440,8 +441,8 @@ const newchat = () => {
         <div class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
           <div flex="~ gap8" justify-center items-center sm:flex-row sm:max-w-full class="sm:p-[0] p-[20px] dark:c-white c-black">
             <div v-for="(item, index) in showList" :key="index" flex="~" justify-center items-center class="showListCss  sm:text-[16px] text-[14px] py-8px px-14px" @click="clickMethods(item.key)">
-              <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 && controller.canAbort ? StopGenerating : index === 1 && !controller.canAbort ? Regenerate : ShareConversation " alt="">
-              {{ index === 0 ? item.name : index === 1 && controller.canAbort ? item.name : index === 1 && !controller.canAbort ? item.name2 : item.name }}
+              <img style="width:17px;" :src="index === 0 ? SaveConversation : index === 1 && openAiFetchController.canAbort ? StopGenerating : index === 1 && !openAiFetchController.canAbort ? Regenerate : ShareConversation " alt="">
+              {{ index === 0 ? item.name : index === 1 && openAiFetchController.canAbort ? item.name : index === 1 && !openAiFetchController.canAbort ? item.name2 : item.name }}
             </div>
           </div>
           <form class="stretch mx-2 flex flex-row gap-3 pt-1 last:mb-2 md:last:mb-6 lg:mx-auto lg:max-w-3xl lg:pt-3">
