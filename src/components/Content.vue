@@ -70,8 +70,10 @@ const clickBar = (idx) => {
   leftStatus.value[idx].bar = !leftStatus.value[idx].bar
 }
 const clickBarStatus = ref('')
-const searchAll = (name) => {
+const clickBarText = ref('')
+const searchAll = (name, text) => {
   clickBarStatus.value = name
+  clickBarText.value = text
 }
 const startStatus = ref(false)
 const goInto = () => {
@@ -130,9 +132,15 @@ onMounted(async () => {
   const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
     clickButton.value = chatDataSource.data.categry
-    leftStatus.value[0].children = chatDataSource.data.model
-    leftStatus.value[1].children = chatDataSource.data.generativeAi
-    leftStatus.value[2].children = chatDataSource.data.applications
+    leftStatus.value[0].children = chatDataSource.data.model.map((item, index) => {
+      return { key: `${item.chatGroup}model${index}`, ...item }
+    })
+    leftStatus.value[1].children = chatDataSource.data.generativeAi.map((item, index) => {
+      return { key: `${item.chatGroup}generativeAi${index}`, ...item }
+    })
+    leftStatus.value[2].children = chatDataSource.data.applications.map((item, index) => {
+      return { key: `${item.chatGroup}applications${index}`, ...item }
+    })
   }
 })
 </script>
@@ -227,7 +235,7 @@ onMounted(async () => {
             <i class="pr-[1px]"><img class="w-[10px]" :src="Right" alt="Right"></i>
           </div>
           <aside v-if="item.bar" class="2xl:ml-13px 2xl:text-sm c-[#D8D8D8] ml-5">
-            <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.name ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.name)">
+            <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.key ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.key, it.chatGroup)">
               <span> {{ it.chatGroup }}</span>
               <span> {{ it.count }}</span>
             </div>
@@ -235,7 +243,7 @@ onMounted(async () => {
         </div>
       </aside>
       <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
-        <span c-white>{{ clickBarStatus }}</span>
+        <span c-white>{{ clickBarText }}</span>
         <div v-if="trendingShow" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
           <div sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px " @click="goInto">
             <div class="bg-#131313 border-1  rounded-[10px] b-[transparent] ">
