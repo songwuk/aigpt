@@ -213,7 +213,7 @@ onMounted(async () => {
           style="width: 190px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);" c-white
           class="ml-[24px] mt-[24px] rounded-8px text-[18px]"
         >
-          All Use Cases 681
+          All Use Cases {{ clickButton.length }}
         </button>
         <div class="mt-[31px] ml-[24px] pb-10px" flex items-center justify-start flex-wrap flex-row>
           <span
