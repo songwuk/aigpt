@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import * as _ from 'lodash'
 import type { ReturnData, ReturnPageData } from '../types'
-import { productsImage, productsLoadCateg, productsPage } from '../url'
+import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsPage } from '../url'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -92,7 +92,6 @@ const getPage = async () => {
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
     })
-    console.log(getPageList.value)
   }
 }
 const searchAll = async (name, text) => {
@@ -112,26 +111,65 @@ const categoriesShow = ref(false)
 const trendingShow = ref(false)
 const favoriteShow = ref(false)
 const historyShow = ref(false)
-const trendingShowf = () => {
+const historyShowList = ref(false)
+const favoriteShowList = ref(false)
+const trendingShowf = async () => {
   trendingShow.value = true
   favoriteShow.value = false
   trendingDotShow.value = true
   historyShow.value = false
+  historyShowList.value = false
+  favoriteShowList.value = false
   clickBarStatus.value = 'Trending'
 }
-const favoriteShowf = () => {
+
+const favoriteShowf = async () => {
+  clickBarText.value = ''
   trendingShow.value = false
   showdot.value = null
-  favoriteShow.value = !favoriteShow.value
   historyShow.value = false
   clickBarStatus.value = 'Favorite'
+  const { data } = await favoriteOfPage<ReturnPageData>()
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
+    getPageList.value = dataSource.data.productList.map((item) => {
+      return {
+        ...item,
+        product_logo: productsImage(item.product_logo),
+        product_imgs: item.product_imgs.map(it => productsImage(it)),
+      }
+    })
+    favoriteShow.value = false
+    historyShowList.value = false
+    favoriteShowList.value = true
+  }
+  else {
+    favoriteShow.value = true
+  }
 }
-const historyShowf = () => {
+const historyShowf = async () => {
+  clickBarText.value = ''
   trendingShow.value = false
   favoriteShow.value = false
   showdot.value = null
-  historyShow.value = !historyShow.value
   clickBarStatus.value = 'History'
+  const { data } = await historyOfPage<ReturnPageData>()
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
+    getPageList.value = dataSource.data.productList.map((item) => {
+      return {
+        ...item,
+        product_logo: productsImage(item.product_logo),
+        product_imgs: item.product_imgs.map(it => productsImage(it)),
+      }
+    })
+    historyShow.value = false
+    historyShowList.value = true
+    favoriteShowList.value = false
+  }
+  else {
+    historyShow.value = true
+  }
 }
 
 const trending = ref([
@@ -148,10 +186,11 @@ const trending = ref([
     href: 'javascript:void(0)',
   },
 ])
-const dotfn = (idx) => {
+const dotfn = async (idx) => {
   showdot.value = idx
   trendingShow.value = true
   trendingDotShow.value = false
+  await getPage()
 }
 onMounted(async () => {
   const { data } = await productsLoadCateg<ReturnData>()
@@ -237,12 +276,10 @@ const mouseOut = _.debounce(() => {
         <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
           <img class="w-[27px]" :src=" favoriteShow ? Shoucang : ShoucangOff" alt="ShoucangOff">
           <span class="ml-[16px] mr-[9px]" :class="favoriteShow ? 'c-[#05D4FD]' : 'c-white' ">Favorite</span>
-          <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
         <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="historyShowf">
           <img class="w-[26px]" :src="historyShow ? JurassicWait : JurassicWaitOff" alt="JurassicWaitOff">
           <span class="ml-[16px] mr-[9px]" :class="historyShow ? 'c-[#05D4FD]' : 'c-white' ">History</span>
-          <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
         </span>
       </div>
       <aside w-full>
@@ -334,6 +371,74 @@ const mouseOut = _.debounce(() => {
           <div v-if="favoriteShow" flex items-center justify-center flex-col>
             <img class="sm:w-110px w-40px" :src="NoFavorite" alt="">
             <span class="sm:text-20px text-16px mt-16px" c-white>No Favorite</span>
+          </div>
+        </div>
+        <div v-if="historyShowList" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
+          <div v-for="(item, index) in getPageList" :key="index" overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+            <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
+              <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
+                <span flex items-center justify-center><img
+                  :src="See"
+                  class="w-16px mr-4px"
+                >{{ item.views }}</span>
+                <span sm:cursor-pointer flex items-center justify-center><img
+                  :src="Like"
+                  class="w-14px mr-4px ml-8px"
+                >{{ item.likes }}</span>
+                <img
+                  sm:cursor-pointer
+                  :src="startStatus ? Start : StartOff"
+                  class="w-16px ml-8px"
+                  @click.stop.prevent="startStatus = !startStatus"
+                >
+              </div>
+              <div class="ml-18px" flex items-center justify-start>
+                <img
+                  class="w-[32px]"
+                  loading="lazy"
+                  :src="item.product_logo"
+                  alt="Quest"
+                >
+                <span class="ml-11px">{{ item.product_name }}</span>
+              </div>
+              <div class="ml-18px mt-12px py-5px overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal">
+                {{ item.product_categry }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="favoriteShowList" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
+          <div v-for="(item, index) in getPageList" :key="index" overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+            <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
+              <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
+                <span flex items-center justify-center><img
+                  :src="See"
+                  class="w-16px mr-4px"
+                >{{ item.views }}</span>
+                <span sm:cursor-pointer flex items-center justify-center><img
+                  :src="Like"
+                  class="w-14px mr-4px ml-8px"
+                >{{ item.likes }}</span>
+                <img
+                  sm:cursor-pointer
+                  :src="startStatus ? Start : StartOff"
+                  class="w-16px ml-8px"
+                  @click.stop.prevent="startStatus = !startStatus"
+                >
+              </div>
+              <div class="ml-18px" flex items-center justify-start>
+                <img
+                  class="w-[32px]"
+                  loading="lazy"
+                  :src="item.product_logo"
+                  alt="Quest"
+                >
+                <span class="ml-11px">{{ item.product_name }}</span>
+              </div>
+              <div class="ml-18px mt-12px py-5px overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal">
+                {{ item.product_categry }}
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -184,3 +184,30 @@ export function productsLoadCateg<T>(): Pick<UseFetchReturn<T>, 'data'> {
 export function productsImage(id) {
   return `${unref(url)}/products/image/${id}`
 }
+/**
+ * 获取喜爱的列表
+ * @returns
+ */
+export function favoriteOfPage<T>(): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/products/member/favoriteOfPage', {
+    method: 'POST',
+    body: JSON.stringify({
+      page: 1,
+      size: 1000,
+    }),
+  })
+}
+
+/**
+ * 获取历史的列表
+ * @returns
+ */
+export function historyOfPage<T>(): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/products/member/historyOfPage', {
+    method: 'POST',
+    body: JSON.stringify({
+      page: 1,
+      size: 1000,
+    }),
+  })
+}
