@@ -28,4 +28,24 @@ export interface ReturnData {
   data: Pick<dataModule, 'applications' | 'categry' | 'generativeAi' | 'model'>
   msg: string
 }
+export interface ReturnPageData {
+  code: number
+  data: Pick<ReturnPageDataList, 'productList' | 'total'>
+  msg: string
+}
 
+export interface ReturnPageDataList {
+  productList: Array<Record<string, any>>
+  total: number
+}
+export interface ProductsPage {
+  keyword: string
+  product_categry: string
+  product_model: string
+  product_applications: string
+  product_generative_ai: string
+}
+
+export interface ProductsPageCondition {
+  condition: Partial<ProductsPage>
+}

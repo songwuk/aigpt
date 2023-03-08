@@ -1,7 +1,7 @@
 import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
 import type { UseFetchReturn } from '@vueuse/core'
-import type { OpenaiComletions } from './types'
+import type { OpenaiComletions, ProductsPageCondition } from './types'
 const url = ref(import.meta.env.PUBLIC_POKEAPI)
 function getParams(params) {
   let data = ''
@@ -141,15 +141,27 @@ export function openaiComletions<T>(...params: OpenaiComletions[]): Pick<UseFetc
     method: 'GET',
   })
 }
-
+// "page": 1,
+// "size": 10,
+// "condition": {
+//   "keyword": "text to video",
+//   "product_categry": "AI Copywriter",
+//   "product_model": "OpenAI CLIP",
+//   "product_applications": "Website",
+//   "product_generative_ai": "Text to Image"
+// }
 /**
- * 获取首页产品数据
+ * 获取指定产品数据
  * @returns
  */
-export function productsPage(params: Record<string, any>) {
+export function productsPage<T>(params: ProductsPageCondition): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/page', {
     method: 'POST',
-    body: JSON.stringify({ ...params }),
+    body: JSON.stringify({
+      page: 1,
+      size: 1000,
+      ...params,
+    }),
   })
 }
 
@@ -161,4 +173,14 @@ export function productsLoadCateg<T>(): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/loadCateg', {
     method: 'GET',
   })
+}
+
+/**
+ *
+ * 获取图片
+ * @param id
+ * @returns
+ */
+export function productsImage(id) {
+  return `${unref(url)}/products/image/${id}`
 }

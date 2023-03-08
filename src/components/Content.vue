@@ -1,7 +1,8 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
-import type { ReturnData } from '../types'
-import { productsLoadCateg } from '../url'
+import * as _ from 'lodash'
+import type { ReturnData, ReturnPageData } from '../types'
+import { productsImage, productsLoadCateg, productsPage } from '../url'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -48,20 +49,20 @@ const leftStatus = ref([
   {
     name: 'Model',
     children: [],
-    bar: false,
+    bar: true,
   },
   {
     name: 'Generative AI',
     children: [],
-    bar: false,
+    bar: true,
   },
   {
     name: 'Application',
     children: [],
-    bar: false,
+    bar: true,
   },
 ])
-const categories = ref('')
+const keyword = ref('')
 const leftshow = ref(true)
 const leftOff = () => {
   leftshow.value = !leftshow.value
@@ -71,10 +72,35 @@ const clickBar = (idx) => {
 }
 const clickBarStatus = ref('')
 const clickBarText = ref('')
-const searchAll = (name, text) => {
+const getPageList = ref([])
+const getPage = async () => {
+  const { data } = await productsPage<ReturnPageData>({
+    condition: {
+      keyword: keyword.value,
+      product_categry: '',
+      product_model: '',
+      product_applications: '',
+      product_generative_ai: '',
+    },
+  })
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0) {
+    getPageList.value = dataSource.data.productList.map((item) => {
+      return {
+        ...item,
+        product_logo: productsImage(item.product_logo),
+        product_imgs: item.product_imgs.map(it => productsImage(it)),
+      }
+    })
+    console.log(getPageList.value)
+  }
+}
+const searchAll = async (name, text) => {
   clickBarStatus.value = name
   clickBarText.value = text
+  await getPage()
 }
+
 const startStatus = ref(false)
 const goInto = () => {
   window.location.href = '/detail'
@@ -141,8 +167,30 @@ onMounted(async () => {
     leftStatus.value[2].children = chatDataSource.data.applications.map((item, index) => {
       return { key: `${item.name}applications${index}`, ...item }
     })
+    trendingShow.value = true
+    showdot.value = 0
+    await getPage()
   }
 })
+const itemRefs = ref([])
+const inputModule = _.debounce(async () => {
+  await getPage()
+}, 1000)
+const onmouseover = (index) => {
+  itemRefs.value[index].querySelectorAll('div')[2].style.whiteSpace = 'normal'
+  itemRefs.value[index].querySelectorAll('div')[2].style.overflow = 'auto'
+}
+const isOnCategories = ref(false)
+const onmouseout = (index) => {
+  itemRefs.value[index].querySelectorAll('div')[2].style.whiteSpace = 'nowrap'
+  itemRefs.value[index].querySelectorAll('div')[2].style.overflow = 'hidden'
+}
+const mouseOut = _.debounce(() => {
+  if (categoriesShow.value && isOnCategories.value)
+    categoriesShow.value = true
+  else
+    categoriesShow.value = false
+}, 100)
 </script>
 
 <template>
@@ -154,7 +202,7 @@ onMounted(async () => {
         </span>
       </div>
       <div flex items-center justify-center sm:flex-nowrap flex-wrap class="2xl:ml-36px sm:ml-1 ml-0 sm:my-0 my-10px">
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="categoriesShow = !categoriesShow">
+        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @mouseleave="mouseOut" @mouseenter.stop.prevent="categoriesShow = true" @click="categoriesShow = !categoriesShow">
           <img class="w-[16px]" :src="categoriesShow ? FenLei : FenLeiOff" alt="FenLei">
           <span class="ml-[16px] mr-[9px]" :class="categoriesShow ? 'c-[#05D4FD]' : 'c-white' ">Categories</span>
           <i>
@@ -165,7 +213,6 @@ onMounted(async () => {
         <span relative class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click.stop="trendingShowf">
           <img class="w-[20px]" :src="trendingShow || showdot !== null ? Filter : FilterOff" alt="FilterOff">
           <span class="ml-[16px] mr-[9px]" :class="trendingShow || showdot !== null ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
-          <!-- <i> <img class="w-[14px]" :src="Bottom" alt="Bottom"></i> -->
           <div
             v-show="trendingShow"
             class="absolute right-0 z-10 mt-40 origin-top-right rounded-md border border-transparent
@@ -200,15 +247,16 @@ onMounted(async () => {
       </div>
       <aside w-full>
         <div class="px-4 py-1 pr-8" baseline flex items-center justify-center style="height: 46px;background: #3C3C3E;border-radius: 26px;">
-          <input v-model="categories" class="c-[#6D6D6D]" placeholder="Search for apps,categories" style="background: #3C3C3E;" outline-none border-none w-full type="text">
+          <input v-model="keyword" class="c-[#6D6D6D]" placeholder="Search for apps,categories" style="background: #3C3C3E;" outline-none border-none w-full type="text" @input="inputModule">
           <img
             sm:cursor-pointer
             class="w-[22px]"
             :src="Search"
+            @click="inputModule"
           >
         </div>
       </aside>
-      <div v-show="categoriesShow" z-10 absolute class="top-[85px] 2xl:left-[108px] left-12 2xl:w-[calc(100%-108px)]  w-[calc(100%-3rem)]  rounded-10px " style="background-color: #33333E;">
+      <div v-show="categoriesShow" z-10 absolute class="top-[85px] 2xl:left-[108px] left-12 2xl:w-[calc(100%-108px)]  w-[calc(100%-3rem)]  rounded-10px " style="background-color: #33333E;" @mouseleave="categoriesShow = false; isOnCategories = false" @mouseenter="categoriesShow = true; isOnCategories = true">
         <button
           style="width: 190px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);" c-white
           class="ml-[24px] mt-[24px] rounded-8px text-[18px]"
@@ -245,65 +293,35 @@ onMounted(async () => {
       <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarText }}</span>
         <div v-if="trendingShow" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px " @click="goInto">
-            <div class="bg-#131313 border-1  rounded-[10px] b-[transparent] ">
+          <div v-for="(item, index) in getPageList" :key="index" overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+            <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
                   :src="See"
                   class="w-16px mr-4px"
-                >22</span>
+                >{{ item.views }}</span>
                 <span sm:cursor-pointer flex items-center justify-center><img
                   :src="Like"
                   class="w-14px mr-4px ml-8px"
-                >21</span>
+                >{{ item.likes }}</span>
                 <img
                   sm:cursor-pointer
                   :src="startStatus ? Start : StartOff"
                   class="w-16px ml-8px"
-                  @click="startStatus = !startStatus"
+                  @click.stop.prevent="startStatus = !startStatus"
                 >
               </div>
               <div class="ml-18px" flex items-center justify-start>
                 <img
                   class="w-[32px]"
-                  :src="Quest"
+                  loading="lazy"
+                  :src="item.product_logo"
                   alt="Quest"
                 >
-                <span class="ml-11px">Quest 3</span>
+                <span class="ml-11px">{{ item.product_name }}</span>
               </div>
-              <div class="ml-18px mt-12px py-5px">
-                Arrakis is a protocol specialized inArrakis is a protocol specialized inArrakis is a protocol specialized inArrakis is a protocol specialized in
-              </div>
-            </div>
-          </div>
-          <div v-for="(item, index) in 10" :key="index" sm:cursor-pointer c-white class="sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" style="border: 1px solid rgb(151 151 151 / 33%);" @click="goInto">
-            <div class=" border-1  rounded-[10px] b-[transparent] ">
-              <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
-                <span flex items-center justify-center><img
-                  :src="See"
-                  class="w-16px mr-4px"
-                >22{{ item }}</span>
-                <span sm:cursor-pointer flex items-center justify-center><img
-                  :src="Like"
-                  class="w-14px mr-4px ml-8px"
-                >21</span>
-                <img
-                  sm:cursor-pointer
-                  :src="startStatus ? Start : StartOff"
-                  class="w-16px ml-8px"
-                  @click="startStatus = !startStatus"
-                >
-              </div>
-              <div class="ml-18px" flex items-center justify-start>
-                <img
-                  class="w-[32px]"
-                  :src="Quest"
-                  alt="Quest"
-                >
-                <span class="ml-11px">Quest 3</span>
-              </div>
-              <div class="ml-18px mt-12px py-5px">
-                Arrakis is a protocol specialized inArrakis
+              <div class="ml-18px mt-12px py-5px overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal">
+                {{ item.product_categry }}
               </div>
             </div>
           </div>
