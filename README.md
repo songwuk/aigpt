@@ -1,4 +1,7 @@
-# new-chat-work
+# AIGPT
+<p style='text-align:left'>
+<img src="./src/components/img/AiGPT_1.png">
+</p>
 > Powerd by OpenAI
 
 ## Usage
