@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems, TransitionRoot } from '@headlessui/vue'
 import AiGPT from './img/AiGPT.png'
 import Global from './img/global.png'
@@ -18,9 +18,18 @@ import Twitter from './img/twitter.png'
 import Chain from './img/chain.png'
 import Fork from './img/fork.png'
 const leftHead = ref([
-  'ChatGPT',
-  'GAI MAP',
-  'Pricing',
+  {
+    name: 'ChatGPT',
+    url: '/chat',
+  },
+  {
+    name: 'GAI MAP',
+    url: 'javascript:void()',
+  },
+  {
+    name: 'Pricing',
+    url: 'javascript:void()',
+  },
 ])
 const walletStatus = ref(true)
 const personalList = ref([
@@ -96,6 +105,12 @@ const tags = ref([
 const submitPath = () => {
   window.location.href = '/submit'
 }
+const pathnameRef = ref('')
+onMounted(() => {
+  const pathname = window.location.pathname
+  if (pathname)
+    pathnameRef.value = pathname
+})
 </script>
 
 <template>
@@ -109,12 +124,12 @@ const submitPath = () => {
       </a>
       <div class="ml-[67px]" sm:block hidden>
         <span v-for="(item, idx) in leftHead" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]">
-          <a :href="idx === 0 ? '/chat' : 'javascript:void()'"> {{ item }}</a>
+          <a :href="item.url" :class=" pathnameRef === item.url ? 'c-[#05D4FD]' : ''"> {{ item.name }}</a>
         </span>
       </div>
     </section>
     <section relative sm:flex-1 sm:block hidden class="mr-[61px]" sm:flex sm:items-center sm:justify-end>
-      <button flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]" @click="submitPath" @mouseover="UploadHoverf" @mouseout="UploadUnhoverf">
+      <button :class="pathnameRef === '/submit' ? 'c-[#05D4FD]' : ''" flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]" @click="submitPath" @mouseover="UploadHoverf" @mouseout="UploadUnhoverf">
         <img ref="sub" class="w-[22px] mr-[10px]" :src="Upload" alt="language">
         Submit
       </button>
