@@ -73,14 +73,18 @@ const clickBar = (idx) => {
 const clickBarStatus = ref('')
 const clickBarText = ref('')
 const getPageList = ref([])
+const product_categry = ref('')
+const product_model = ref('')
+const product_applications = ref('')
+const product_generative_ai = ref('')
 const getPage = async () => {
   const { data } = await productsPage<ReturnPageData>({
     condition: {
       keyword: keyword.value,
-      product_categry: '',
-      product_model: '',
-      product_applications: '',
-      product_generative_ai: '',
+      product_categry: product_categry.value,
+      product_model: product_model.value,
+      product_applications: product_applications.value,
+      product_generative_ai: product_generative_ai.value,
     },
   })
   const dataSource = data.value
@@ -94,9 +98,21 @@ const getPage = async () => {
     })
   }
 }
-const searchAll = async (name, text) => {
+const searchAll = async (name, text, itemName) => {
   clickBarStatus.value = name
   clickBarText.value = text
+  product_model.value = ''
+  product_applications.value = ''
+  product_generative_ai.value = ''
+  if (itemName === 'Model')
+    product_model.value = text
+
+  else if (itemName === 'Application')
+    product_applications.value = text
+
+  else if (itemName === 'Generative AI')
+    product_generative_ai.value = text
+
   await getPage()
 }
 
@@ -230,6 +246,12 @@ const mouseOut = _.debounce(() => {
   else
     categoriesShow.value = false
 }, 100)
+
+const useCase = async (name) => {
+  product_categry.value = name
+  await getPage()
+  categoriesShow.value = false
+}
 </script>
 
 <template>
@@ -306,6 +328,7 @@ const mouseOut = _.debounce(() => {
             :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
             class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
             text-center
+            @click="useCase(it.name)"
           >{{ it.name }} {{ it.count }}</span>
         </div>
       </div>
@@ -320,7 +343,7 @@ const mouseOut = _.debounce(() => {
             <i class="pr-[1px]"><img class="w-[10px]" :src="Right" alt="Right"></i>
           </div>
           <aside v-if="item.bar" class="2xl:ml-13px 2xl:text-sm c-[#D8D8D8] ml-5">
-            <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.key ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.key, it.name)">
+            <div v-for="(it, idx) in item.children" :key="idx" flex items-center justify-between class=" my-2 2xl:my-13px hover:c-[#05D4FD]" :class="[clickBarStatus === it.key ? 'c-[#05D4FD]' : '']" @click.stop="searchAll(it.key, it.name, item.name)">
               <span> {{ it.name }}</span>
               <span> {{ it.count }}</span>
             </div>
