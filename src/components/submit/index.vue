@@ -4,6 +4,7 @@ import {
   RadioGroup,
   RadioGroupOption,
 } from '@headlessui/vue'
+import Loading from '../loading/index.vue'
 import Upload from '../img/upload_img.png'
 import Del from '../img/del.png'
 import { productsSave } from '../../url'
@@ -12,23 +13,23 @@ import Facebook_2 from '../img/facebook_2.png'
 import Instagram_2 from '../img/instagram_2.png'
 import Twitter_2 from '../img/twitter_2.png'
 const isOwner = ref(true)
-const email = ref('songwen8519761@126.com')
-const given_name = ref('John')
-const family_name = ref('Doe')
-const product_name = ref('product Name')
-const product_url = ref('https://songwuk.cc')
-const product_categry = ref('Select one of our categories that best fit your product')
-const product_model = ref('AI')
+const email = ref('')
+const given_name = ref('')
+const family_name = ref('')
+const product_name = ref('')
+const product_url = ref('')
+const product_categry = ref('')
+const product_model = ref('')
 const product_applications = ref('')
 const product_generative_ai = ref('')
 const product_short_desc = ref('')
 const product_detail = ref('')
 const product_review_url = ref('')
-const facebook = ref('https://songwuk.cc')
-const twitter = ref('https://songwuk.cc')
-const discord = ref('https://songwuk.cc')
-const instagram = ref('https://songwuk.cc')
-
+const facebook = ref('')
+const twitter = ref('')
+const discord = ref('')
+const instagram = ref('')
+const loading = ref(false)
 const Policies = ref('')
 const Privacy = ref('')
 
@@ -80,7 +81,7 @@ const submitProject = async () => {
     alert('must agree')
     return false
   }
-
+  loading.value = true
   const product_logo = file1.value
   const files = {
     product_logo,
@@ -106,8 +107,12 @@ const submitProject = async () => {
     discord: discord.value,
     instagram: instagram.value,
   }, files)
-  if (JSON.parse(data.value) && JSON.parse(data.value).code === 0)
-    window.location.href = '/'
+  if (data.value && data.value.code === 0)
+    alert('Submitted successfully')
+  else
+    alert(data.value.msg)
+
+  loading.value = false
 }
 
 const deleteFn1 = () => {
@@ -118,6 +123,20 @@ const deleteFn2 = () => {
   file3.value = ''
   upload_3.value = ''
 }
+const product_applicationsArr = ref([
+  'Website',
+  'Apps',
+  'Web3',
+  'Chrome Extension',
+])
+const product_generative_aiArr = ref([
+  'Text to Text',
+  'Text to Code',
+  'Text to Image',
+  'Text to Video',
+  'Text to Audio',
+  'Text to 3D',
+])
 </script>
 
 <template>
@@ -297,20 +316,11 @@ const deleteFn2 = () => {
             * Category
           </h4>
           <div mb-34px>
-            <select
-              v-model="product_categry" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+            <input
+              v-model="product_categry"
+              class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797" style="border: 1px solid #979797;"
               placeholder="Select one of our categories that best fit your product"
             >
-              <option value="" disabled selected hidden>
-                Select one of our categories that best fit your product
-              </option>
-              <option value="1">
-                1
-              </option>
-              <option value="2">
-                2
-              </option>
-            </select>
           </div>
         </div>
         <div>
@@ -318,20 +328,11 @@ const deleteFn2 = () => {
             Model
           </h4>
           <div mb-34px>
-            <select
-              v-model="product_model" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+            <input
+              v-model="product_model"
+              class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797" style="border: 1px solid #979797;"
               placeholder="Select one of models that best fit your product"
             >
-              <option value="" disabled selected hidden>
-                Select one of models that best fit your product
-              </option>
-              <option value="1">
-                1
-              </option>
-              <option value="2">
-                2
-              </option>
-            </select>
           </div>
         </div>
         <div>
@@ -346,11 +347,8 @@ const deleteFn2 = () => {
               <option value="" disabled selected hidden>
                 Select one of application that best fit your product
               </option>
-              <option value="1">
-                1
-              </option>
-              <option value="2">
-                2
+              <option v-for="(item, index) in product_applicationsArr" :key="index" :value="item">
+                {{ item }}
               </option>
             </select>
           </div>
@@ -367,11 +365,8 @@ const deleteFn2 = () => {
               <option value="" disabled selected hidden>
                 Select one of generative AI that best fit your product
               </option>
-              <option value="1">
-                1
-              </option>
-              <option value="2">
-                2
+              <option v-for="(item, index) in product_generative_aiArr" :key="index" :value="item">
+                {{ item }}
               </option>
             </select>
           </div>
@@ -489,4 +484,7 @@ border-radius: 8px;"
       Submit Your Project
     </button>
   </section>
+  <div v-show="loading" fixed left-0 top-0 right-0 bottom-0 flex items-center justify-center>
+    <Loading />
+  </div>
 </template>

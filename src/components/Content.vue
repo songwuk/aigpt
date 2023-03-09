@@ -366,9 +366,16 @@ const useCase = async (name) => {
                 >{{ item.likes }}</span>
                 <img
                   sm:cursor-pointer
-                  :src="startStatus ? Start : StartOff"
+                  :src="item.status ? Start : StartOff"
                   class="w-16px ml-8px"
-                  @click.stop.prevent="startStatus = !startStatus"
+                  @click.stop.prevent="() => {
+                    if (!item.status){
+                      item.status = true
+                    }
+                    else {
+                      item.status = false
+                    }
+                  }"
                 >
               </div>
               <div class="ml-18px" flex items-center justify-start>
@@ -410,9 +417,16 @@ const useCase = async (name) => {
                 >{{ item.likes }}</span>
                 <img
                   sm:cursor-pointer
-                  :src="startStatus ? Start : StartOff"
+                  :src="item.status ? Start : StartOff"
                   class="w-16px ml-8px"
-                  @click.stop.prevent="startStatus = !startStatus"
+                  @click.stop.prevent="() => {
+                    if (!item.status){
+                      item.status = true
+                    }
+                    else {
+                      item.status = false
+                    }
+                  }"
                 >
               </div>
               <div class="ml-18px" flex items-center justify-start>
@@ -444,9 +458,16 @@ const useCase = async (name) => {
                 >{{ item.likes }}</span>
                 <img
                   sm:cursor-pointer
-                  :src="startStatus ? Start : StartOff"
+                  :src="item.status ? Start : StartOff"
                   class="w-16px ml-8px"
-                  @click.stop.prevent="startStatus = !startStatus"
+                  @click.stop.prevent="() => {
+                    if (!item.status){
+                      item.status = true
+                    }
+                    else {
+                      item.status = false
+                    }
+                  }"
                 >
               </div>
               <div class="ml-18px" flex items-center justify-start>
