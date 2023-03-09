@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
-import * as _ from 'lodash'
+import { debounce } from 'lodash-es'
 import type { ReturnData, ReturnPageData } from '../types'
 import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsPage } from '../url'
 import Left from './img/left.png'
@@ -243,7 +243,7 @@ onMounted(async () => {
   }
 })
 const itemRefs = ref([])
-const inputModule = _.debounce(async () => {
+const inputModule = debounce(async () => {
   await getPage()
 }, 1000)
 const onmouseover = (index) => {
@@ -253,7 +253,7 @@ const isOnCategories = ref(false)
 const onmouseout = (index) => {
   itemRefs.value[index].querySelectorAll('div')[2].style.display = '-webkit-box'
 }
-const mouseOut = _.debounce(() => {
+const mouseOut = debounce(() => {
   if (categoriesShow.value && isOnCategories.value)
     categoriesShow.value = true
   else

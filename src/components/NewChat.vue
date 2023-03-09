@@ -2,7 +2,7 @@
 <script setup lang='ts'>
 import { computed, nextTick, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import * as htmlToImage from 'html-to-image'
-import * as _ from 'lodash'
+import { debounce } from 'lodash-es'
 import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
 import type { ReturnData } from '../types'
@@ -87,7 +87,7 @@ const loadingGroup = async () => {
 const updateCount = ref(0)
 const maxUpdateCount = ref(1)
 const chatGroup = ref(0) // 每次会话唯一
-watch(chatValue, _.debounce((newVal, oldVal) => {
+watch(chatValue, debounce((newVal, oldVal) => {
   console.log(chatGroup, 'chatValue', newVal, oldVal)
   if (updateCount.value < maxUpdateCount.value) {
     updateCount.value++
