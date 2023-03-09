@@ -74,7 +74,7 @@ const openAiFetchController = reactive({
   canAbort: computed(() => ref(false)),
 })
 const loadingGroup = async () => {
-  const { data } = await loadChatGroup<ReturnData>()
+  const { data } = await loadChatGroup<any>()
   const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
     historyData.value = []
@@ -266,7 +266,10 @@ const pageChat = async (chatGroup) => {
   const { data } = await getPageOfChat(params)
   const dataSource = data.value as any
   if (dataSource && dataSource.code === 0) {
+    console.log(dataSource)
     list.value = dataSource.data.openaiList ?? []
+    showAnswer.value = false
+    console.log(list.value)
     await nextTick()
     scrollToBottom()
   }

@@ -114,6 +114,9 @@ export function shareList(id) {
 export function getPageOfChat(params) {
   return useFetchOptions('/openai/pageOfChat', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify({
       page: 1,
       size: 1000,
@@ -157,6 +160,9 @@ export function openaiComletions<T>(...params: OpenaiComletions[]): Pick<UseFetc
 export function productsPage<T>(params: ProductsPageCondition): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/page', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify({
       page: 1,
       size: 1000,
