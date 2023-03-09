@@ -90,8 +90,12 @@ const getPage = async () => {
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
+      const strlikes = String(item.likes).length >= 4 ? `${String(item.likes).slice(-(String(item.likes).length), -3)}k` : item.likes
+      const strviews = String(item.views).length >= 4 ? `${String(item.views).slice(-(String(item.views).length), -3)}k` : item.views
       return {
         ...item,
+        likes: strlikes,
+        views: strviews,
         product_logo: productsImage(item.product_logo),
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
@@ -149,8 +153,12 @@ const favoriteShowf = async () => {
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
+      const strlikes = String(item.likes).length >= 4 ? `${String(item.likes).slice(-(String(item.likes).length), -3)}k` : item.likes
+      const strviews = String(item.views).length >= 4 ? `${String(item.views).slice(-(String(item.views).length), -3)}k` : item.views
       return {
         ...item,
+        likes: strlikes,
+        views: strviews,
         product_logo: productsImage(item.product_logo),
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
@@ -173,8 +181,12 @@ const historyShowf = async () => {
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
+      const strlikes = String(item.likes).length >= 4 ? `${String(item.likes).slice(-(String(item.likes).length), -3)}k` : item.likes
+      const strviews = String(item.views).length >= 4 ? `${String(item.views).slice(-(String(item.views).length), -3)}k` : item.views
       return {
         ...item,
+        likes: strlikes,
+        views: strviews,
         product_logo: productsImage(item.product_logo),
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
@@ -206,6 +218,9 @@ const dotfn = async (idx) => {
   showdot.value = idx
   trendingShow.value = true
   trendingDotShow.value = false
+  product_model.value = ''
+  product_applications.value = ''
+  product_generative_ai.value = ''
   await getPage()
 }
 onMounted(async () => {
@@ -232,13 +247,11 @@ const inputModule = _.debounce(async () => {
   await getPage()
 }, 1000)
 const onmouseover = (index) => {
-  itemRefs.value[index].querySelectorAll('div')[2].style.whiteSpace = 'normal'
-  itemRefs.value[index].querySelectorAll('div')[2].style.overflow = 'auto'
+  itemRefs.value[index].querySelectorAll('div')[2].style.display = 'flex'
 }
 const isOnCategories = ref(false)
 const onmouseout = (index) => {
-  itemRefs.value[index].querySelectorAll('div')[2].style.whiteSpace = 'nowrap'
-  itemRefs.value[index].querySelectorAll('div')[2].style.overflow = 'hidden'
+  itemRefs.value[index].querySelectorAll('div')[2].style.display = '-webkit-box'
 }
 const mouseOut = _.debounce(() => {
   if (categoriesShow.value && isOnCategories.value)
@@ -353,7 +366,7 @@ const useCase = async (name) => {
       <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarText }}</span>
         <div v-if="trendingShow" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -387,8 +400,8 @@ const useCase = async (name) => {
                 >
                 <span class="ml-11px">{{ item.product_name }}</span>
               </div>
-              <div class="ml-18px mt-12px py-5px overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal">
-                {{ item.product_categry }}
+              <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
+                {{ item.product_detail }}
               </div>
             </div>
           </div>
@@ -404,7 +417,7 @@ const useCase = async (name) => {
           </div>
         </div>
         <div v-if="historyShowList" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -438,14 +451,14 @@ const useCase = async (name) => {
                 >
                 <span class="ml-11px">{{ item.product_name }}</span>
               </div>
-              <div class="ml-18px mt-12px py-5px overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal">
-                {{ item.product_categry }}
+              <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
+                {{ item.product_detail }}
               </div>
             </div>
           </div>
         </div>
         <div v-if="favoriteShowList" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -479,8 +492,8 @@ const useCase = async (name) => {
                 >
                 <span class="ml-11px">{{ item.product_name }}</span>
               </div>
-              <div class="ml-18px mt-12px py-5px overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:whitespace-normal">
-                {{ item.product_categry }}
+              <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
+                {{ item.product_detail }}
               </div>
             </div>
           </div>
