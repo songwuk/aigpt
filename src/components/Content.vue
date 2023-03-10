@@ -120,8 +120,8 @@ const searchAll = async (name, text, itemName) => {
   await getPage()
 }
 
-const startStatus = ref(false)
-const goInto = () => {
+const goInto = (id) => {
+  localStorage.setItem('detail', id)
   window.location.href = '/detail'
 }
 const showdot = ref(null)
@@ -366,7 +366,7 @@ const useCase = async (name) => {
       <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarText }}</span>
         <div v-if="trendingShow" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -401,7 +401,7 @@ const useCase = async (name) => {
                 <span class="ml-11px">{{ item.product_name }}</span>
               </div>
               <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
-                {{ item.product_detail }}
+                {{ item.product_short_desc }}
               </div>
             </div>
           </div>
@@ -417,7 +417,7 @@ const useCase = async (name) => {
           </div>
         </div>
         <div v-if="historyShowList" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -452,13 +452,13 @@ const useCase = async (name) => {
                 <span class="ml-11px">{{ item.product_name }}</span>
               </div>
               <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
-                {{ item.product_detail }}
+                {{ item.product_short_desc }}
               </div>
             </div>
           </div>
         </div>
         <div v-if="favoriteShowList" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -493,7 +493,7 @@ const useCase = async (name) => {
                 <span class="ml-11px">{{ item.product_name }}</span>
               </div>
               <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
-                {{ item.product_detail }}
+                {{ item.product_short_desc }}
               </div>
             </div>
           </div>

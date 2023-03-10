@@ -217,3 +217,14 @@ export function historyOfPage<T>(): Pick<UseFetchReturn<T>, 'data'> {
     }),
   })
 }
+/**
+ * 获取当前产品的详情
+ * @param id
+ * @param user_id
+ * @returns
+ */
+export function productsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/products/query/${id}`, {
+    method: 'GET',
+  })
+}
