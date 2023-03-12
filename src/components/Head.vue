@@ -17,6 +17,7 @@ import Disconnect from './img/disconnect.png'
 import Twitter from './img/twitter.png'
 import Chain from './img/chain.png'
 import Fork from './img/fork.png'
+import GoogleLogin from './login/googleLogin.vue'
 const leftHead = ref([
   {
     name: 'ChatGPT',
@@ -31,6 +32,8 @@ const leftHead = ref([
     url: 'javascript:void()',
   },
 ])
+const googleloginRef = ref('')
+const pathnameRef = ref('')
 const walletStatus = ref(true)
 const personalList = ref([
   {
@@ -66,7 +69,8 @@ const connectList = ref([
 ])
 const wallet = ref(false)
 const getStart = () => {
-  wallet.value = !wallet.value
+  // wallet.value = !wallet.value
+  googleloginRef.value.showLogin()
 }
 const connectWallet = () => {
   walletStatus.value = false
@@ -105,12 +109,16 @@ const tags = ref([
 const submitPath = () => {
   window.location.href = '/submit'
 }
-const pathnameRef = ref('')
+
 onMounted(() => {
   const pathname = window.location.pathname
   if (pathname)
     pathnameRef.value = pathname
 })
+const LoginDisplay = () => {
+  googleloginRef.value.showLogin()
+  console.log(googleloginRef.value)
+}
 </script>
 
 <template>
@@ -222,6 +230,7 @@ onMounted(() => {
         </TransitionRoot>
       </Menu>
     </div>
+    <GoogleLogin ref="googleloginRef" @login-display="LoginDisplay" />
   </div>
 </template>
 

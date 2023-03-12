@@ -7,7 +7,7 @@
     "node": ">=16.2.0"
   },
   "scripts": {
-    "dev": "astro dev --port 4000",
+    "dev": "astro dev --port 4444",
     "start": "astro dev",
     "buildTest": "astro build --mode test",
     "buildPrd": "astro build --mode prd",
@@ -23,7 +23,8 @@
     "lodash-es": "^4.17.21",
     "untyper": "^0.0.4",
     "uuid": "^9.0.0",
-    "vue": "^3.2.37"
+    "vue": "^3.2.37",
+    "vue3-google-login": "^2.0.15"
   },
   "devDependencies": {
     "@astrojs/vue": "^2.0.1",

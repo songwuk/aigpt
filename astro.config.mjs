@@ -5,5 +5,5 @@ import UnoCSS from 'unocss/astro'
 export default defineConfig({
   // Enable Vue to support Vue components.
   experimental: { integrations: true },
-  integrations: [vue(), UnoCSS()],
+  integrations: [vue({ appEntrypoint: '/src/pages/_app/app' }), UnoCSS()],
 })
