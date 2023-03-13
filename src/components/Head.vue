@@ -69,7 +69,6 @@ const connectList = ref([
 ])
 const wallet = ref(false)
 const getStart = () => {
-  // wallet.value = !wallet.value
   googleloginRef.value.showLogin()
 }
 const connectWallet = () => {
@@ -146,9 +145,14 @@ const LoginDisplay = () => {
           892 Credits
         </button>
       </div>
-      <button class="mr-[20px] w-[109px] h-[32px] rounded-[6px]" style="background: linear-gradient(135deg, #5106FE 0%, #2A4DFF 100%);" @click="getStart">
-        Get Started
-      </button>
+      <template v-if="true">
+        <img cursor-pointer class="w-[32px] mr-[10px] mr-[20px] " :src="Walletpng" alt="Walletpng" @click="wallet = !wallet">
+      </template>
+      <template v-else>
+        <button class="mr-[20px] w-[109px] h-[32px] rounded-[6px]" style="background: linear-gradient(135deg, #5106FE 0%, #2A4DFF 100%);" @click="getStart">
+          Get Started
+        </button>
+      </template>
       <button flex items-center justify-center class="hover:c-[#05D4FD]" @mouseover="GlobalHoverf" @mouseout="GlobalUnhoverf">
         <img ref="eng" class="w-[20px] mr-[10px]" :src="Global" alt="language">
         English
