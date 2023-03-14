@@ -32,7 +32,6 @@ const leftHead = ref([
     url: 'javascript:void()',
   },
 ])
-const googleloginRef = ref('')
 const pathnameRef = ref('')
 const walletStatus = ref(true)
 const personalList = ref([
@@ -67,9 +66,10 @@ const connectList = ref([
     type: 'r',
   },
 ])
+const loginVisible = ref(true)
 const wallet = ref(false)
 const getStart = () => {
-  googleloginRef.value.showLogin()
+  loginVisible.value = true
 }
 const connectWallet = () => {
   walletStatus.value = false
@@ -115,8 +115,7 @@ onMounted(() => {
     pathnameRef.value = pathname
 })
 const LoginDisplay = () => {
-  googleloginRef.value.showLogin()
-  console.log(googleloginRef.value)
+  loginVisible.value = true
 }
 </script>
 
@@ -145,7 +144,7 @@ const LoginDisplay = () => {
           892 Credits
         </button>
       </div>
-      <template v-if="true">
+      <template v-if="false">
         <img cursor-pointer class="w-[32px] mr-[10px] mr-[20px] " :src="Walletpng" alt="Walletpng" @click="wallet = !wallet">
       </template>
       <template v-else>
@@ -234,7 +233,7 @@ const LoginDisplay = () => {
         </TransitionRoot>
       </Menu>
     </div>
-    <GoogleLogin ref="googleloginRef" @login-display="LoginDisplay" />
+    <GoogleLogin v-model="loginVisible" :login-display="LoginDisplay" />
   </div>
 </template>
 

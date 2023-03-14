@@ -1,10 +1,25 @@
 <!-- eslint-disable no-console -->
 <script setup>
-import { onMounted, ref } from 'vue'
-import { decodeCredential, googleOneTap } from 'vue3-google-login'
-const emit = defineEmits(['loginDisplay'])
-const loginDisplay = ref(false)
+import { computed, defineEmits, defineProps, onMounted, ref, watch, watchEffect } from 'vue'
+import { decodeCredential } from 'vue3-google-login'
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['loginDisplay', 'update:modelValue'])
 const isLogin = ref(true)
+const loginDisplay = ref(false)
+loginDisplay.value = props.modelValue
+watch(() => props.modelValue, (val) => {
+  console.log(val)
+  loginDisplay.value = val
+  // emit('update:modelValue', val)
+})
+// const loginDisplay = computed({
+//   get() {
+//     return props.modelValue
+//   },
+//   set(value) {
+//     emit('update:modelValue', value)
+//   },
+// })
 const callback = (response) => {
   if (response.credential) {
     const userData = decodeCredential(response.credential)
@@ -46,7 +61,7 @@ const showLogin = () => {
  */
 const hideLogin = () => {
   loginDisplay.value = false
-  // $emit('loginDisplay', { login: true })
+  emit('update:modelValue', loginDisplay.value)
   document.body.style.overflow = 'auto'
 }
 const signIn = () => {
@@ -55,9 +70,9 @@ const signIn = () => {
 const signOut = () => {
   console.log('signOut')
 }
-defineExpose({
-  showLogin,
-})
+const createAccount = () => {
+
+}
 </script>
 
 <template>
@@ -93,8 +108,8 @@ defineExpose({
           </button>
         </form>
         <p w-full text-left mt2>
-          <span cursor-pointer mr-10>No account?</span>
-          <span cursor-pointer class="c-[#79797B]">Create one</span>
+          <span mr-10>No account?</span>
+          <span cursor-pointer class="c-[#79797B]" @click="createAccount">Create one</span>
         </p>
       </div>
     </div>
