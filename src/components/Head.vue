@@ -66,7 +66,7 @@ const connectList = ref([
     type: 'r',
   },
 ])
-const loginVisible = ref(true)
+const loginVisible = ref(false)
 const wallet = ref(false)
 const getStart = () => {
   loginVisible.value = true

@@ -4,6 +4,7 @@
     // Needed for TypeScript intellisense in the template inside Vue files
     "jsx": "preserve",
     "allowJs": true,
-    "module": "ESNext"
+    "module": "ESNext",
+    "types": ["element-plus/global"]
   }
 }

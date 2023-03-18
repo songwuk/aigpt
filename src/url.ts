@@ -228,3 +228,30 @@ export function productsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
     method: 'GET',
   })
 }
+
+/**
+ * 登录
+ * /account/login
+ */
+export function accountLogin(param) {
+  return useFetchOptions('account/login', {
+    method: 'POST',
+    body: JSON.stringify(param),
+  })
+}
+
+/**
+ * /account/register
+ * {
+      nickName: 'Vicar',
+      walletAddress: 'DZR5SGt4ktjKhXyrtf1fkGuBk5VXP2vGBTyAaepwJT1e',
+      email: 'xxx@xx.xx',
+      password: 'hXyrt3fkG.1e',
+    }
+ */
+export function accountRegister(param) {
+  return useFetchOptions('', {
+    method: 'POST',
+    body: JSON.stringify(param),
+  })
+}
