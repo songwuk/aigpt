@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@astrojs/vue': ^2.0.1
   '@babel/core': ^7.0.0-0
+  '@element-plus/icons-vue': ^2.1.0
   '@headlessui/vue': ^1.7.11
   '@iconify-json/carbon': ^1.1.8
   '@jambonn/vue-concise-carousel': ^2.1.29
@@ -16,6 +17,7 @@ specifiers:
   eslint: ^8.24.0
   html-to-image: ^1.11.11
   lodash-es: ^4.17.21
+  pinia: ^2.0.33
   typescript: '>=3.9.0'
   unocss: ^0.49.7
   untyper: ^0.0.4
@@ -25,6 +27,7 @@ specifiers:
   vue3-google-login: ^2.0.15
 
 dependencies:
+  '@element-plus/icons-vue': registry.npmmirror.com/@element-plus/icons-vue/2.1.0_vue@3.2.47
   '@headlessui/vue': registry.npmmirror.com/@headlessui/vue/1.7.11_vue@3.2.47
   '@iconify-json/carbon': registry.npmmirror.com/@iconify-json/carbon/1.1.16
   '@jambonn/vue-concise-carousel': registry.npmmirror.com/@jambonn/vue-concise-carousel/2.1.29_vue@3.2.47
@@ -32,6 +35,7 @@ dependencies:
   element-plus: registry.npmmirror.com/element-plus/2.3.0_vue@3.2.47
   html-to-image: 1.11.11
   lodash-es: registry.npmmirror.com/lodash-es/4.17.21
+  pinia: registry.npmmirror.com/pinia/2.0.33_typescript@4.9.5+vue@3.2.47
   untyper: 0.0.4
   uuid: registry.npmmirror.com/uuid/9.0.0
   vue: registry.npmmirror.com/vue/3.2.47
@@ -1886,6 +1890,12 @@ packages:
     dependencies:
       '@vue/compiler-dom': registry.npmmirror.com/@vue/compiler-dom/3.2.47
       '@vue/shared': registry.npmmirror.com/@vue/shared/3.2.47
+
+  registry.npmmirror.com/@vue/devtools-api/6.5.0:
+    resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.5.0.tgz}
+    name: '@vue/devtools-api'
+    version: 6.5.0
+    dev: false
 
   registry.npmmirror.com/@vue/reactivity-transform/3.2.47:
     resolution: {integrity: sha512-m8lGXw8rdnPVVIdIFhf0LeQ/ixyHkH5plYuS83yop5n7ggVJU+z5v0zecwEnX7fa7HNLBhh2qngJJkxpwEEmYA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/reactivity-transform/-/reactivity-transform-3.2.47.tgz}
@@ -5679,6 +5689,27 @@ packages:
     version: 4.0.1
     engines: {node: '>=6'}
     dev: true
+
+  registry.npmmirror.com/pinia/2.0.33_typescript@4.9.5+vue@3.2.47:
+    resolution: {integrity: sha512-HOj1yVV2itw6rNIrR2f7+MirGNxhORjrULL8GWgRwXsGSvEqIQ+SE0MYt6cwtpegzCda3i+rVTZM+AM7CG+kRg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/pinia/-/pinia-2.0.33.tgz}
+    id: registry.npmmirror.com/pinia/2.0.33
+    name: pinia
+    version: 2.0.33
+    peerDependencies:
+      '@vue/composition-api': ^1.4.0
+      typescript: '>=4.4.4'
+      vue: ^2.6.14 || ^3.2.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@vue/devtools-api': registry.npmmirror.com/@vue/devtools-api/6.5.0
+      typescript: registry.npmmirror.com/typescript/4.9.5
+      vue: registry.npmmirror.com/vue/3.2.47
+      vue-demi: registry.npmmirror.com/vue-demi/0.13.11_vue@3.2.47
+    dev: false
 
   registry.npmmirror.com/pkg-dir/4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/pkg-dir/-/pkg-dir-4.2.0.tgz}

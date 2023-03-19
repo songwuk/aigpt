@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems, TransitionRoot } from '@headlessui/vue'
 import AiGPT from './img/AiGPT.png'
 import Global from './img/global.png'
@@ -18,6 +18,8 @@ import Twitter from './img/twitter.png'
 import Chain from './img/chain.png'
 import Fork from './img/fork.png'
 import GoogleLogin from './login/googleLogin.vue'
+import { useUserStore } from '@/store'
+const userStore = useUserStore()
 const leftHead = ref([
   {
     name: 'ChatGPT',
@@ -32,8 +34,28 @@ const leftHead = ref([
     url: 'javascript:void()',
   },
 ])
+
+const isLogin = ref(false)
+const userInfo = reactive({})
+function checkUserInfo(user) {
+  if (typeof user === 'object' && '_id' in user && user._id) {
+    for (const key in user)
+      userInfo[key] = user[key]
+
+    return isLogin.value = true
+  }
+
+  isLogin.value = false
+}
+checkUserInfo(userStore.getuserstate)
+const signout = () => {
+  userStore.signOut()
+  window.location.reload()
+}
 const pathnameRef = ref('')
 const walletStatus = ref(true)
+const isWaiting = ref(true)
+const isconnect = ref(false)
 const personalList = ref([
   {
     name: 'Change Avatar',
@@ -72,7 +94,8 @@ const getStart = () => {
   loginVisible.value = true
 }
 const connectWallet = () => {
-  walletStatus.value = false
+  isconnect.value = true
+  // walletStatus.value = false
 }
 const disconnectWallet = () => {
   walletStatus.value = true
@@ -114,8 +137,11 @@ onMounted(() => {
   if (pathname)
     pathnameRef.value = pathname
 })
-const LoginDisplay = () => {
-  loginVisible.value = true
+const updateUserInfo = (userinfo) => {
+  checkUserInfo(userinfo)
+}
+const sendMessage = () => {
+  isWaiting.value = false
 }
 </script>
 
@@ -144,8 +170,8 @@ const LoginDisplay = () => {
           892 Credits
         </button>
       </div>
-      <template v-if="false">
-        <img cursor-pointer class="w-[32px] mr-[10px] mr-[20px] " :src="Walletpng" alt="Walletpng" @click="wallet = !wallet">
+      <template v-if="isLogin">
+        <img cursor-pointer class="w-[32px] mr-[10px] mr-[20px] " :src="userInfo.avatar ? userInfo.avatar : Walletpng" alt="Walletpng" @click="wallet = !wallet">
       </template>
       <template v-else>
         <button class="mr-[20px] w-[109px] h-[32px] rounded-[6px]" style="background: linear-gradient(135deg, #5106FE 0%, #2A4DFF 100%);" @click="getStart">
@@ -158,8 +184,8 @@ const LoginDisplay = () => {
       </button>
       <aside v-show="wallet" flex items-center justify-start flex-col absolute class="w-[290px] h-[auto] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]">
         <div flex items-center justify-start w-full>
-          <img class="w-[32px] mr-[10px]" :src="Walletpng" alt="Walletpng">
-          <span style="font-size: 14px;">lili2201@gmail.com</span>
+          <img class="w-[32px] mr-[10px]" :src="userInfo.avatar ? userInfo.avatar : Walletpng" alt="Walletpng">
+          <span style="font-size: 14px;">{{ userInfo.email }}</span>
         </div>
         <button v-if="walletStatus" style="width: 136px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);border-radius: 8px;" class="mt-[10px] mb-[11px]" @click="connectWallet">
           Connect Wallet
@@ -186,7 +212,7 @@ const LoginDisplay = () => {
           <img class="w-[14px] mr-[3px]" :src="Disconnect" alt="Disconnect">
           Disconnect
         </button>
-        <button :class="!walletStatus ? 'mt-[14px]' : 'mt-[29px]'" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;">
+        <button :class="!walletStatus ? 'mt-[14px]' : 'mt-[29px]'" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;" @click="signout">
           <img class="w-[14px] mr-[3px]" :src="SignOut" alt="SignOut">
           Sign Out
         </button>
@@ -196,6 +222,35 @@ const LoginDisplay = () => {
         </p>
       </aside>
     </section>
+    <template v-if="isconnect">
+      <div class="bg-zinc-800 items-center fixed shadow-xl rounded-2xl z-50 px-8 py-8 text-sm drop-shadow-lg border border-zinc-700 fadeInAndScale" tabindex="-1" style="top: 50%; transform: translate(-50%, -50%); left: 50%; max-width: 330px; width: 100%; max-height: 85vh; pointer-events: auto;">
+        <button type="button" class="hover:bg-zinc-700 p-1 rounded absolute right-3 top-3" @click="isconnect = !isconnect; isWaiting = true">
+          <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="text-xl" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+            <line class="c-white" x1="18" y1="6" x2="6" y2="18" />
+            <line class="c-white" x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <div>
+          <div class="font-medium text-center flex flex-col items-center justify-center text-xl mt-5 my-4">
+            Verify your account
+            <div class="text-sm mt-2 font-base font-normal opacity-50">
+              To finish connecting, you must sign a message in your wallet to verify that you are the owner of this account.
+            </div>
+            <button v-if="isWaiting" type="submit" class="mt40px bg-gradient-to-r from-#1C82FE to-#5106FE hover:brightness-110 bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3 text-16px" @click.stop.prevent="sendMessage">
+              Send Message
+            </button>
+            <button v-else type="submit" class="mt40px bg-#79797B hover:brightness-110 bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3 text-16px" @click.stop.prevent="sendMessage">
+              <el-icon class="is-loading mr-5px">
+                <Loading />
+              </el-icon>Waiting for signature…
+            </button>
+            <button type="submit" class="hover:brightness-110 bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3 text-16px" @click.stop.prevent="isconnect = !isconnect; isWaiting = true">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
     <div sm:hidden block absolute right-1 z-111>
       <Menu as="template">
         <div>
@@ -205,6 +260,7 @@ const LoginDisplay = () => {
             <div i-carbon-menu aria-hidden="true" />
           </MenuButton>
         </div>
+
         <TransitionRoot
           enter="transition ease-out duration-100"
           enter-from="transition opacity-0 scale-95"
@@ -233,7 +289,7 @@ const LoginDisplay = () => {
         </TransitionRoot>
       </Menu>
     </div>
-    <GoogleLogin v-model="loginVisible" :login-display="LoginDisplay" />
+    <GoogleLogin v-model="loginVisible" @updateInfo="updateUserInfo" />
   </div>
 </template>
 

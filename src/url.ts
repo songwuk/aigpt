@@ -233,10 +233,13 @@ export function productsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
  * 登录
  * /account/login
  */
-export function accountLogin(param) {
-  return useFetchOptions('account/login', {
+export function accountLogin<T>(...param): Pick<UseFetchReturn<T>, 'data'> {
+  const data = getParams(param)
+  return useFetchOptions(`/account/login?${data}`, {
     method: 'POST',
-    body: JSON.stringify(param),
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
   })
 }
 
@@ -249,9 +252,23 @@ export function accountLogin(param) {
       password: 'hXyrt3fkG.1e',
     }
  */
-export function accountRegister(param) {
-  return useFetchOptions('', {
+export function accountRegister<T>(param): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/account/register', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify(param),
+  })
+}
+
+/**
+ * 根据id查用户信息
+ * @param {string} id
+ * @returns
+ */
+export function accountUserId<T>(id: string): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/account/userId/${id}`, {
+    method: 'GET',
   })
 }

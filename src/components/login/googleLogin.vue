@@ -1,11 +1,17 @@
 <!-- eslint-disable no-console -->
-<script setup>
-import { onMounted, ref, watch } from 'vue'
-import { TransitionRoot } from '@headlessui/vue'
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
 import { decodeCredential } from 'vue3-google-login'
+import { ElMessage } from 'element-plus'
+import { accountLogin, accountRegister, accountUserId } from '../../url'
+import Password from '../img/password.png'
+import Check from '../img/check.png'
+import PasswordOn from '../img/password_on.png'
+import { useUserStore } from '@/store'
 const props = defineProps(['modelValue'])
-const emit = defineEmits(['loginDisplay', 'update:modelValue'])
+const emit = defineEmits(['updateInfo', 'update:modelValue'])
 const isLogin = ref(true)
+const userStore = useUserStore()
 const loginDisplay = ref(false)
 loginDisplay.value = props.modelValue
 watch(() => props.modelValue, (val) => {
@@ -13,23 +19,22 @@ watch(() => props.modelValue, (val) => {
   if (loginDisplay.value)
     document.body.style.overflow = 'hidden'
 })
-const isShowing = ref(true)
-// const loginDisplay = computed({
-//   get() {
-//     return props.modelValue
-//   },
-//   set(value) {
-//     emit('update:modelValue', value)
-//   },
-// })
+const isLoading = ref(false)
+const createOrSign = ref(true)
+
+const sendEmail = ref(false)
+const emailRef = ref('1017301325@qq.com')
+const passwordRef = ref('12345678')
+const passwordShow = ref(true)
+const successfullyLogin = ref(['bg-gradient-to-r from-#1C82FE to-#5106FE'])
 const callback = (response) => {
   if (response.credential) {
     const userData = decodeCredential(response.credential)
-    localStorage.setItem('username', JSON.stringify({
-      name: userData.name,
-      email: userData.email,
-      picture: userData.picture,
-    }))
+    // localStorage.setItem('username', JSON.stringify({
+    //   name: userData.name,
+    //   email: userData.email,
+    //   picture: userData.picture,
+    // }))
   }
   else {
     console.log('Call the endpoint which validates authorization code', response)
@@ -55,21 +60,88 @@ onMounted(() => {
  */
 const hideLogin = () => {
   loginDisplay.value = false
+  createOrSign.value = true
+  sendEmail.value = false
   emit('update:modelValue', loginDisplay.value)
   document.body.style.overflow = 'auto'
 }
-const signIn = () => {
-  console.log('login')
+/**
+ * check
+ */
+const computedAccount = computed(() => {
+  return emailRef.value && passwordRef.value.length > 7
+})
+const signIn = async () => {
+  if (!computedAccount.value)
+    return
+  isLoading.value = true
+  const { data } = await accountLogin<any>({
+    email: emailRef.value,
+    password: passwordRef.value,
+  })
+  const dataSource = data.value
+  isLoading.value = false
+  if (dataSource && dataSource.code === 0) {
+    const dataInfo = {
+      avatar: dataSource.data.avatar,
+      email: dataSource.data.email,
+      family_name: dataSource.data.family_name,
+      given_name: dataSource.data.given_name,
+      nick_name: dataSource.data.nick_name,
+      open_id: dataSource.data.open_id,
+      wallet_address: dataSource.data.wallet_address,
+      _id: dataSource.data._id,
+    }
+    updateUserInfo(dataInfo)
+    console.log('登录成功')
+    hideLogin()
+    emit('updateInfo', dataInfo)
+  }
+  if (dataSource && dataSource.code === -1) {
+    ElMessage({
+      showClose: true,
+      message: dataSource.msg,
+      type: 'error',
+    })
+  }
 }
-const sendEmail = ref(false)
-const createAccount = () => {
-  sendEmail.value = true
-  console.log('createAccount')
+function updateUserInfo(options) {
+  userStore.updateUserInfo(options)
+  console.log('success')
 }
+
+const createAccount = async () => {
+  if (computedAccount.value) {
+    console.log('createAccount')
+    const { data } = await accountRegister<any>({
+      nickName: emailRef.value,
+      walletAddress: '',
+      email: emailRef.value,
+      password: passwordRef.value,
+    })
+    const dataSource = data.value
+    if (dataSource && dataSource.code === 0) {
+      const { data: dataOne } = await accountUserId<any>(dataSource.data._id)
+      const dataInfo = {
+        avatar: dataOne.value.data.avatar,
+        email: dataOne.value.data.email,
+        family_name: dataOne.value.data.family_name,
+        given_name: dataOne.value.data.given_name,
+        nick_name: dataOne.value.data.nick_name,
+        open_id: dataOne.value.data.open_id,
+        wallet_address: dataOne.value.data.wallet_address,
+        _id: dataOne.value.data._id,
+      }
+      updateUserInfo(dataInfo)
+      console.log('登录成功')
+      hideLogin()
+      emit('updateInfo', dataInfo)
+    }
+  }
+}
+
 const back = () => {
   hideLogin()
-  sendEmail.value = false
-  isShowing.value = true
 }
 </script>
 
@@ -98,7 +170,7 @@ const back = () => {
       </template>
       <div v-else class="flex flex-col text-zinc-200 text-center items-center">
         <img class="h-6 mb-8" src="../img/AiGPT_1.png">
-        <template v-if="isShowing">
+        <template v-if="createOrSign">
           <div>
             <GoogleLogin :callback="callback" :auto-login="isLogin">
               <button class="bg-zinc-700 px-4 py-2 rounded-lg  w-64 shadow flex items-center justify-center space-x-2 border border-zinc-500 border-opacity-50 hover:brightness-110">
@@ -113,31 +185,47 @@ const back = () => {
             </div>
           </div>
           <form>
-            <input autocomplete="email" placeholder="Email address" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="email" value="">
-            <input mt3 autocomplete="password" placeholder="Password" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="password" value="">
-            <button type="submit" class="hover:brightness-110 bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3" @click.stop.prevent="signIn">
+            <input v-model="emailRef" autocomplete="email" placeholder="Email address" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="email">
+            <input v-model="passwordRef" :maxlength="8" mt3 autocomplete="password" placeholder="Password" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="password">
+            <button :class="[computedAccount ? [...successfullyLogin] : '']" type="submit" class="hover:brightness-110 bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3" @click.stop.prevent="signIn">
+              <el-icon v-if="isLoading" class="is-loading mr-5px">
+                <Loading />
+              </el-icon>
               Sign In
             </button>
           </form>
           <p w-full text-left mt2>
             <span mr-10>No account?</span>
-            <span cursor-pointer class="c-[#79797B]" @click="isShowing = !isShowing">Create one</span>
+            <span cursor-pointer class="c-[#79797B]" @click="createOrSign = !createOrSign">Create one</span>
           </p>
         </template>
         <template v-else>
           <form>
-            <input autocomplete="email" placeholder="Email address" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="email" value="">
-            <aside>
-              <input mt3 autocomplete="password" placeholder="Password" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="password" value="">
-              <p />
+            <input v-model="emailRef" autocomplete="email" placeholder="Email address" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="email">
+            <aside relative>
+              <input v-model="passwordRef" :maxlength="8" mt3 autocomplete="password" placeholder="Password" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" :type="passwordShow ? 'password' : 'text'">
+              <img absolute class="w-17px top-50% -translate-y-4% right-14px" cursor-pointer :src="passwordShow ? PasswordOn : Password" alt="password" @click="passwordShow = !passwordShow">
+              <div absolute class="checkPassword w-full bg-black pl-11px mt1px" flex items-start justify-center flex-col>
+                <h6 class="mt10px text-12px c-#79797B">
+                  Password must contain:
+                </h6>
+                <p v-if="passwordRef.length < 8" class="mt8px text-12px mb7px c-#79797B" flex items-center justify-start>
+                  <span inline-block class="w-4px h-4px bg-#79797B rounded-50% mr-12px" />
+                  At least 8 characters
+                </p>
+                <p v-else class="mt8px text-12px mb7px c-#05D4FD" flex items-center justify-start>
+                  <img w-11px mr5px :src="Check" alt="check">
+                  At least 8 characters
+                </p>
+              </div>
             </aside>
-            <button type="submit" class="hover:brightness-110 bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3" @click.stop.prevent="createAccount">
+            <button type="submit" :class="[computedAccount ? [...successfullyLogin] : '']" class=" hover:brightness-110  mt75px bg-#3C3C3E! px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3" @click.stop.prevent="createAccount">
               Continue
             </button>
           </form>
           <p w-full text-left mt2>
             <span mr-1>Already have an account? </span>
-            <span cursor-pointer class="c-[#79797B]" @click="isShowing = !isShowing">Sign in</span>
+            <span cursor-pointer class="c-[#79797B]" @click="createOrSign = !createOrSign">Sign in</span>
           </p>
         </template>
       </div>
@@ -145,3 +233,20 @@ const back = () => {
     <div />
   </div>
 </template>
+
+<style>
+.el-button .custom-loading .circular {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  animation: loading-rotate 2s linear infinite;
+}
+.el-button .custom-loading .circular .path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: var(--el-button-text-color);
+  stroke-linecap: round;
+}
+</style>

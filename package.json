@@ -15,6 +15,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "@headlessui/vue": "^1.7.11",
     "@iconify-json/carbon": "^1.1.8",
     "@jambonn/vue-concise-carousel": "^2.1.29",
@@ -22,6 +23,7 @@
     "element-plus": "^2.3.0",
     "html-to-image": "^1.11.11",
     "lodash-es": "^4.17.21",
+    "pinia": "^2.0.33",
     "untyper": "^0.0.4",
     "uuid": "^9.0.0",
     "vue": "^3.2.37",
