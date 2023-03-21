@@ -20,37 +20,20 @@ import Fork from './img/fork.png'
 import GoogleLogin from './login/googleLogin.vue'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
-const leftHead = ref([
-  {
-    name: 'ChatGPT',
-    url: '/chat',
-  },
-  {
-    name: 'GAI MAP',
-    url: 'javascript:void()',
-  },
-  {
-    name: 'Pricing',
-    url: 'javascript:void()',
-  },
-])
-
 const isLogin = ref(false)
 const userInfo = reactive({})
 function checkUserInfo(user) {
   if (typeof user === 'object' && '_id' in user && user._id) {
     for (const key in user)
       userInfo[key] = user[key]
-
     return isLogin.value = true
   }
-
   isLogin.value = false
 }
 checkUserInfo(userStore.getuserstate)
 const signout = () => {
   userStore.signOut()
-  window.location.reload()
+  window.location.href = '/'
 }
 const pathnameRef = ref('')
 const walletStatus = ref(true)
@@ -140,6 +123,12 @@ onMounted(() => {
 const updateUserInfo = (userinfo) => {
   checkUserInfo(userinfo)
 }
+const gptCheckLogin = (item) => {
+  if (item.href === '/chat' && isLogin.value)
+    return window.location.href = '/chat'
+  if (item.href === '/chat' && !isLogin.value)
+    return loginVisible.value = true
+}
 const sendMessage = () => {
   isWaiting.value = false
 }
@@ -155,8 +144,8 @@ const sendMessage = () => {
         </div>
       </a>
       <div class="ml-[67px]" sm:block hidden>
-        <span v-for="(item, idx) in leftHead" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]">
-          <a :href="item.url" :class=" pathnameRef === item.url ? 'c-[#05D4FD]' : ''"> {{ item.name }}</a>
+        <span v-for="(item, idx) in tags" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]" @click="gptCheckLogin(item)">
+          <a href="javascript:void(0)" :class=" pathnameRef === item.href ? 'c-[#05D4FD]' : ''"> {{ item.name }}</a>
         </span>
       </div>
     </section>

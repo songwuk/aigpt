@@ -32,7 +32,7 @@ const useFetchOptions = createFetch({
   // fetchOptions: {
   //   mode: 'cors',
   //   headers: {
-  //     'Content-Type': 'application/json',
+  //     userId: 'xxxx',
   //   },
   // },
 })
@@ -128,9 +128,17 @@ export function getPageOfChat(params) {
  * 获取所有的分组列表
  * @returns
  */
-export function loadChatGroup<T>(): Pick<UseFetchReturn<T>, 'data'> {
+export function loadChatGroup<T>(params): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/openai/loadChatGroup', {
-    method: 'GET',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    body: JSON.stringify({
+      page: 1,
+      size: 1000,
+      ...params,
+    }),
   })
 }
 /**
