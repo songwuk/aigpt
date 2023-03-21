@@ -3,6 +3,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { decodeCredential } from 'vue3-google-login'
 import { ElMessage } from 'element-plus'
+import AiGPT_1 from '../img/AiGPT_1.png'
 import { accountLogin, accountRegister, accountUserId } from '../../url'
 import Password from '../img/password.png'
 import Check from '../img/check.png'
@@ -176,7 +177,7 @@ const back = () => {
         </div>
       </template>
       <div v-else class="flex flex-col text-zinc-200 text-center items-center">
-        <img class="h-6 mb-8" src="../img/AiGPT_1.png">
+        <img class="h-6 mb-8" :src="AiGPT_1">
         <template v-if="createOrSign">
           <div>
             <GoogleLogin :callback="callback" :auto-login="isLogin">
