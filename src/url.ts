@@ -289,3 +289,24 @@ export function accountUserId<T>(id: string): Pick<UseFetchReturn<T>, 'data'> {
     method: 'GET',
   })
 }
+/**
+ * 单删
+ * @param ids
+ * @returns
+ */
+export function removeByGroupId<T>(ids: string): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/openai/removeByGroupId?ids=${ids}`, {
+    method: 'GET',
+  })
+}
+
+/**
+ * 全删
+ * @param user_id
+ * @returns
+ */
+export function removeByUser<T>(user_id: string): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/openai/removeByUser?user_id=${user_id}`, {
+    method: 'GET',
+  })
+}

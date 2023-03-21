@@ -72,6 +72,13 @@ const computedAccount = computed(() => {
   return emailRef.value && passwordRef.value.length > 7
 })
 const signIn = async () => {
+  if (passwordRef.value.length < 8) {
+    return ElMessage({
+      showClose: true,
+      message: 'Password at least 8 characters',
+      type: 'error',
+    })
+  }
   if (!computedAccount.value)
     return
   isLoading.value = true

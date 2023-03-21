@@ -3,7 +3,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { debounce } from 'lodash-es'
-import { createGroup, getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
+import { createGroup, getPageOfChat, loadChatGroup, openaiComletions, pushShare, removeByGroupId, removeByUser } from '../url'
 import { setcursoranimation } from '../animate'
 import type { ReturnData } from '../types'
 import { getAskContent, removeAskContent } from './localAsk'
@@ -14,6 +14,10 @@ import ShareConversation from './img/ShareConversation.png'
 import NewChat from './img/newchat.png'
 import Upgrade from './img/upgrade.png'
 import Discord from './img/discord_3.png'
+import Add from './img/add.png'
+import feiji from './img/feiji.png'
+import faq from './img/faq.png'
+import SignOut from './img/signout.png'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
 const cursorPoniter = ref('_')
@@ -57,6 +61,7 @@ const setTheme = async (themeStatus?: string) => {
   }
   theme.value = themeStatus || await themsStatus()
 }
+const group_id = ref('') // 组id
 const chatValue = ref('')
 const stopClick = ref(false)
 const errorValue = ref(false)
@@ -87,6 +92,14 @@ const loadingGroup = async () => {
   }
 }
 
+const createGroupId = async () => {
+  const { data: dataGroup } = await createGroup({
+    group_name: chatValue.value,
+    user_id: userStore.getuserstate._id,
+  })
+  const dataCreateValue = dataGroup.value as any
+  group_id.value = dataCreateValue.data?._id
+}
 const cursorAnimationDom = ref<null | Animation>(null)
 const openaiChat = async () => {
   if (stopClick.value || !chatValue.value)
@@ -97,13 +110,11 @@ const openaiChat = async () => {
     prompt: chatValue.value,
     answer: cursorPoniter.value,
   })
-  const { data: dataGroup } = await createGroup({
-    group_name: chatValue.value,
-    user_id: userStore.getuserstate._id,
-  })
-  const dataCreateValue = dataGroup.value as any
+  if (list.value.length === 1)
+    await createGroupId()
+
   const chatObj = {
-    group_id: dataCreateValue.data?._id,
+    group_id: group_id.value,
     prompt: chatValue.value,
     user_id: userStore.getuserstate._id,
   }
@@ -266,6 +277,7 @@ const pageChat = async (chatGroup, index) => {
   const dataSource = data.value as any
   if (dataSource && dataSource.code === 0) {
     console.log(dataSource)
+    group_id.value = chatGroup
     leftBarStatus.value = index
     list.value = dataSource.data.openaiList ?? []
     showAnswer.value = false
@@ -293,6 +305,26 @@ onMounted(async () => {
     await openaiChat()
   }
 })
+const removeById = async (id, idx) => {
+  const { data } = await removeByGroupId(id)
+  const dataSource = data.value as any
+  if (dataSource && dataSource.code === 0) {
+    historyData.value.splice(idx, 1)
+    list.value.splice(0, list.value.length)
+    showAnswer.value = true
+    leftBarStatus.value = null
+  }
+}
+const removeByUserFn = async () => {
+  const { data } = await removeByUser(userStore.getuserstate._id)
+  const dataSource = data.value as any
+  if (dataSource && dataSource.code === 0) {
+    historyData.value.splice(0, historyData.value.length)
+    list.value.splice(0, list.value.length)
+    showAnswer.value = true
+    leftBarStatus.value = null
+  }
+}
 </script>
 
 <template>
@@ -461,10 +493,7 @@ onMounted(async () => {
               <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 text-black dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
                 <textarea v-model="chatValue" style="max-height: 200px; height: 24px; overflow-y: hidden;" class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0" @keydown="submitChat" />
                 <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 sm:hover:bg-gray-100 dark:hover:text-gray-400 sm:dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent" @click.stop.prevent="openaiChat">
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="22" y1="2" x2="11" y2="13" />
-                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                  </svg>
+                  <img :src="feiji" class="h-4 w-4 mr-1">
                 </button>
               </div>
             </div>
@@ -483,10 +512,7 @@ onMounted(async () => {
         <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
           <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
             <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20" @click.stop="newchat">
-              <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>New chat
+              <img class="w-16px" :src="Add"> New chat
             </a>
             <div class="flex-col flex-1 overflow-y-auto border-b border-white/20 -mr-2">
               <div class="flex flex-col gap-2 text-gray-100 text-sm">
@@ -495,19 +521,14 @@ onMounted(async () => {
                   <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
                     {{ item.group_name }}
                     <div v-if="leftBarStatus === index" class="absolute inset-y-0 right-0 z-10 ">
-                      <div i-carbon-trash-can />
+                      <div i-carbon-trash-can @click="removeById(item._id, index)" />
                     </div>
                   </div>
                 </a>
               </div>
             </div>
-            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-              <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                <line x1="10" y1="11" x2="10" y2="17" />
-                <line x1="14" y1="11" x2="14" y2="17" />
-              </svg>Clear conversations</a>
+            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" @click="removeByUserFn">
+              <div i-carbon-trash-can />Clear conversations</a>
             <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
               <img class="w-18px" :src="Upgrade" alt="Upgrade">
               Upgrade plan</a>
@@ -519,17 +540,9 @@ onMounted(async () => {
               <img class="w-18px" :src="Discord" alt="Discord">
               AIGPT Discord</a>
             <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-              <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>Updates &amp; FAQ</a>
+              <img class="w-18px" :src="faq" alt="faq">Updates &amp; FAQ</a>
             <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-              <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>Log out</a>
+              <img class="w-16px" :src="SignOut" alt="faq">Log out</a>
           </nav>
         </div>
       </div>
@@ -548,7 +561,7 @@ onMounted(async () => {
                   </button>
                 </div><div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
                   <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
-                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>New chat</a>
+                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"> <img class="w-16px" :src="Add"> New chat</a>
                     <div class="flex-col flex-1 overflow-y-auto border-b border-white/20">
                       <div class="flex flex-col gap-2 text-gray-100 text-sm">
                         <a v-for="(item, index) in historyData" :key="index" class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-black-800 hover:bg-gray-800 group" @click="pageChat(item._id, index)">
@@ -557,13 +570,8 @@ onMounted(async () => {
                         </a>
                       </div>
                     </div>
-                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-                      <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>Clear conversations</a>
+                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" @click="removeByUserFn">
+                      <div i-carbon-trash-can />Clear conversations</a>
                     <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
                       <img class="w-18px" :src="Upgrade" alt="Upgrade">
                       Upgrade plan</a>
@@ -575,17 +583,9 @@ onMounted(async () => {
                       <img class="w-18px" :src="Discord" alt="Discord">
                       AIGPT Discord</a>
                     <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-                      <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                        <polyline points="15 3 21 3 21 9" />
-                        <line x1="10" y1="14" x2="21" y2="3" />
-                      </svg>Updates &amp; FAQ</a>
+                      <img class="w-18px" :src="faq" alt="faq">Updates &amp; FAQ</a>
                     <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
-                      <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" y1="12" x2="9" y2="12" />
-                      </svg>Log out</a>
+                      <img class="w-16px" :src="SignOut" alt="faq">Log out</a>
                   </nav>
                 </div>
               </div><div class="w-14 flex-shrink-0" />
