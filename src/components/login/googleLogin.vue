@@ -23,8 +23,8 @@ const isLoading = ref(false)
 const createOrSign = ref(true)
 
 const sendEmail = ref(false)
-const emailRef = ref('1017301325@qq.com')
-const passwordRef = ref('12345678')
+const emailRef = ref('')
+const passwordRef = ref('')
 const passwordShow = ref(true)
 const successfullyLogin = ref(['bg-gradient-to-r from-#1C82FE to-#5106FE'])
 const callback = (response) => {
