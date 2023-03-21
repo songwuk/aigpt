@@ -142,6 +142,15 @@ export function loadChatGroup<T>(params): Pick<UseFetchReturn<T>, 'data'> {
   })
 }
 /**
+ * 创建分组
+ */
+export function createGroup<T>(...params): Pick<UseFetchReturn<T>, 'data'> {
+  const data = getParams(params)
+  return useFetchOptions(`/openai/createGroup?${data}`, {
+    method: 'GET',
+  })
+}
+/**
  * 聊天
  * @param params
  * @returns

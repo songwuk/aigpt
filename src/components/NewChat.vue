@@ -3,7 +3,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import * as htmlToImage from 'html-to-image'
 import { debounce } from 'lodash-es'
-import { getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
+import { createGroup, getPageOfChat, loadChatGroup, openaiComletions, pushShare } from '../url'
 import { setcursoranimation } from '../animate'
 import type { ReturnData } from '../types'
 import { getAskContent, removeAskContent } from './localAsk'
@@ -14,6 +14,8 @@ import ShareConversation from './img/ShareConversation.png'
 import NewChat from './img/newchat.png'
 import Upgrade from './img/upgrade.png'
 import Discord from './img/discord_3.png'
+import { useUserStore } from '@/store'
+const userStore = useUserStore()
 const cursorPoniter = ref('_')
 const cursor = ref<HTMLElement | null>(null)
 const refPng = ref<HTMLElement | null>(null)
@@ -73,40 +75,38 @@ const openAiFetchController = reactive({
   canAbort: computed(() => ref(false)),
 })
 const loadingGroup = async () => {
-  const { data } = await loadChatGroup<any>()
+  const { data } = await loadChatGroup<any>({
+    condition: userStore.getuserstate._id,
+  })
   const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
-    historyData.value = []
-    chatDataSource.data.map(item => item.chatGroup).forEach((item) => {
-      historyData.value.unshift(item)
-    })
+    if (Object.prototype.toString.call(chatDataSource.data.list) === '[object Array]')
+      historyData.value = chatDataSource.data.list
+    else
+      historyData.value = []
   }
 }
 
-const updateCount = ref(0)
-const maxUpdateCount = ref(1)
-const chatGroup = ref(0) // 每次会话唯一
-watch(chatValue, debounce((newVal, oldVal) => {
-  console.log(chatGroup, 'chatValue', newVal, oldVal)
-  if (updateCount.value < maxUpdateCount.value) {
-    updateCount.value++
-    chatGroup.value = Date.now()
-  }
-}, 1000))
 const cursorAnimationDom = ref<null | Animation>(null)
 const openaiChat = async () => {
   if (stopClick.value || !chatValue.value)
     return false
-  const chatObj = {
-    chatGroup: chatGroup.value,
-    prompt: chatValue.value,
-  }
   stopClick.value = true
   showAnswer.value = false
   list.value.push({
     prompt: chatValue.value,
     answer: cursorPoniter.value,
   })
+  const { data: dataGroup } = await createGroup({
+    group_name: chatValue.value,
+    user_id: userStore.getuserstate._id,
+  })
+  const dataCreateValue = dataGroup.value as any
+  const chatObj = {
+    group_id: dataCreateValue.data?._id,
+    prompt: chatValue.value,
+    user_id: userStore.getuserstate._id,
+  }
   chatValue.value = ''
   await nextTick()
   scrollToBottom()
@@ -278,7 +278,6 @@ const pageChat = async (chatGroup, index) => {
 const newchat = () => {
   list.value = []
   showAnswer.value = true
-  updateCount.value = 0
   scrollToBottom()
   window.location.href = `/chat?chatid=${Date.now()}`
 }
@@ -290,7 +289,6 @@ onMounted(async () => {
   loadingGroup()
   if (getAskContent()) {
     chatValue.value = getAskContent()
-    chatGroup.value = Date.now()
     removeAskContent()
     await openaiChat()
   }
@@ -492,10 +490,10 @@ onMounted(async () => {
             </a>
             <div class="flex-col flex-1 overflow-y-auto border-b border-white/20 -mr-2">
               <div class="flex flex-col gap-2 text-gray-100 text-sm">
-                <a v-for="(item, index) in historyData" :key="index" :class="[leftBarStatus === index ? 'bg-gray-700' : '']" class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-gray-700 cursor-pointer break-all" @click="pageChat(item, index);">
+                <a v-for="(item, index) in historyData" :key="index" :class="[leftBarStatus === index ? 'bg-gray-700' : '']" class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-gray-700 cursor-pointer break-all" @click="pageChat(item._id, index);">
                   <img class="w-17px" :src="NewChat" alt="NewChat">
                   <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-                    {{ item }}
+                    {{ item.group_name }}
                     <div v-if="leftBarStatus === index" class="absolute inset-y-0 right-0 z-10 ">
                       <div i-carbon-trash-can />
                     </div>
@@ -553,9 +551,9 @@ onMounted(async () => {
                     <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>New chat</a>
                     <div class="flex-col flex-1 overflow-y-auto border-b border-white/20">
                       <div class="flex flex-col gap-2 text-gray-100 text-sm">
-                        <a v-for="(item, index) in historyData" :key="index" class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-black-800 hover:bg-gray-800 group" @click="pageChat(item, index)">
+                        <a v-for="(item, index) in historyData" :key="index" class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-black-800 hover:bg-gray-800 group" @click="pageChat(item._id, index)">
                           <img class="w-17px" :src="NewChat" alt="NewChat">
-                          <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">{{ item }}</div>
+                          <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">{{ item.group_name }}</div>
                         </a>
                       </div>
                     </div>

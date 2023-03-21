@@ -119,7 +119,8 @@ onMounted(async () => {
     listData.product_short_desc = dataSource.data.product_short_desc
     listData.social_media = dataSource.data.social_media
     listData.product_model = dataSource.data.product_model
-    forList.value.push(dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
+    forList.value.push(...dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
+    forList.value = forList.value.filter(value => (value !== '' && value !== undefined && value !== null))
   }
 })
 </script>
@@ -154,22 +155,22 @@ onMounted(async () => {
         <span class="text-26px">{{ listData.product_name }}</span>
         <aside flex items-center justify-center class="shareImg">
           <i>
-            <a :href="listData.social_media.facebook ? listData.social_media.facebook : 'javascript:void(0) '">
+            <a :href="listData.social_media?.facebook ? listData.social_media.facebook : 'javascript:void(0) '">
               <img class="w-13px" :src="Facebook" alt="Facebook">
             </a>
           </i>
           <i>
-            <a :href="listData.social_media.instagram ? listData.social_media.instagram : 'javascript:void(0) '">
+            <a :href="listData.social_media?.instagram ? listData.social_media.instagram : 'javascript:void(0) '">
               <img class="w-22px" :src="Instagram" alt="Instagram">
             </a>
           </i>
           <i>
-            <a :href="listData.social_media.discord ? listData.social_media.discord : 'javascript:void(0) '">
+            <a :href="listData.social_media?.discord ? listData.social_media.discord : 'javascript:void(0) '">
               <img class="w-24px" :src="Discord" alt="Discord">
             </a>
           </i>
           <i>
-            <a :href="listData.social_media.twitter ? listData.social_media.twitter : 'javascript:void(0) '">
+            <a :href="listData.social_media?.twitter ? listData.social_media.twitter : 'javascript:void(0) '">
               <img class="w-22px" :src="Twitter" alt="Twitter">
             </a>
           </i>

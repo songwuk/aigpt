@@ -4,8 +4,9 @@ export interface LoadingGroup {
   count: number
 }
 export interface OpenaiComletions {
-  chatGroup: number
+  group_id: string
   prompt: string
+  user_id: string
 }
 export interface OpenAiFetchController {
   abort: () => void
