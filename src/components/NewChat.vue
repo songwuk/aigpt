@@ -14,10 +14,10 @@ import ShareConversation from './img/ShareConversation.png'
 import NewChat from './img/newchat.png'
 import Upgrade from './img/upgrade.png'
 import Discord from './img/discord_3.png'
-import Add from './img/add.png'
-import feiji from './img/feiji.png'
-import faq from './img/faq.png'
-import SignOut from './img/signout.png'
+import Add from '@/components/img/add.png'
+import feiji from '@/components/img/feiji.png'
+import faq from '@/components/img/faq.png'
+import SignOut from '@/components/img/signout.png'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
 const cursorPoniter = ref('_')
@@ -53,8 +53,7 @@ const setTheme = async (themeStatus?: string) => {
 
     if (typeof localStorage !== 'undefined' && localStorage.getItem('theme'))
       return localStorage.getItem('theme')
-
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches)
       return 'dark'
 
     return 'light'
@@ -291,7 +290,8 @@ const newchat = () => {
   list.value = []
   showAnswer.value = true
   scrollToBottom()
-  window.location.href = `/chat?chatid=${Date.now()}`
+  if (typeof window !== 'undefined')
+    window.location.href = `/chat?chatid=${Date.now()}`
 }
 
 onMounted(async () => {
@@ -355,7 +355,7 @@ const removeByUserFn = async () => {
             <div ref="scrollToMe" class="vue-scroll-to-bottom--css">
               <div v-if="showAnswer" class="flex flex-col items-center text-sm dark:bg-gray-800">
                 <div class="text-gray-800 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100">
-                  <h1 class="text-4xl font-semibold text-center mt-8 sm:mt-[9vh] ml-auto mr-auto mb-10 sm:mb-14 flex gap-2 items-center justify-center">
+                  <h1 style="margin-top: 4rem!important" class="text-4xl font-semibold text-center mt-8 sm:mt-[12] ml-auto mr-auto mb-10 sm:mb-14 flex gap-2 items-center justify-center">
                     ChatGPT
                   </h1>
                   <div class="md:flex items-start text-center gap-3.5">
@@ -493,7 +493,7 @@ const removeByUserFn = async () => {
               <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 text-black dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
                 <textarea v-model="chatValue" style="max-height: 200px; height: 24px; overflow-y: hidden;" class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0" @keydown="submitChat" />
                 <button class="absolute p-1 rounded-md text-gray-500 bottom-1.5 right-1 md:bottom-2.5 md:right-2 sm:hover:bg-gray-100 dark:hover:text-gray-400 sm:dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent" @click.stop.prevent="openaiChat">
-                  <img :src="feiji" class="h-4 w-4 mr-1">
+                  <img :src="feiji" class="h-4 w-4 mr-1" alt="">
                 </button>
               </div>
             </div>
@@ -512,7 +512,7 @@ const removeByUserFn = async () => {
         <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
           <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
             <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20" @click.stop="newchat">
-              <img class="w-16px" :src="Add"> New chat
+              <img class="w-16px" :src="Add" alt=""> New chat
             </a>
             <div class="flex-col flex-1 overflow-y-auto border-b border-white/20 -mr-2">
               <div class="flex flex-col gap-2 text-gray-100 text-sm">
@@ -561,7 +561,7 @@ const removeByUserFn = async () => {
                   </button>
                 </div><div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
                   <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
-                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"> <img class="w-16px" :src="Add"> New chat</a>
+                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"> <img class="w-16px" :src="Add" alt=""> New chat</a>
                     <div class="flex-col flex-1 overflow-y-auto border-b border-white/20">
                       <div class="flex flex-col gap-2 text-gray-100 text-sm">
                         <a v-for="(item, index) in historyData" :key="index" class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-black-800 hover:bg-gray-800 group" @click="pageChat(item._id, index)">
@@ -597,7 +597,7 @@ const removeByUserFn = async () => {
   </div>
 </template>
 
-<style src="./NewChat.css"></style>
+<style src="./NewChat.css" scoped></style>
 
 <style scoped>
 .vue-scroll-to-bottom--css {
