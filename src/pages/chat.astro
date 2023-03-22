@@ -2,7 +2,6 @@
 // Component Imports
 import NewChat from '../components/NewChat.vue';
 import Head from '../components/Head.vue';
-
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
 ---
@@ -14,6 +13,7 @@ import Head from '../components/Head.vue';
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="stylesheet" href="/NewChat.css" />
 		<style>
 			html,
 			body {
@@ -26,7 +26,7 @@ import Head from '../components/Head.vue';
 	<body>
 		<main style="height: 100%">
 			<Head client:only="vue" ></Head>
-			<NewChat client:only="vue"></NewChat>
+			<NewChat client:visible></NewChat>
 		</main>
 	</body>
 </html>
