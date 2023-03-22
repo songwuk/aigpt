@@ -355,7 +355,7 @@ const removeByUserFn = async () => {
             <div ref="scrollToMe" class="vue-scroll-to-bottom--css">
               <div v-if="showAnswer" class="flex flex-col items-center text-sm dark:bg-gray-800">
                 <div class="text-gray-800 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100">
-                  <h1 class="text-4xl font-semibold text-center mt-8 sm:mt-[9vh] ml-auto mr-auto mb-10 sm:mb-14 flex gap-2 items-center justify-center">
+                  <h1 style="margin-top: 4rem!important" class="text-4xl font-semibold text-center mt-8 sm:mt-[12] ml-auto mr-auto mb-10 sm:mb-14 flex gap-2 items-center justify-center">
                     ChatGPT
                   </h1>
                   <div class="md:flex items-start text-center gap-3.5">
