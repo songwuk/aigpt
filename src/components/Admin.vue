@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+// import { ElPagination } from 'element-plus'
 import AiGPT from './img/AiGPT_1.png'
 const searchValue = ref('')
 const isProducts = ref(true)
