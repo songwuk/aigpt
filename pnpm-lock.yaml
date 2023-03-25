@@ -14,7 +14,7 @@ specifiers:
   '@vueuse/core': ^9.13.0
   astro: ^2.0.14
   dayjs: ^1.11.7
-  element-plus: ^2.3.0
+  element-plus: ^2.3.1
   eslint: ^8.24.0
   html-to-image: ^1.11.11
   lodash-es: ^4.17.21
@@ -34,7 +34,7 @@ dependencies:
   '@jambonn/vue-concise-carousel': registry.npmmirror.com/@jambonn/vue-concise-carousel/2.1.29_vue@3.2.47
   '@vueuse/core': 9.13.0_vue@3.2.47
   dayjs: registry.npmmirror.com/dayjs/1.11.7
-  element-plus: registry.npmmirror.com/element-plus/2.3.0_vue@3.2.47
+  element-plus: registry.npmmirror.com/element-plus/2.3.1_vue@3.2.47
   html-to-image: 1.11.11
   lodash-es: registry.npmmirror.com/lodash-es/4.17.21
   pinia: registry.npmmirror.com/pinia/2.0.33_typescript@4.9.5+vue@3.2.47
@@ -2822,11 +2822,11 @@ packages:
     version: 1.4.302
     dev: true
 
-  registry.npmmirror.com/element-plus/2.3.0_vue@3.2.47:
-    resolution: {integrity: sha512-3s3JO4+LHLi61tFwF2emIHx6nxwKKdj5YWcj3GUBoXKhbuRjhq6xqaxWpBlPk7jySr/8Eci5++T2THbvrpGn7A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/element-plus/-/element-plus-2.3.0.tgz}
-    id: registry.npmmirror.com/element-plus/2.3.0
+  registry.npmmirror.com/element-plus/2.3.1_vue@3.2.47:
+    resolution: {integrity: sha512-IBS7ic1mRyDXpOreRkredV4ByZSuax5HPb0zNOHm4qwKC4wm927yQv+Is0JbzxPzCW5zWaV4PLy9/Gl3E3v59w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/element-plus/-/element-plus-2.3.1.tgz}
+    id: registry.npmmirror.com/element-plus/2.3.1
     name: element-plus
-    version: 2.3.0
+    version: 2.3.1
     peerDependencies:
       vue: ^3.2.0
     dependencies:

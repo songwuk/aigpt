@@ -23,10 +23,10 @@ import Footer from '../components/Footer.vue';
 			}
 		</style>
 	</head>
-	<body>
+	<body class='submitIndex'>
 		<main style="height: 100%">
 			<Head client:only="vue"  ></Head>
-			<Submit client:visible ></Submit>
+			<Submit client:only="vue" ></Submit>
 			<Footer client:visible></Footer>
 		</main>
 	</body>

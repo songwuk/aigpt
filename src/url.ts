@@ -396,3 +396,12 @@ export function panelProductsSave(params: any, files: any) {
     // },
   })
 }
+/**
+ * 获取分类
+ * @returns
+ */
+export function getCateAll() {
+  return useFetchOptions('/cate/all', {
+    method: 'GET',
+  })
+}

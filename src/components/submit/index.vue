@@ -4,7 +4,7 @@ import {
   RadioGroup,
   RadioGroupOption,
 } from '@headlessui/vue'
-import { panelProductsAudite, panelProductsQuery, panelProductsSave, productsImage, productsSave } from '../../url'
+import { getCateAll, panelProductsAudite, panelProductsQuery, panelProductsSave, productsImage, productsSave } from '../../url'
 import Loading from '../loading/index.vue'
 import Upload from '../img/upload_img.png'
 import Del from '../img/del.png'
@@ -25,8 +25,23 @@ const given_name = ref('')
 const family_name = ref('')
 const product_name = ref('')
 const product_url = ref('')
-const product_categry = ref('')
-const product_model = ref('')
+const product_categry = ref([])
+const product_model = ref([])
+const product_categry_options = ref([])
+const product_model_options = ref([
+  {
+    value: 'ChatGPT',
+    label: 'ChatGPT',
+  },
+  {
+    value: 'OpenAI CLIP',
+    label: 'OpenAI CLIP',
+  },
+  {
+    value: 'DALL·E',
+    label: 'DALL·E',
+  },
+])
 const product_applications = ref('')
 const product_generative_ai = ref('')
 const product_short_desc = ref('')
@@ -84,6 +99,7 @@ const handleFiles = async () => {
   reader.readAsDataURL(fileElem.value.files[0])
 }
 const submitProject = async () => {
+  console.log(product_categry.value, product_model.value)
   if (!Policies.value || !Privacy.value) {
     alert('must agree')
     return false
@@ -198,6 +214,17 @@ const product_generative_aiArr = ref([
 ])
 onMounted(async () => {
   submitId.value = localStorage.getItem('submit')
+  const { data: dataCate } = await getCateAll()
+  const dataSources = dataCate.value
+  if (dataSources && dataSources.code === 0) {
+    product_categry_options.value = dataSources.data.map((item) => {
+      return {
+        value: item,
+        label: item,
+      }
+    })
+  }
+
   if (submitId.value) {
     Policies.value = 'Policies'
     Privacy.value = 'Privacy'
@@ -415,24 +442,43 @@ onMounted(async () => {
           <h4 class="mb-18px">
             * Category
           </h4>
-          <div mb-34px>
-            <input
+          <div mb-34px class="select_bg">
+            <el-select
               v-model="product_categry"
-              class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797" style="border: 1px solid #979797;"
-              placeholder="Select one of our categories that best fit your product"
+              multiple
+              collapse-tags
+              collapse-tags-tooltip
+              :max-collapse-tags="3"
+              placeholder="Select one of models that best fit your product"
+              style=" width:501px; height:34px; border: 1px solid #979797;width: 240px"
             >
+              <el-option
+                v-for="item in product_categry_options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </div>
         </div>
         <div>
           <h4 class="mb-18px">
             Model
           </h4>
-          <div mb-34px>
-            <input
+          <div mb-34px class="select_bg">
+            <el-select
               v-model="product_model"
-              class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797" style="border: 1px solid #979797;"
+              multiple
               placeholder="Select one of models that best fit your product"
+              style=" width:501px; height:34px; border: 1px solid #979797;width: 240px"
             >
+              <el-option
+                v-for="item in product_model_options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </div>
         </div>
         <div>
@@ -620,3 +666,13 @@ border-radius: 8px;"
     <Loading />
   </div>
 </template>
+
+<style scoped>
+.select_bg :deep(.el-select) {
+  width:501px !important;
+  height:34px!important;
+}
+.select_bg :deep(.el-select .select-trigger .el-input__wrapper) {
+  background: #2A2A33
+}
+</style>
