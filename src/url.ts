@@ -155,10 +155,13 @@ export function createGroup<T>(...params): Pick<UseFetchReturn<T>, 'data'> {
  * @param params
  * @returns
  */
-export function openaiComletions<T>(...params: OpenaiComletions[]): Pick<UseFetchReturn<T>, 'data' | 'abort' | 'canAbort'> {
-  const data = getParams(params)
-  return useFetchOptions(`/openai/completions?${data}`, {
-    method: 'GET',
+export function openaiComletions<T>(params: OpenaiComletions): Pick<UseFetchReturn<T>, 'data' | 'abort' | 'canAbort'> {
+  return useFetchOptions('/openai/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    body: JSON.stringify(params),
   })
 }
 // "page": 1,
