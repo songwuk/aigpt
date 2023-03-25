@@ -37,7 +37,7 @@ const userList = async () => {
       return {
         id: dataSource.data.memberList.length - index,
         ...item,
-        createTime: dayjs(item.createTime).format('DD/MM/YYYY'),
+        modifyTime: dayjs(item.modifyTime).format('DD/MM/YYYY'),
       }
     })
   }
@@ -62,6 +62,7 @@ const productsPage = async () => {
         views: strviews,
         likesS: item.likes,
         viewsS: item.views,
+        modifyTime: dayjs(item.modifyTime).format('DD/MM/YYYY'),
         isInputViews: false,
         isInputLikes: false,
       }
@@ -184,7 +185,7 @@ const clickLikes = (index: number, likes) => {
             <span flex items-center justify-center text-center inline-block class="lineText w-140px min-h-80px ">{{ item.product_name }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-144px min-h-80px  ">{{ item.email }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px  ">{{ item.product_url }}</span>
-            <span flex items-center justify-center text-center inline-block class="lineText w-146px min-h-80px ">{{ item.date }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-146px min-h-80px ">{{ item.modifyTime }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-140px min-h-80px ">
               <input ref="inputViewsRef" v-model="item.views" text-right style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.views, 'views')">
               <img
@@ -196,7 +197,7 @@ const clickLikes = (index: number, likes) => {
               <img cursor-pointer :src="Write" class="w-20px ml-13px" @click="clickLikes(index, item.likesS)">
             </span>
             <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px " :class="[item.status === 0 ? bc1 : item.status === 1 ? bc2 : bc3]">{{
-              item.status === 1 ? 'Pending' : item.status === 1 ? 'Onboarded' : 'Banned'
+              item.status === 0 ? 'Pending' : item.status === 1 ? 'Onboarded' : 'Banned'
             }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-155px  min-h-80px ">
               <span
@@ -242,7 +243,7 @@ const clickLikes = (index: number, likes) => {
             <span flex items-center justify-center text-center inline-block class="lineText w-155px min-h-80px ">{{ item.email }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-290px min-h-80px">{{ item.wallet_address }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px">{{
-              item.createTime
+              item.modifyTime
             }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px">{{ item.credits }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-290px min-h-80px">{{ item.upgradeplan }}</span>
