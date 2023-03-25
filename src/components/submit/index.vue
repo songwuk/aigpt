@@ -237,8 +237,8 @@ onMounted(async () => {
       family_name.value = dataSource.data.family_name
       product_name.value = dataSource.data.product_name
       product_url.value = dataSource.data.product_url
-      product_categry.value = dataSource.data.product_categry
-      product_model.value = dataSource.data.product_model
+      product_categry.value = typeof dataSource.data.product_categry === 'string' ? dataSource.data.product_categry.split(',') : dataSource.data.product_categry
+      product_model.value = typeof dataSource.data.product_model === 'string' ? dataSource.data.product_model.split(',') : dataSource.data.product_model
       product_applications.value = dataSource.data.product_applications
       product_generative_ai.value = dataSource.data.product_generative_ai
       product_short_desc.value = dataSource.data.product_short_desc

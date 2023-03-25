@@ -318,6 +318,9 @@ export function removeByUser<T>(user_id: string): Pick<UseFetchReturn<T>, 'data'
 export function panelProductsPage<T>(param: ProductsPageCondition): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/panel/products/page', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify(param),
   })
 }
@@ -328,6 +331,9 @@ export function panelProductsPage<T>(param: ProductsPageCondition): Pick<UseFetc
 export function panelUsersPage<T>(param: ProductsPageCondition): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/panel/users/page', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify(param),
   })
 }

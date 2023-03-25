@@ -19,6 +19,8 @@ const pageInfo = reactive({
   page: 1,
   size: 10,
 })
+const inputViewsRef = ref([])
+const inputLikesRef = ref([])
 const pageInfoUser = reactive({
   page: 1,
   size: 10,
@@ -58,6 +60,8 @@ const productsPage = async () => {
         _id: dataSource.data.productList.length - index,
         likes: strlikes,
         views: strviews,
+        likesS: item.likes,
+        viewsS: item.views,
         isInputViews: false,
         isInputLikes: false,
       }
@@ -124,6 +128,17 @@ watch(() => isProducts.value, async (newVal) => {
   else
     await userList()
 })
+const clickViews = (index: number, views) => {
+  listProducts.value[index].isInputViews = true
+  inputViewsRef.value[index].focus()
+  listProducts.value[index].views = views
+}
+
+const clickLikes = (index: number, likes) => {
+  listProducts.value[index].isInputLikes = true
+  inputLikesRef.value[index].focus()
+  listProducts.value[index].likes = likes
+}
 </script>
 
 <template>
@@ -171,14 +186,18 @@ watch(() => isProducts.value, async (newVal) => {
             <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px  ">{{ item.product_url }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-146px min-h-80px ">{{ item.date }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-140px min-h-80px ">
-              <input v-model="item.views" text-right :disabled="!item.isInputViews" style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.views, 'views')">
-              <img cursor-pointer :src="Write" class="w-20px ml-13px" @click="item.isInputViews = true">
+              <input ref="inputViewsRef" v-model="item.views" text-right style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.views, 'views')">
+              <img
+                cursor-pointer :src="Write" class="w-20px ml-13px" @click="clickViews(index, item.viewsS)"
+              >
             </span>
             <span flex items-center justify-center text-center inline-block class="lineText w-145px min-h-80px  ">
-              <input v-model="item.likes" text-right :disabled="!item.isInputViews" style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.likes, 'likes')">
-              <img cursor-pointer :src="Write" class="w-20px ml-13px" @click="item.isInputViews = true">
+              <input ref="inputLikesRef" v-model="item.likes" text-right style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.likes, 'likes')">
+              <img cursor-pointer :src="Write" class="w-20px ml-13px" @click="clickLikes(index, item.likesS)">
             </span>
-            <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px " :class="[item.status === 'Pending' ? bc1 : item.status === 'Onboarded' ? bc2 : bc3]">{{ item.status }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px " :class="[item.status === 0 ? bc1 : item.status === 1 ? bc2 : bc3]">{{
+              item.status === 1 ? 'Pending' : item.status === 1 ? 'Onboarded' : 'Banned'
+            }}</span>
             <span flex items-center justify-center text-center inline-block class="lineText w-155px  min-h-80px ">
               <span
                 inline-block relative class="w-93px h-31px  border rounded-8px border-transparent" cursor-pointer @click="() => {
