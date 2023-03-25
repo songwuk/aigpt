@@ -120,7 +120,7 @@ const clickBtn = async (id) => {
 }
 const reviewPRD = (id) => {
   localStorage.setItem('submit', id)
-  window.location.href = '/submit'
+  window.location.href = `/submit?id=${id}`
 }
 const creditgifts = ref()
 watch(() => isProducts.value, async (newVal) => {

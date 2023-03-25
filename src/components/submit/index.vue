@@ -151,6 +151,7 @@ const submitProductsSave = async () => {
     product_imgs2: file3.value,
   }
   const { data } = await panelProductsSave({
+    id: submitId.value,
     isOwner: isOwner.value,
     email: email.value,
     given_name: given_name.value,
