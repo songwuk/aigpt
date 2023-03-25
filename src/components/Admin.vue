@@ -1,6 +1,6 @@
 <script lang='ts' setup>
 import { onMounted, reactive, ref, watch } from 'vue'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { debounce } from 'lodash-es'
 import { panelProductsEditProductStat, panelProductsPage, panelUsersPage } from '../url'
 import Write from './img/write.png'

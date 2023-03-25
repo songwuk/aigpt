@@ -14,6 +14,7 @@ import ShareConversation from '../img/ShareConversation.png'
 import Right from '../img/right.png'
 import Right1 from '../img/right_1.png'
 import Left1 from '../img/left_1.png'
+import { NumUtils } from '@/utils'
 const leftStatus = ref([
   {
     name: 'Model',
@@ -111,8 +112,8 @@ onMounted(async () => {
   if (dataSource && dataSource.code === 0) {
     listData.product_logo = productsImage(dataSource.data.product_logo)
     listData.product_imgs = dataSource.data.product_imgs.map(it => productsImage(it))
-    listData.views = dataSource.data.views
-    listData.likes = dataSource.data.likes
+    listData.views = NumUtils.formatWithK(dataSource.data.views)
+    listData.likes = NumUtils.formatWithK(dataSource.data.likes)
     listData.product_name = dataSource.data.product_name
     listData.product_detail = dataSource.data.product_detail
     listData.product_url = dataSource.data.product_url
