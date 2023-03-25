@@ -27,8 +27,8 @@ import Footer from '../components/Footer.vue';
 	<body>
 		<main>
 			<Head client:only="vue" ></Head>
-			<Home client:visible></Home>
-			<Content client:visible></Content>
+			<Home client:only="vue"></Home>
+			<Content client:only="vue"></Content>
 			<Footer client:visible></Footer>
 		</main>
 	</body>

@@ -181,8 +181,6 @@ export function productsPage<T>(params: ProductsPageCondition): Pick<UseFetchRet
       'Content-Type': 'application/json; charset=utf-8',
     },
     body: JSON.stringify({
-      page: 1,
-      size: 1000,
       ...params,
     }),
   })

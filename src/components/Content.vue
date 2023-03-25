@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import type { ReturnData, ReturnPageData } from '../types'
 import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsPage } from '../url'
@@ -23,6 +23,7 @@ import Start from './img/start.png'
 import StartOff from './img/startOff.png'
 import NoHistory from './img/no_history.png'
 import NoFavorite from './img/no_favorite.png'
+import { NumUtils } from '@/utils'
 const stable = ref([
   {
     name: 'Categories',
@@ -75,10 +76,23 @@ const clickBarText = ref('')
 const getPageList = ref([])
 const product_categry = ref('')
 const product_model = ref('')
+const currentPage = ref(1)
+const pageInfo = reactive({
+  page: 1,
+  size: 10,
+})
+const total = ref(0)
 const product_applications = ref('')
 const product_generative_ai = ref('')
+const isPageChange = ref(false)
 const getPage = async () => {
+  if (!isPageChange.value) {
+    currentPage.value = 1
+    pageInfo.page = 1
+  }
   const { data } = await productsPage<ReturnPageData>({
+    page: pageInfo.page,
+    size: pageInfo.size,
     condition: {
       keyword: keyword.value,
       product_categry: product_categry.value,
@@ -90,8 +104,8 @@ const getPage = async () => {
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
-      const strlikes = String(item.likes).length >= 4 ? `${String(item.likes).slice(-(String(item.likes).length), -3)}k` : item.likes
-      const strviews = String(item.views).length >= 4 ? `${String(item.views).slice(-(String(item.views).length), -3)}k` : item.views
+      const strlikes = NumUtils.formatWithK(item.likes)
+      const strviews = NumUtils.formatWithK(item.views)
       return {
         ...item,
         likes: strlikes,
@@ -100,7 +114,9 @@ const getPage = async () => {
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
     })
+    total.value = dataSource.data.total
   }
+  isPageChange.value = false
 }
 const searchAll = async (name, text, itemName) => {
   clickBarStatus.value = name
@@ -108,6 +124,7 @@ const searchAll = async (name, text, itemName) => {
   product_model.value = ''
   product_applications.value = ''
   product_generative_ai.value = ''
+  product_categry.value = ''
   if (itemName === 'Model')
     product_model.value = text
 
@@ -116,7 +133,6 @@ const searchAll = async (name, text, itemName) => {
 
   else if (itemName === 'Generative AI')
     product_generative_ai.value = text
-
   await getPage()
 }
 
@@ -153,8 +169,8 @@ const favoriteShowf = async () => {
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
-      const strlikes = String(item.likes).length >= 4 ? `${String(item.likes).slice(-(String(item.likes).length), -3)}k` : item.likes
-      const strviews = String(item.views).length >= 4 ? `${String(item.views).slice(-(String(item.views).length), -3)}k` : item.views
+      const strlikes = NumUtils.formatWithK(item.likes)
+      const strviews = NumUtils.formatWithK(item.views)
       return {
         ...item,
         likes: strlikes,
@@ -181,8 +197,8 @@ const historyShowf = async () => {
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
-      const strlikes = String(item.likes).length >= 4 ? `${String(item.likes).slice(-(String(item.likes).length), -3)}k` : item.likes
-      const strviews = String(item.views).length >= 4 ? `${String(item.views).slice(-(String(item.views).length), -3)}k` : item.views
+      const strlikes = NumUtils.formatWithK(item.likes)
+      const strviews = NumUtils.formatWithK(item.views)
       return {
         ...item,
         likes: strlikes,
@@ -265,6 +281,14 @@ const useCase = async (name) => {
   await getPage()
   categoriesShow.value = false
 }
+watch(() => pageInfo.page, async () => {
+  await getPage()
+})
+
+const handleCurrentChange = (val: number) => {
+  isPageChange.value = true
+  pageInfo.page = val
+}
 </script>
 
 <template>
@@ -335,7 +359,7 @@ const useCase = async (name) => {
         >
           All Use Cases {{ clickButton.length }}
         </button>
-        <div class="mt-[31px] ml-[24px] pb-10px" flex items-center justify-start flex-wrap flex-row>
+        <div class="mt-[31px] ml-[24px] pb-10px h-100 overflow-y-scroll" flex items-center justify-start flex-wrap flex-row>
           <span
             v-for="(it, idx) in clickButton"
             :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
@@ -497,6 +521,15 @@ const useCase = async (name) => {
               </div>
             </div>
           </div>
+        </div>
+        <div v-if="(trendingShow || historyShowList || favoriteShowList) && getPageList.length > 0" relative c-white w-full text-right>
+          <el-pagination
+            v-model:current-page="currentPage"
+            absolute
+            right-5
+            background layout="prev, pager, next" :page-size="pageInfo.size" :total="total"
+            @current-change="handleCurrentChange"
+          />
         </div>
       </section>
     </div>

@@ -48,5 +48,7 @@ export interface ProductsPage {
 }
 
 export interface ProductsPageCondition {
+  page: number
+  size: number
   condition: Partial<ProductsPage>
 }
