@@ -308,3 +308,88 @@ export function removeByUser<T>(user_id: string): Pick<UseFetchReturn<T>, 'data'
     method: 'GET',
   })
 }
+
+/**
+ * 后台获取产品列表
+ */
+export function panelProductsPage<T>(param: ProductsPageCondition): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/panel/products/page', {
+    method: 'POST',
+    body: JSON.stringify(param),
+  })
+}
+
+/**
+ * 后台获取用户列表
+ */
+export function panelUsersPage<T>(param: ProductsPageCondition): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/panel/users/page', {
+    method: 'POST',
+    body: JSON.stringify(param),
+  })
+}
+
+/**
+ * 编辑views 和 likes isTrending
+ * @param param
+ * @returns
+ */
+export function panelProductsEditProductStat<T>(...param): Pick<UseFetchReturn<T>, 'data'> {
+  const data = getParams(param)
+  return useFetchOptions(`/panel/products/editProductStat?${data}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  })
+}
+
+/**
+ * 获取当前产品的详情
+ * /panel/products/query/{id}
+ * @returns
+ */
+export function panelProductsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/panel/products/query/${id}`, {
+    method: 'GET',
+  })
+}
+
+/**
+ * 通过or拒绝 PASS = 1, // review pass BAN = 2, // ban
+ */
+export function panelProductsAudite<T>(...param): Pick<UseFetchReturn<T>, 'data'> {
+  const data = getParams(param)
+  return useFetchOptions(`/panel/products/audit?${data}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  })
+}
+/**
+ * 审核的时候，提交产品的接口
+ * @param params
+ * @param files
+ * @returns
+ */
+
+export function panelProductsSave(params: any, files: any) {
+  const fd = new FormData()
+  if (files.product_logo)
+    fd.append('product_logo', files.product_logo)
+  if (files.product_imgs1)
+    fd.append('product_imgs', files.product_imgs1)
+  if (files.product_imgs2)
+    fd.append('product_imgs', files.product_imgs2)
+  let url = ''
+  for (const key in params)
+    url += `&${key}=${params[key]}`
+  return useFetchOptions(`/panel/products/save?${url.substring(1)}`, {
+    method: 'POST',
+    body: fd,
+    // headers: {
+    //   'Content-Type': 'application/x-www-form-urlencoded',
+    // },
+  })
+}

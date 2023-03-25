@@ -9,6 +9,8 @@
     },
     "allowJs": true,
     "module": "ESNext",
-    "types": ["element-plus/global"]
+    "types": ["element-plus/global"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   }
 }

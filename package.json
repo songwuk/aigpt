@@ -20,6 +20,7 @@
     "@iconify-json/carbon": "^1.1.8",
     "@jambonn/vue-concise-carousel": "^2.1.29",
     "@vueuse/core": "^9.13.0",
+    "dayjs": "^1.11.7",
     "element-plus": "^2.3.0",
     "html-to-image": "^1.11.11",
     "lodash-es": "^4.17.21",

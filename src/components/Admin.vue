@@ -1,60 +1,135 @@
-<script setup>
-import { ref } from 'vue'
-// import { ElPagination } from 'element-plus'
+<script lang='ts' setup>
+import { onMounted, reactive, ref, watch } from 'vue'
+import * as dayjs from 'dayjs'
+import { debounce } from 'lodash-es'
+import { panelProductsEditProductStat, panelProductsPage, panelUsersPage } from '../url'
+import Write from './img/write.png'
 import AiGPT from './img/AiGPT_1.png'
+import type { ReturnPageData } from '@/types'
+import { NumUtils } from '@/utils'
 const searchValue = ref('')
 const isProducts = ref(true)
 const bgColor = ref('bg-#004699')
-const listProducts = ref([{
-  id: 1,
-  name: 'OpenAi',
-  email: 'yeet@gmail.com',
-  website: 'https://songwuk.cc',
-  date: '02/03/2023',
-  views: '15k',
-  likes: 100,
-  status: 'pending',
-  action: 'button',
-  trending: true,
-}, {
-  id: 2,
-  name: 'OpenAi',
-  email: 'yeet@gmail.com',
-  website: 'https://songwuk.cc',
-  date: '02/03/2023',
-  views: '14k',
-  likes: 100,
-  status: 'pending',
-  action: 'button',
-  trending: false,
-}])
+const bc1 = ref('c-#F7B500')
+const bc2 = ref('c-#72C8FF')
+const bc3 = ref('c-#E02020')
+const listProducts = ref([])
+const totalProducts = ref(0)
+const pageInfo = reactive({
+  page: 1,
+  size: 10,
+})
+const pageInfoUser = reactive({
+  page: 1,
+  size: 10,
+})
+const listRegisters = ref([])
+const userList = async () => {
+  const { data } = await panelUsersPage<ReturnPageData>({
+    ...pageInfoUser,
+  })
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0) {
+    totalProducts.value = dataSource.data.total
+    listRegisters.value = dataSource.data.memberList.map((item, index) => {
+      return {
+        id: dataSource.data.memberList.length - index,
+        ...item,
+        createTime: dayjs(item.createTime).format('DD/MM/YYYY'),
+      }
+    })
+  }
+}
 
-const listRegisters = ref([{
-  id: 1,
-  email: 'yeet@gmail.com',
-  address: '0x58A9130D18Ec2c41D535d56B7E2a616BBeC6f359',
-  date: '02/03/2023',
-  credits: '5,000',
-  upgradeplan: '',
-  creditgifts: '',
-}, {
-  id: 2,
-  email: 'yeet@gmail.com',
-  address: '0x58A9130D18Ec2c41D535d56B7E2a616BBeC6f359',
-  date: '02/03/2023',
-  credits: '5,000',
-  upgradeplan: '',
-  creditgifts: '',
-}])
-const page = ref([
+const productsPage = async () => {
+  const { data } = await panelProductsPage<ReturnPageData>({
+    ...pageInfo,
+    condition: {
+      keyword: searchValue.value,
+    },
+  })
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0) {
+    listProducts.value = dataSource.data.productList.map((item, index) => {
+      const strlikes = item.likes ? NumUtils.formatWithK(item.likes) : 0
+      const strviews = item.views ? NumUtils.formatWithK(item.views) : 0
+      return {
+        ...item,
+        _id: dataSource.data.productList.length - index,
+        likes: strlikes,
+        views: strviews,
+        isInputViews: false,
+        isInputLikes: false,
+      }
+    })
+    console.log(listProducts.value)
+    totalProducts.value = dataSource.data.total
+  }
+}
+onMounted(async () => {
+  await productsPage()
+})
+const idRef = ref('')
+const viewsModel = ref('')
+const likesModel = ref('')
+const isTrendingRef = ref(false)
+const productsEditProductStat = async () => {
+  await panelProductsEditProductStat({
+    id: idRef.value,
+    views: viewsModel.value,
+    likes: likesModel.value,
+    isTrending: isTrendingRef.value,
+  })
+}
 
-])
+const editPro = debounce(async (id, start, type) => {
+  viewsModel.value = ''
+  likesModel.value = ''
+  idRef.value = ''
+  if (type === 'views')
+    viewsModel.value = start
+  if (type === 'likes')
+    likesModel.value = start
+  idRef.value = id
+  await productsEditProductStat()
+}, 1000)
+
+const inputModule = debounce(async () => {
+  await productsPage()
+}, 1000)
+watch(() => pageInfo.page, async () => {
+  await productsPage()
+})
+watch(() => pageInfoUser.page, async () => {
+  await userList()
+})
+const handleCurrentChangeUser = (val: number) => {
+  pageInfoUser.page = val
+}
+const handleCurrentChange = (val: number) => {
+  pageInfo.page = val
+}
+const clickBtn = async (id) => {
+  idRef.value = id
+  await productsEditProductStat()
+}
+const reviewPRD = (id) => {
+  localStorage.setItem('submit', id)
+  window.location.href = '/submit'
+}
+const creditgifts = ref()
+watch(() => isProducts.value, async (newVal) => {
+  if (newVal)
+    await productsPage()
+  else
+    await userList()
+})
 </script>
 
 <template>
   <div class="py-28px px-60px" w-full flex="~" items-center sm:justify-between>
     <img sm:cursor-pointer class="w-[150px]" :src="AiGPT" alt="logo">
-    <input v-model="searchValue" placeholder="Search for products or registers" class="indent-13px w-547px h-58px b-#26262C  border-solid border-#979797 border-1 rounded-8px" type="text">
+    <input v-model="searchValue" placeholder="Search for products or registers" class="indent-13px w-547px h-58px b-#26262C  border-solid border-#979797 border-1 rounded-8px" type="text" @input="inputModule">
   </div>
   <section class="w-full" flex="~" items-start justify-start>
     <aside class="w-265px">
@@ -71,7 +146,7 @@ const page = ref([
     </aside>
     <div v-if="isProducts" relative overflow-x-hidden overflow-y-scroll class="w-[calc(100%-265px)] h-[calc(100vh-114px)] pt-40px pl-51px pr-118px bg-#26262C ">
       <h3 class="text-30px">
-        Products <span ml-30px>685</span>
+        Products <span ml-30px>{{ totalProducts }}</span>
       </h3>
       <aside
         class="mt-16px w-1481px h-auto border-4px border-solid border-#FFFFFF"
@@ -89,34 +164,46 @@ const page = ref([
           <span text-center inline-block class="w-145px h-80px leading-80px border-transparent border-2">Action</span>
         </div>
         <div class="content">
-          <div v-for="(item, index) in listProducts" :key="index" :class="[index % 2 !== 0 ? 'bg-#333944' : '']">
-            <span text-center inline-block class="lineText w-145px h-80px leading-80px border-transparent ">{{ item.id }}</span>
-            <span text-center inline-block class="lineText w-140px h-80px leading-80px  border-transparent">{{ item.name }}</span>
-            <span text-center inline-block class="lineText w-144px h-80px leading-80px border-transparent">{{ item.email }}</span>
-            <span text-center inline-block class="lineText w-150px h-80px leading-80px border-transparent">{{ item.website }}</span>
-            <span text-center inline-block class="lineText w-146px h-80px leading-80px border-transparent">{{ item.date }}</span>
-            <span text-center inline-block class="lineText w-140px h-80px leading-80px border-transparent ">{{ item.views }}</span>
-            <span text-center inline-block class="lineText w-145px h-80px leading-80px border-transparent">{{ item.likes }}</span>
-            <span text-center inline-block class="lineText w-150px h-80px leading-80px  border-transparent c-#F7B500">{{ item.status }}</span>
-            <span text-center inline-block class="lineText w-155px  h-80px leading-80px border-transparent">
-              <span inline-block relative class="w-93px h-31px  border rounded-8px border-transparent pt-10px" cursor-pointer @click="item.trending = !item.trending">
-                <i absolute z-1 inline-block class="w-50px h-31px leading-31px border rounded-8px border-transparent -left-5px " :class="[item.trending ? 'bg-#004699 z-2' : 'bg-#B5BFCB']">On</i>
-                <i absolute z-1 inline-block class=" -ml10px w-50px h-31px leading-31px border rounded-8px border-transparent" :class="[!item.trending ? 'bg-#004699  z-2' : 'bg-#B5BFCB']">Off</i>
+          <div v-for="(item, index) in listProducts" :key="index" flex :class="[index % 2 !== 0 ? 'bg-#333944' : '']">
+            <span flex items-center justify-center text-center class="lineText w-145px min-h-80px  ">{{ item._id }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-140px min-h-80px ">{{ item.product_name }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-144px min-h-80px  ">{{ item.email }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px  ">{{ item.product_url }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-146px min-h-80px ">{{ item.date }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-140px min-h-80px ">
+              <input v-model="item.views" text-right :disabled="!item.isInputViews" style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.views, 'views')">
+              <img cursor-pointer :src="Write" class="w-20px ml-13px" @click="item.isInputViews = true">
+            </span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-145px min-h-80px  ">
+              <input v-model="item.likes" text-right :disabled="!item.isInputViews" style="outline: none;background: transparent;" class="w-50%" type="text" @input="editPro(item.id, item.likes, 'likes')">
+              <img cursor-pointer :src="Write" class="w-20px ml-13px" @click="item.isInputViews = true">
+            </span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px " :class="[item.status === 'Pending' ? bc1 : item.status === 'Onboarded' ? bc2 : bc3]">{{ item.status }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-155px  min-h-80px ">
+              <span
+                inline-block relative class="w-93px h-31px  border rounded-8px border-transparent" cursor-pointer @click="() => {
+                  item.isTrending = !item.isTrending
+                  isTrendingRef = item.isTrending
+                  clickBtn(item.id)
+                }"
+              >
+                <i absolute z-1 inline-block class="w-50px h-31px leading-31px border rounded-8px border-transparent -left-5px " :class="[item.isTrending ? 'bg-#004699 z-2' : 'bg-#B5BFCB']">On</i>
+                <i absolute z-1 inline-block class=" -ml10px w-50px h-31px leading-31px border rounded-8px border-transparent" :class="[!item.isTrending ? 'bg-#004699  z-2' : 'bg-#B5BFCB']">Off</i>
               </span>
             </span>
-            <span text-center inline-block class=" w-145px">
-              <span cursor-pointer inline-block class="w-93px h-40px leading-40px bg-#004699 border rounded-8px border-transparent">Review</span>
+            <span flex items-center justify-center text-center inline-block class=" w-145px">
+              <span cursor-pointer inline-block class="w-93px h-40px leading-40px bg-#004699 border rounded-8px border-transparent" @click="reviewPRD(item.id)">Review</span>
             </span>
           </div>
         </div>
       </aside>
-      <div class="page b-#26262C absolute right-0 pr-118px mt-20px">
-        <el-pagination background layout="prev, pager, next" :page-size="10" :total="100" />
+      <div class="page b-#26262C absolute right-0 pr-75px mt-20px pb-5">
+        <el-pagination background layout="prev, pager, next" :page-size="10" :total="totalProducts" @current-change="handleCurrentChange" />
       </div>
     </div>
     <div v-else relative overflow-x-hidden overflow-y-scroll class="w-[calc(100%-265px)] h-[calc(100vh-114px)] pt-40px pl-51px pr-118px bg-#26262C ">
       <h3 class="text-30px">
-        Registers <span ml-30px> 32,673</span>
+        Registers <span ml-30px> {{ totalProducts }}</span>
       </h3>
       <aside
         class="mt-16px w-1481px h-auto border-4px border-solid border-#FFFFFF"
@@ -132,18 +219,23 @@ const page = ref([
         </div>
         <div class="content">
           <div v-for="(item, index) in listRegisters" :key="index" flex :class="[index % 2 !== 0 ? 'bg-#333944' : '']">
-            <span text-center inline-block class="lineText w-148px h-80px  leading-80px ">{{ item.id }}</span>
-            <span text-center inline-block class="lineText w-155px h-80px leading-80px ">{{ item.email }}</span>
-            <span text-center inline-block class="lineText w-290px h-80px leading-80px">{{ item.address }}</span>
-            <span text-center inline-block class="lineText w-150px h-80px leading-80px">{{ item.date }}</span>
-            <span text-center inline-block class="lineText w-150px h-80px leading-80px">{{ item.credits }}</span>
-            <span text-center inline-block class="lineText w-290px h-80px leading-80px">{{ item.upgradeplan }}</span>
-            <span text-center inline-block class=" w-290px h-80px leading-80px border-transparent">{{ item.creditgifts }}</span>
+            <span flex items-center justify-center text-centerinline-block class="lineText w-148px min-h-80px">{{ item.id }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-155px min-h-80px ">{{ item.email }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-290px min-h-80px">{{ item.wallet_address }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px">{{
+              item.createTime
+            }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-150px min-h-80px">{{ item.credits }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-290px min-h-80px">{{ item.upgradeplan }}</span>
+            <span flex items-center justify-center text-center inline-block class="lineText w-290px min-h-80px">
+              <input v-model="creditgifts" text-right type="number" style="outline: none;background: transparent;" class="w-50%">
+              <img cursor-pointer :src="Write" class="w-20px ml-13px">
+            </span>
           </div>
         </div>
       </aside>
-      <div class="page b-#26262C absolute right-0 pr-118px mt-20px">
-        <el-pagination background layout="prev, pager, next" :page-size="10" :total="32673" />
+      <div class="page b-#26262C absolute right-0 pr-75px mt-20px  pb-5">
+        <el-pagination background layout="prev, pager, next" :page-size="10" :total="totalProducts" @current-change="handleCurrentChangeUser" />
       </div>
     </div>
   </section>
@@ -166,16 +258,18 @@ const page = ref([
 }
 .lineText {
   position: relative;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .lineText::after{
   position: absolute;
   right:0;
-  top: -5px;
+  top: -2px;
   bottom:0;
   display: inline-block;
   content: '';
   width: 2px;
-  height: 85px;
+  height: 100%;
   background-color: #A0A0A0;
 
 }

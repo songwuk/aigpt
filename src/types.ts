@@ -31,13 +31,14 @@ export interface ReturnData {
 }
 export interface ReturnPageData {
   code: number
-  data: Pick<ReturnPageDataList, 'productList' | 'total'>
+  data: Pick<ReturnPageDataList, 'productList' | 'total' | 'memberList'>
   msg: string
 }
 
 export interface ReturnPageDataList {
   productList: Array<Record<string, any>>
   total: number
+  memberList: Array<Record<string, any>>
 }
 export interface ProductsPage {
   keyword: string
@@ -50,5 +51,5 @@ export interface ProductsPage {
 export interface ProductsPageCondition {
   page: number
   size: number
-  condition: Partial<ProductsPage>
+  condition?: Partial<ProductsPage>
 }

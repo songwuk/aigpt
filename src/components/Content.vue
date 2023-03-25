@@ -522,7 +522,7 @@ const handleCurrentChange = (val: number) => {
             </div>
           </div>
         </div>
-        <div v-if="(trendingShow || historyShowList || favoriteShowList) && getPageList.length > 0" relative c-white w-full text-right>
+        <div v-if="(trendingShow || historyShowList || favoriteShowList) && getPageList.length > 0" class="page" relative c-white w-full text-right>
           <el-pagination
             v-model:current-page="currentPage"
             absolute
@@ -546,5 +546,19 @@ const handleCurrentChange = (val: number) => {
 
 ::-webkit-scrollbar {
   display: none;
+}
+.page :deep(.el-pagination .el-pager li){
+  background-color: #26262C !important;
+  border: 1px solid #FFFFFF;
+  border-radius: 4px;
+  color: white
+}
+.page :deep(.el-pagination .el-pager .is-active){
+  background-color:#004699 !important;
+}
+.page :deep(.el-pagination .is-first), :deep(.el-pagination .is-last)  {
+  background-color: #26262C !important;
+  border: 1px solid #FFFFFF;
+  color: white
 }
 </style>

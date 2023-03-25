@@ -1,17 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import {
   RadioGroup,
   RadioGroupOption,
 } from '@headlessui/vue'
+import { panelProductsAudite, panelProductsQuery, panelProductsSave, productsImage, productsSave } from '../../url'
 import Loading from '../loading/index.vue'
 import Upload from '../img/upload_img.png'
 import Del from '../img/del.png'
-import { productsSave } from '../../url'
 import Discord_2 from '../img/discord_2.png'
 import Facebook_2 from '../img/facebook_2.png'
 import Instagram_2 from '../img/instagram_2.png'
 import Twitter_2 from '../img/twitter_2.png'
+function urlToBlob(url, fileName) {
+  return fetch(url)
+    .then(response => response.blob())
+    .then(blob => new File([blob], fileName, { type: 'image/png' }))
+}
+
+const submitId = ref('')
 const isOwner = ref(true)
 const email = ref('')
 const given_name = ref('')
@@ -115,6 +122,58 @@ const submitProject = async () => {
   loading.value = false
 }
 
+const submitProductsSave = async () => {
+  if (!Policies.value || !Privacy.value) {
+    alert('must agree')
+    return false
+  }
+  loading.value = true
+  const product_logo = file1.value
+  const files = {
+    product_logo,
+    product_imgs1: file2.value,
+    product_imgs2: file3.value,
+  }
+  const { data } = await panelProductsSave({
+    isOwner: isOwner.value,
+    email: email.value,
+    given_name: given_name.value,
+    family_name: family_name.value,
+    product_name: product_name.value,
+    product_url: product_url.value,
+    product_categry: product_categry.value,
+    product_model: product_model.value,
+    product_applications: product_applications.value,
+    product_generative_ai: product_generative_ai.value,
+    product_short_desc: product_short_desc.value,
+    product_detail: product_detail.value,
+    product_review_url: product_review_url.value,
+    facebook: facebook.value,
+    twitter: twitter.value,
+    discord: discord.value,
+    instagram: instagram.value,
+  }, files)
+  if (data.value && data.value.code === 0)
+    alert('Submitted successfully')
+  else
+    alert(data.value.msg)
+  localStorage.removeItem('submit')
+  // window.reload()
+  loading.value = false
+}
+const passOrNO = async (status) => {
+  const { data } = await panelProductsAudite({
+    id: submitId.value,
+    status,
+  })
+  if (data.value && data.value.code === 0) {
+    if (status === 1)
+      alert('examination passed')
+
+    else
+      alert('Audit Rejected')
+  }
+}
 const deleteFn1 = () => {
   file2.value = ''
   upload_2.value = ''
@@ -137,6 +196,47 @@ const product_generative_aiArr = ref([
   'Text to Audio',
   'Text to 3D',
 ])
+onMounted(async () => {
+  submitId.value = localStorage.getItem('submit')
+  if (submitId.value) {
+    Policies.value = 'Policies'
+    Privacy.value = 'Privacy'
+    const { data } = await panelProductsQuery(submitId.value)
+    const dataSource = data.value
+    if (dataSource && dataSource.code === 0) {
+      isOwner.value = dataSource.data.isOwner
+      email.value = dataSource.data.email
+      given_name.value = dataSource.data.given_name
+      family_name.value = dataSource.data.family_name
+      product_name.value = dataSource.data.product_name
+      product_url.value = dataSource.data.product_url
+      product_categry.value = dataSource.data.product_categry
+      product_model.value = dataSource.data.product_model
+      product_applications.value = dataSource.data.product_applications
+      product_generative_ai.value = dataSource.data.product_generative_ai
+      product_short_desc.value = dataSource.data.product_short_desc
+      product_detail.value = dataSource.data.product_detail
+      product_review_url.value = dataSource.data.product_review_url
+      facebook.value = dataSource.data.social_media?.facebook ?? ''
+      twitter.value = dataSource.data.social_media?.twitter ?? ''
+      discord.value = dataSource.data.social_media?.discord ?? ''
+      instagram.value = dataSource.data.social_media?.instagram ?? ''
+      upload_1.value = productsImage(dataSource.data.product_logo)
+      file1.value = await urlToBlob(upload_1.value)
+      const product_imgs = dataSource.data.product_imgs.map(it => productsImage(it))
+      if (product_imgs.length === 1) {
+        upload_2.value = product_imgs[0]
+        file2.value = await urlToBlob(upload_2.value)
+      }
+      if (product_imgs.length === 2) {
+        upload_2.value = product_imgs[0]
+        file2.value = await urlToBlob(upload_2.value)
+        upload_3.value = product_imgs[1]
+        file3.value = await urlToBlob(upload_3.value)
+      }
+    }
+  }
+})
 </script>
 
 <template>
@@ -473,7 +573,39 @@ const product_generative_aiArr = ref([
         </RadioGroup>
       </div>
     </aside>
+    <div v-if="submitId">
+      <button
+        class="mt-27px" style="width: 125px; height: 48px;
+background: #004699;
+border-radius: 8px; margin-right: 30px"
+        @click="passOrNO(1)"
+      >
+        Onborad
+      </button>
+      <button
+        class="mt-27px"
+        style="width: 125px;
+height: 48px;
+background: #3C3C3E;
+border-radius: 8px;"
+        @click="passOrNO(2)"
+      >
+        Ban
+      </button>
+    </div>
     <button
+      v-if="submitId"
+      class="mt-27px"
+      style="width: 125px;
+height: 48px;
+background: #3C3C3E;
+border-radius: 8px;"
+      @click="submitProductsSave"
+    >
+      Save
+    </button>
+    <button
+      v-if="!submitId"
       class="mt-27px"
       style="width: 200px;
 height: 48px;
