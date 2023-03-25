@@ -119,7 +119,12 @@ onMounted(async () => {
     listData.product_short_desc = dataSource.data.product_short_desc
     listData.social_media = dataSource.data.social_media
     listData.product_model = dataSource.data.product_model
-    forList.value.push(...dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
+    if (typeof dataSource.data.product_categry === 'object')
+      forList.value.push(...dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
+
+    else
+      forList.value.push(dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
+
     forList.value = forList.value.filter(value => (value !== '' && value !== undefined && value !== null))
   }
 })
