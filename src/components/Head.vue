@@ -145,12 +145,12 @@ const sendMessage = () => {
       </a>
       <div class="ml-[67px]" sm:block hidden>
         <span v-for="(item, idx) in tags" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]" @click="gptCheckLogin(item)">
-          <a href="javascript:void(0)" :class=" pathnameRef === item.href ? 'c-[#05D4FD]' : ''"> {{ item.name }}</a>
+          <a href="javascript:void(0)" :class=" pathnameRef.indexOf(item.href) !== -1 ? 'c-[#05D4FD]' : ''"> {{ item.name }}</a>
         </span>
       </div>
     </section>
     <section relative sm:flex-1 sm:block hidden class="mr-[61px]" sm:flex sm:items-center sm:justify-end>
-      <button :class="pathnameRef === '/submit' ? 'c-[#05D4FD]' : ''" flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]" @click="submitPath" @mouseover="UploadHoverf" @mouseout="UploadUnhoverf">
+      <button :class="pathnameRef.indexOf('/submit') !== -1 ? 'c-[#05D4FD]' : ''" flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]" @click="submitPath" @mouseover="UploadHoverf" @mouseout="UploadUnhoverf">
         <img ref="sub" class="w-[22px] mr-[10px]" :src="Upload" alt="language">
         Submit
       </button>
