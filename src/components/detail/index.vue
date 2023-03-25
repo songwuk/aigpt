@@ -128,6 +128,12 @@ onMounted(async () => {
     forList.value = forList.value.filter(value => (value !== '' && value !== undefined && value !== null))
   }
 })
+const shareConversationShow = ref(false)
+const startOff = ref(false)
+
+const setFavorite = () => {
+  startOff.value = !startOff.value
+}
 </script>
 
 <template>
@@ -179,10 +185,18 @@ onMounted(async () => {
               <img class="w-22px" :src="Twitter" alt="Twitter">
             </a>
           </i>
-          <i>
+          <i relative style=" font-style: normal;" @click="startOff = !startOff">
+            <div v-show="startOff" absolute class="right-50% top-50% translate-x-50% -translate-y-150% text-center -top-50px w-140px h-43px leading-43px text-16px bg-#33333E border rounded-5px border-transparent" @click="setFavorite">
+              Add to Favorite
+            </div>
             <img class="w-22px" :src="StartOff" alt="StartOff">
           </i>
-          <i>
+          <i relative style=" font-style: normal;" @click="shareConversationShow = !shareConversationShow">
+            <div v-show="shareConversationShow" flex items-center justify-center flex-col absolute class="right-50% top-50% translate-x-0% translate-y-15% text-center -top-50px w-204px text-16px bg-#33333E border rounded-5px border-transparent">
+              <div class="py-12px w-full">Copy link</div>
+              <div class="py-12px  w-full border border-t-#5C5C60 border-transparent">Share on Facebook</div>
+              <div class="py-12px w-full border border-t-#5C5C60 border-transparent">Share on Twitter</div>
+            </div>
             <img class="w-22px" :src="ShareConversation" alt="ShareConversation">
           </i>
         </aside>
