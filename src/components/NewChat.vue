@@ -26,6 +26,14 @@ const refPng = ref<HTMLElement | null>(null)
 const list = ref([])
 const historyData = ref([])
 const showAnswer = ref(true)
+const isLogin = ref(false)
+function checkUserInfo(user) {
+  if (typeof user === 'object' && '_id' in user && user._id)
+    return isLogin.value = true
+
+  isLogin.value = false
+}
+checkUserInfo(userStore.getuserstate)
 const showList = ref([
   {
     name: 'Save Conversation',
@@ -299,7 +307,7 @@ onMounted(async () => {
   await nextTick()
   scrollToBottom()
   loadingGroup()
-  if (getAskContent()) {
+  if (getAskContent() && isLogin.value) {
     chatValue.value = getAskContent()
     removeAskContent()
     await openaiChat()

@@ -423,3 +423,18 @@ export function productsMemberFavorite(...params) {
     method: 'GET',
   })
 }
+
+/**
+ * 编辑
+ * @param params
+ * @returns
+ */
+export function accountEditProfile<T>(params): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/account/editProfile', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  })
+}

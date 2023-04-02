@@ -167,7 +167,7 @@ const trendingShowf = async () => {
   favoriteShowList.value = false
   clickBarStatus.value = 'Trending'
 }
-const topAndBottom = ref(0)
+const topAndBottom = ref(-1)
 const favoriteShowf = async () => {
   clickBarText.value = ''
   trendingShow.value = false
@@ -360,7 +360,7 @@ onMounted(async () => {
       if (topAndBottom.value > searchList.value.length - 1)
         topAndBottom.value = 0
     }
-    else if (ev.keyCode === 13) {
+    else if (ev.keyCode === 13 && topAndBottom.value > -1) {
       const id = searchList.value[topAndBottom.value].id
       goInto(id)
     }

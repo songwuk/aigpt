@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems, TransitionRoot } from '@headlessui/vue'
+import { ElMessage } from 'element-plus'
 import AiGPT from './img/AiGPT.png'
 import Global from './img/global.png'
 import GlobalHover from './img/global_1.png'
@@ -16,8 +17,9 @@ import SignOut from './img/signout.png'
 import Disconnect from './img/disconnect.png'
 import Twitter from './img/twitter.png'
 import Chain from './img/chain.png'
-import Fork from './img/fork.png'
+import MetaMask from './img/fork.png'
 import GoogleLogin from './login/googleLogin.vue'
+import { accountEditProfile } from '@/url'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
 const isLogin = ref(false)
@@ -61,8 +63,8 @@ const personalList = ref([
 ])
 const connectList = ref([
   {
-    name: '0xecbe…0923',
-    img: Fork,
+    name: 'MetaMask',
+    img: MetaMask,
   },
   {
     name: 'BNB Smart Chain',
@@ -77,8 +79,8 @@ const getStart = () => {
   loginVisible.value = true
 }
 const connectWallet = () => {
-  isconnect.value = true
-  // walletStatus.value = false
+  // isconnect.value = true
+  isLogin.value && Init()
 }
 const disconnectWallet = () => {
   walletStatus.value = true
@@ -114,20 +116,64 @@ const tags = ref([
 const submitPath = () => {
   window.location.href = '/submit'
 }
-
+const uploadAccountProfile = async () => {
+  await accountEditProfile({
+    userId: userStore.getuserstate._id,
+    // nickName: 'Vicar',
+    // avatar: 'https://www.mktvio.com/avatar001.png',
+    address: connectList.value[0].name,
+    email: userStore.getuserstate.email,
+  })
+}
 onMounted(() => {
   const pathname = window.location.pathname
   if (pathname)
     pathnameRef.value = pathname
+  gptCheckLogin(pathname)
+  Init()
 })
+function gptCheckLogin(item) {
+  const pathname = window.location.pathname
+  if (item.includes('/chat') && isLogin.value && !pathname.includes('/chat'))
+    return window.location.href = '/chat'
+  if (item.includes('/chat') && !isLogin.value)
+    return loginVisible.value = true
+}
 const updateUserInfo = (userinfo) => {
   checkUserInfo(userinfo)
 }
-const gptCheckLogin = (item) => {
-  if (item.href === '/chat' && isLogin.value)
-    return window.location.href = '/chat'
-  if (item.href === '/chat' && !isLogin.value)
-    return loginVisible.value = true
+function Init() {
+  // 判断用户是否安装MetaMask钱包插件
+  if (typeof window.ethereum === 'undefined') {
+    // 没安装MetaMask钱包进行弹框提示
+    ElMessage({
+      showClose: true,
+      message: 'Please install MetaMask',
+      type: 'error',
+    })
+  }
+  else {
+  // 如果用户安装了MetaMask，你可以要求他们授权应用登录并获取其账号
+    ethereum.enable()
+      .catch((reason) => {
+      // 如果用户拒绝了登录请求
+        if (reason === 'User rejected provider access') {
+        // 用户拒绝登录后执行语句；
+        }
+        else {
+        // 本不该执行到这里，但是真到这里了，说明发生了意外
+          ElMessage({
+            showClose: true,
+            message: 'There was a problem signing you in',
+            type: 'error',
+          })
+        }
+      }).then((accounts) => {
+        walletStatus.value = false
+        connectList.value[0].name = accounts[0]
+        uploadAccountProfile()
+      })
+  }
 }
 const sendMessage = () => {
   isWaiting.value = false
@@ -144,7 +190,7 @@ const sendMessage = () => {
         </div>
       </a>
       <div class="ml-[67px]" sm:block hidden>
-        <span v-for="(item, idx) in tags" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]" @click="gptCheckLogin(item)">
+        <span v-for="(item, idx) in tags" :key="idx" cursor-pointer c-white class="mr-[28px] hover:c-[#05D4FD]" @click="gptCheckLogin(item.href)">
           <a href="javascript:void(0)" :class=" pathnameRef.indexOf(item.href) !== -1 ? 'c-[#05D4FD]' : ''"> {{ item.name }}</a>
         </span>
       </div>
@@ -179,10 +225,10 @@ const sendMessage = () => {
         <button v-if="walletStatus" style="width: 136px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);border-radius: 8px;" class="mt-[10px] mb-[11px]" @click="connectWallet">
           Connect Wallet
         </button>
-        <div v-if="!walletStatus">
+        <div v-if="!walletStatus" w-full>
           <div v-for="(item, index) in connectList" :key="index" cursor-pointer relative class="mt-[19px]" w-full flex items-center justify-start>
             <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
-            <span>{{ item.name }}</span>
+            <span truncate>{{ item.name }}</span>
             <i absolute right-0>
               <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
             </i>

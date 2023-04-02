@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user-store', {
   },
   getters: {
     getuserstate() {
-      return this.$state
+      return this.$state.userInfo
     },
   },
 })
