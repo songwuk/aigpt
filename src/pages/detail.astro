@@ -26,7 +26,7 @@ import Footer from '../components/Footer.vue';
 	<body>
 		<main style="height: 100%">
 			<Head client:only="vue" ></Head>
-			<Detail client:visible ></Detail>
+			<Detail client:only="vue" ></Detail>
 			<Footer client:visible></Footer>
 		</main>
 	</body>
