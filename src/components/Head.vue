@@ -132,12 +132,15 @@ onMounted(() => {
   gptCheckLogin(pathname)
   Init()
 })
+const jumpBack = ref('')
 function gptCheckLogin(item) {
   const pathname = window.location.pathname
   if (item.includes('/chat') && isLogin.value && !pathname.includes('/chat'))
     return window.location.href = '/chat'
-  if (item.includes('/chat') && !isLogin.value)
+  if (item.includes('/chat') && !isLogin.value) {
+    jumpBack.value = '/chat' // 调回/chat
     return loginVisible.value = true
+  }
 }
 const updateUserInfo = (userinfo) => {
   checkUserInfo(userinfo)
@@ -324,7 +327,7 @@ const sendMessage = () => {
         </TransitionRoot>
       </Menu>
     </div>
-    <GoogleLogin v-model="loginVisible" @updateInfo="updateUserInfo" />
+    <GoogleLogin v-model="loginVisible" :jump-back="jumpBack" @updateInfo="updateUserInfo" />
   </div>
 </template>
 

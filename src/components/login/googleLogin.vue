@@ -9,7 +9,7 @@ import Password from '../img/password.png'
 import Check from '../img/check.png'
 import PasswordOn from '../img/password_on.png'
 import { useUserStore } from '@/store'
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue', 'jumpBack'])
 const emit = defineEmits(['updateInfo', 'update:modelValue'])
 const isLogin = ref(true)
 const userStore = useUserStore()
@@ -96,14 +96,15 @@ const signIn = async () => {
       family_name: dataSource.data.family_name,
       given_name: dataSource.data.given_name,
       nick_name: dataSource.data.nick_name,
-      open_id: dataSource.data.open_id,
       wallet_address: dataSource.data.wallet_address,
-      _id: dataSource.data._id,
+      _id: dataSource.data.id,
     }
     updateUserInfo(dataInfo)
     console.log('登录成功')
     hideLogin()
     emit('updateInfo', dataInfo)
+    if (props.jumpBack === '/chat')
+      return window.location.href = '/chat'
   }
   if (dataSource && dataSource.code === -1) {
     ElMessage({
@@ -115,7 +116,6 @@ const signIn = async () => {
 }
 function updateUserInfo(options) {
   userStore.updateUserInfo(options)
-  console.log('success')
 }
 
 const createAccount = async () => {
@@ -136,14 +136,15 @@ const createAccount = async () => {
         family_name: dataOne.value.data.family_name,
         given_name: dataOne.value.data.given_name,
         nick_name: dataOne.value.data.nick_name,
-        open_id: dataOne.value.data.open_id,
         wallet_address: dataOne.value.data.wallet_address,
-        _id: dataOne.value.data._id,
+        _id: dataOne.value.data.id,
       }
       updateUserInfo(dataInfo)
-      console.log('登录成功')
+      console.log('注册成功')
       hideLogin()
       emit('updateInfo', dataInfo)
+      if (props.jumpBack === '/chat')
+        return window.location.href = '/chat'
     }
   }
 }
