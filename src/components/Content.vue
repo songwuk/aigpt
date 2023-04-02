@@ -167,7 +167,7 @@ const trendingShowf = async () => {
   favoriteShowList.value = false
   clickBarStatus.value = 'Trending'
 }
-
+const topAndBottom = ref(0)
 const favoriteShowf = async () => {
   clickBarText.value = ''
   trendingShow.value = false
@@ -254,34 +254,45 @@ const handleCurrentChange = () => {
   pageInfo.page++
   isPageChange.value = true
 }
-onMounted(async () => {
-  const { data } = await productsLoadCateg<ReturnData>()
-  const chatDataSource = data.value
-  if (chatDataSource && chatDataSource.code === 0) {
-    clickButton.value = chatDataSource.data.categry
-    leftStatus.value[0].children = chatDataSource.data.model.map((item, index) => {
-      return { key: `${item.name}model${index}`, ...item }
-    })
-    leftStatus.value[1].children = chatDataSource.data.generativeAi.map((item, index) => {
-      return { key: `${item.name}generativeAi${index}`, ...item }
-    })
-    leftStatus.value[2].children = chatDataSource.data.applications.map((item, index) => {
-      return { key: `${item.name}applications${index}`, ...item }
-    })
-    trendingShow.value = true
-    showdot.value = 0
-    await getPage()
-  }
 
-  window.addEventListener('scroll', debounce(() => {
-    if ((document.documentElement.scrollHeight - 200 <= document.documentElement.scrollTop + window.innerHeight) && !isEmpty.value)
-      handleCurrentChange()
-  }, 500))
-})
 const itemRefs = ref([])
+const searchList = ref([])
+const isLoading = ref(false)
+const getSearchPage = async () => {
+  isLoading.value = true
+  const { data } = await productsPage<ReturnPageData>({
+    page: pageInfo.page,
+    size: pageInfo.size,
+    condition: {
+      keyword: keyword.value,
+      product_categry: product_categry.value,
+      product_model: product_model.value,
+      product_applications: product_applications.value,
+      product_generative_ai: product_generative_ai.value,
+    },
+  })
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0) {
+    const nowData = dataSource.data.productList.map((item) => {
+      const strlikes = NumUtils.formatWithK(item.likes)
+      const strviews = NumUtils.formatWithK(item.views)
+      return {
+        ...item,
+        likes: strlikes,
+        views: strviews,
+        product_logo: productsImage(item.product_logo),
+        product_imgs: item.product_imgs.map(it => productsImage(it)),
+      }
+    })
+    topAndBottom.value = 0
+    searchList.value = nowData
+  }
+  isLoading.value = false
+}
 const inputModule = debounce(async () => {
-  await getPage()
+  await getSearchPage()
 }, 1000)
+
 const onmouseover = (index) => {
   itemRefs.value[index].querySelectorAll('div')[2].style.display = 'flex'
 }
@@ -306,6 +317,58 @@ watch(() => pageInfo.page, async (newPage) => {
     getPageList.value = []
   if (newPage > 1)
     await getPage()
+})
+const searchOut = (idx: number) => {
+  topAndBottom.value = -1
+}
+const searchIn = (idx: number) => {
+  topAndBottom.value = idx
+}
+onMounted(async () => {
+  const { data } = await productsLoadCateg<ReturnData>()
+  const chatDataSource = data.value
+  if (chatDataSource && chatDataSource.code === 0) {
+    clickButton.value = chatDataSource.data.categry
+    leftStatus.value[0].children = chatDataSource.data.model.map((item, index) => {
+      return { key: `${item.name}model${index}`, ...item }
+    })
+    leftStatus.value[1].children = chatDataSource.data.generativeAi.map((item, index) => {
+      return { key: `${item.name}generativeAi${index}`, ...item }
+    })
+    leftStatus.value[2].children = chatDataSource.data.applications.map((item, index) => {
+      return { key: `${item.name}applications${index}`, ...item }
+    })
+    trendingShow.value = true
+    showdot.value = 0
+    await getPage()
+  }
+
+  window.addEventListener('scroll', debounce(() => {
+    if ((document.documentElement.scrollHeight - 200 <= document.documentElement.scrollTop + window.innerHeight) && !isEmpty.value)
+      handleCurrentChange()
+  }, 500))
+  window.addEventListener('keydown', (ev: KeyboardEvent) => {
+    if (ev.keyCode === 38) { // --
+      ev.preventDefault()
+      topAndBottom.value -= 1
+      if (topAndBottom.value < 0)
+        topAndBottom.value = searchList.value.length - 1
+    }
+    else if (ev.keyCode === 40) { // ++
+      ev.preventDefault()
+      topAndBottom.value += 1
+      if (topAndBottom.value > searchList.value.length - 1)
+        topAndBottom.value = 0
+    }
+    else if (ev.keyCode === 13) {
+      const id = searchList.value[topAndBottom.value].id
+      goInto(id)
+    }
+  })
+  window.addEventListener('click', (ev) => {
+    searchList.value = []
+    keyword.value = ''
+  })
 })
 </script>
 
@@ -360,14 +423,28 @@ watch(() => pageInfo.page, async (newPage) => {
         </span>
       </div>
       <aside w-full>
-        <div class="px-4 py-1 pr-8" baseline flex items-center justify-center style="height: 46px;background: #3C3C3E;border-radius: 26px;">
-          <input v-model="keyword" class="c-[#6D6D6D]" placeholder="Search for apps,categories" style="background: #3C3C3E;" outline-none border-none w-full type="text" @input="inputModule">
+        <div relative class="px-4 py-1 pr-8" baseline flex items-center justify-center style="height: 46px;background: #3C3C3E;border-radius: 26px;">
+          <el-icon v-if="isLoading" class="is-loading mr-5px !c-white">
+            <Loading />
+          </el-icon>
+          <input v-model="keyword" class="c-[#6D6D6D]" placeholder="Search for apps,categories" style="background: #3C3C3E;" outline-none border-none w-full type="text" @click.stop="() => {}" @input="inputModule">
           <img
             sm:cursor-pointer
-            class="w-[22px]"
+            class="w-[20px]"
             :src="Search"
             @click="inputModule"
           >
+          <div v-show="searchList.length > 0" class="search_content top-46px bg-#3C3C3E" absolute left-0 right-0 z-10 style="border-radius: 10px; padding: 5px 5px;">
+            <div v-for="(item, index) in searchList" :key="index" flex items-center justify-start :class="[topAndBottom === index ? 'bg-[#6D6D6D]' : '']" class="w-full h-40px cursor-pointer hover:bg-[#6D6D6D] py-10px" @click.stop="goInto(item.id)" @mouseleave="searchOut(index)" @mouseenter.stop.prevent="searchIn(index)">
+              <img
+                class="w-[32px] mr-10px"
+                loading="lazy" :src="item.product_logo" alt=""
+              >
+              <p truncate>
+                {{ item.product_short_desc }}
+              </p>
+            </div>
+          </div>
         </div>
       </aside>
       <div v-show="categoriesShow" z-10 absolute class="top-[85px] 2xl:left-[108px] left-12 2xl:w-[calc(100%-108px)]  w-[calc(100%-3rem)]  rounded-10px " style="background-color: #33333E;" @mouseleave="categoriesShow = false; isOnCategories = false" @mouseenter="categoriesShow = true; isOnCategories = true">
