@@ -146,6 +146,9 @@ const updateUserInfo = (userinfo) => {
   checkUserInfo(userinfo)
 }
 function Init() {
+  if (!isLogin.value)
+    return
+
   // 判断用户是否安装MetaMask钱包插件
   if (typeof window.ethereum === 'undefined') {
     // 没安装MetaMask钱包进行弹框提示
@@ -174,7 +177,7 @@ function Init() {
       }).then((accounts) => {
         walletStatus.value = false
         connectList.value[0].name = accounts[0]
-        isLogin.value && uploadAccountProfile()
+        uploadAccountProfile()
       })
   }
 }
