@@ -491,7 +491,7 @@ onMounted(async () => {
                       await productsMemberFavorite({
                         user_id: userStore.userInfo._id,
                         product_id: item.id,
-                        type: 1,
+                        type: 0,
                       })
                       item.status = true
                     }
@@ -499,7 +499,7 @@ onMounted(async () => {
                       await productsMemberFavorite({
                         user_id: userStore.userInfo._id,
                         product_id: item.id,
-                        type: 0,
+                        type: 1,
                       })
                       item.status = false
                     }
