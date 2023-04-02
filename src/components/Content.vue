@@ -26,28 +26,7 @@ import NoFavorite from './img/no_favorite.png'
 import { useUserStore } from '@/store'
 import { NumUtils } from '@/utils'
 const userStore = useUserStore()
-const stable = ref([
-  {
-    name: 'Categories',
-    on: FenLei,
-    off: FenLeiOff,
-  },
-  {
-    name: 'Trending',
-    on: Filter,
-    off: FilterOff,
-  },
-  {
-    name: 'Favorite',
-    on: Shoucang,
-    off: ShoucangOff,
-  },
-  {
-    name: 'History',
-    on: JurassicWait,
-    off: JurassicWaitOff,
-  },
-])
+const sort = ref('a-z')
 const leftStatus = ref([
   {
     name: 'Model',
@@ -96,11 +75,11 @@ const getPage = async () => {
     page: pageInfo.page,
     size: pageInfo.size,
     condition: {
-      keyword: keyword.value,
       product_categry: product_categry.value,
       product_model: product_model.value,
       product_applications: product_applications.value,
       product_generative_ai: product_generative_ai.value,
+      sort: sort.value,
     },
   })
   const dataSource = data.value
@@ -132,6 +111,7 @@ const searchAll = async (name, text, itemName) => {
   product_model.value = ''
   product_applications.value = ''
   product_generative_ai.value = ''
+  sort.value = ''
   product_categry.value = ''
   if (itemName === 'Model')
     product_model.value = text
@@ -149,7 +129,6 @@ const goInto = (id) => {
   window.location.href = '/detail'
 }
 const showdot = ref(null)
-
 const clickButton = ref([])
 const trendingDotShow = ref(false)
 const categoriesShow = ref(false)
@@ -227,19 +206,28 @@ const historyShowf = async () => {
 
 const trending = ref([
   {
+    name: 'A-Z',
+    href: 'javascript:void(0)',
+    key: 'a-z',
+  },
+  {
     name: 'Trending',
     href: 'javascript:void(0)',
+    key: 'trending',
   },
   {
     name: 'Latest',
     href: 'javascript:void(0)',
+    key: 'latest',
   },
   {
     name: 'Like',
     href: 'javascript:void(0)',
+    key: 'like',
   },
 ])
 const dotfn = async (idx) => {
+  sort.value = trending.value[idx].key
   showdot.value = idx
   trendingShow.value = true
   trendingDotShow.value = false
@@ -265,10 +253,6 @@ const getSearchPage = async () => {
     size: pageInfo.size,
     condition: {
       keyword: keyword.value,
-      product_categry: product_categry.value,
-      product_model: product_model.value,
-      product_applications: product_applications.value,
-      product_generative_ai: product_generative_ai.value,
     },
   })
   const dataSource = data.value
@@ -394,7 +378,7 @@ onMounted(async () => {
           <span class="ml-[16px] mr-[9px]" :class="trendingShow || showdot !== null ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
           <div
             v-show="trendingShow"
-            class="absolute right-0 z-10 mt-40 origin-top-right rounded-md border border-transparent
+            class="absolute right-0 z-10 mt-50 origin-top-right rounded-md border border-transparent
             c-white bg-zinc-800 shadow-xl ring-black focus:outline-none divide-zinc-400 dark:divide-zinc-700"
           >
             <div className="py-1">
@@ -434,8 +418,8 @@ onMounted(async () => {
             :src="Search"
             @click="inputModule"
           >
-          <div v-show="searchList.length > 0" class="search_content top-46px bg-#3C3C3E" absolute left-0 right-0 z-10 style="border-radius: 10px; padding: 5px 5px;">
-            <div v-for="(item, index) in searchList" :key="index" flex items-center justify-start :class="[topAndBottom === index ? 'bg-[#6D6D6D]' : '']" class="w-full h-40px cursor-pointer hover:bg-[#6D6D6D] py-10px" @click.stop="goInto(item.id)" @mouseleave="searchOut(index)" @mouseenter.stop.prevent="searchIn(index)">
+          <div v-show="searchList.length > 0" class="search_content top-46px bg-#3C3C3E h-100  overflow-y-scroll over" absolute left-0 right-0 z-10 style="border-radius: 10px; padding: 5px 5px;">
+            <div v-for="(item, index) in searchList" :key="index" flex items-center justify-start :class="[topAndBottom === index ? 'bg-[#6D6D6D]' : '']" class="w-full h-50px cursor-pointer hover:bg-[#6D6D6D] my-5px px-5px" @click.stop="goInto(item.id)" @mouseleave="searchOut(index)" @mouseenter.stop.prevent="searchIn(index)">
               <img
                 class="w-[32px] mr-10px"
                 loading="lazy" :src="item.product_logo" alt=""
@@ -454,14 +438,16 @@ onMounted(async () => {
         >
           All Use Cases {{ clickButton.length }}
         </button>
-        <div class="mt-[31px] ml-[24px] pb-10px h-100 overflow-y-scroll" flex items-center justify-start flex-wrap flex-row>
-          <span
-            v-for="(it, idx) in clickButton"
-            :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
-            class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
-            text-center
-            @click="useCase(it.name)"
-          >{{ it.name }} {{ it.count }}</span>
+        <div w-full h-100>
+          <div class="mt-[31px] ml-[24px] pb-10px overflow-y-scroll" flex items-start justify-start flex-wrap flex-row>
+            <span
+              v-for="(it, idx) in clickButton"
+              :key="idx" sm:cursor-pointer style="background: #BEE3F8;font-family: Helvetica;"
+              class="text-[14px] rounded-17px px-[16px] py-[7px] mr-16px mb-20px"
+              text-center
+              @click="useCase(it.name)"
+            >{{ it.name }} {{ it.count }}</span>
+          </div>
         </div>
       </div>
     </div>
