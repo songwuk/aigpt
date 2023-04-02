@@ -174,7 +174,7 @@ function Init() {
       }).then((accounts) => {
         walletStatus.value = false
         connectList.value[0].name = accounts[0]
-        uploadAccountProfile()
+        isLogin.value && uploadAccountProfile()
       })
   }
 }

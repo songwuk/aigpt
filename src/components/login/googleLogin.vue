@@ -28,49 +28,6 @@ const emailRef = ref('')
 const passwordRef = ref('')
 const passwordShow = ref(true)
 const successfullyLogin = ref(['bg-gradient-to-r from-#1C82FE to-#5106FE'])
-// const callback = (response) => {
-
-//   if (response.credential) {
-//     const userData = decodeCredential(response.credential)
-//     // localStorage.setItem('username', JSON.stringify({
-//     //   name: userData.name,
-//     //   email: userData.email,
-//     //   picture: userData.picture,
-//     // }))
-//   }
-//   else {
-//     console.log('Call the endpoint which validates authorization code', response)
-//   }
-// }
-const login = () => {
-  // googleSdkLoaded((google) => {
-  //   google.accounts.oauth2.initCodeClient({
-  //     client_id: '352931034399-ht1i7mqefgrbsn67a4b1nm991bvat47l.apps.googleusercontent.com',
-  //     scope: 'email profile openid',
-  //     callback: (response) => {
-  //       console.log('Handle the response', response)
-  //     },
-  //   }).requestCode()
-  // })
-  googleTokenLogin().then((response) => {
-    console.log('Handle the response', response)
-  })
-}
-onMounted(() => {
-  // if (localStorage.getItem('username'))
-  //   isLogin.value = true
-  // else
-  //   isLogin.value = false
-  // isLogin.value && googleOneTap()
-  //   .then((response) => {
-  //     // This promise is resolved when user selects an account from the the One Tap prompt
-  //     callback(response)
-  //     console.log('Handle the response', response)
-  //   })
-  //   .catch((error) => {
-  //     console.log('Handle the error', error)
-  //   })
-})
 /**
  * close
  */
@@ -80,6 +37,36 @@ const hideLogin = () => {
   sendEmail.value = false
   emit('update:modelValue', loginDisplay.value)
   document.body.style.overflow = 'auto'
+}
+const login = async () => {
+  const { access_token } = await googleTokenLogin()
+  const { data } = await accountLogin<any>(access_token)
+  const dataSource = data.value
+  isLoading.value = false
+  if (dataSource && dataSource.code === 0) {
+    const dataInfo = {
+      avatar: dataSource.data.avatar,
+      email: dataSource.data.email,
+      family_name: dataSource.data.family_name,
+      given_name: dataSource.data.given_name,
+      nick_name: dataSource.data.nick_name,
+      wallet_address: dataSource.data.wallet_address,
+      _id: dataSource.data.id,
+    }
+    updateUserInfo(dataInfo)
+    console.log('登录成功')
+    hideLogin()
+    emit('updateInfo', dataInfo)
+    if (props.jumpBack === '/chat')
+      return window.location.href = '/chat'
+  }
+  if (dataSource && dataSource.code === -1) {
+    ElMessage({
+      showClose: true,
+      message: dataSource.msg,
+      type: 'error',
+    })
+  }
 }
 /**
  * check
@@ -98,7 +85,7 @@ const signIn = async () => {
   if (!computedAccount.value)
     return
   isLoading.value = true
-  const { data } = await accountLogin<any>({
+  const { data } = await accountLogin<any>('', {
     email: emailRef.value,
     password: passwordRef.value,
   })

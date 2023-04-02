@@ -251,13 +251,16 @@ export function productsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
  * 登录
  * /account/login
  */
-export function accountLogin<T>(...param): Pick<UseFetchReturn<T>, 'data'> {
+export function accountLogin<T>(token, ...param): Pick<UseFetchReturn<T>, 'data'> {
   const data = getParams(param)
   return useFetchOptions(`/account/login?${data}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },
+    body: JSON.stringify({
+      access_token: token,
+    }),
   })
 }
 
