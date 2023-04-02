@@ -1,4 +1,4 @@
-import { createFetch } from '@vueuse/core'
+import { createFetch, useFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
 import type { UseFetchReturn } from '@vueuse/core'
 import type { OpenaiComletions, ProductsPageCondition } from './types'
@@ -212,11 +212,11 @@ export function productsImage(id) {
  * 获取喜爱的列表
  * @returns
  */
-export function favoriteOfPage<T>(): Pick<UseFetchReturn<T>, 'data'> {
+export function favoriteOfPage<T>(page: number): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/member/favoriteOfPage', {
     method: 'POST',
     body: JSON.stringify({
-      page: 1,
+      page,
       size: 1000,
     }),
   })
@@ -226,11 +226,11 @@ export function favoriteOfPage<T>(): Pick<UseFetchReturn<T>, 'data'> {
  * 获取历史的列表
  * @returns
  */
-export function historyOfPage<T>(): Pick<UseFetchReturn<T>, 'data'> {
+export function historyOfPage<T>(page: number): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/member/historyOfPage', {
     method: 'POST',
     body: JSON.stringify({
-      page: 1,
+      page,
       size: 1000,
     }),
   })
@@ -408,6 +408,18 @@ export function panelProductsSave(params: any, files: any) {
  */
 export function getCateAll() {
   return useFetchOptions('/cate/all', {
+    method: 'GET',
+  })
+}
+
+/**
+ * 收藏
+ * @param params
+ * @returns
+ */
+export function productsMemberFavorite(...params) {
+  const url = getParams(params)
+  return useFetchOptions(`/products/member/favorite?${url}`, {
     method: 'GET',
   })
 }

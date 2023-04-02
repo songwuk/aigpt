@@ -160,7 +160,7 @@ const clickLikes = (index: number, likes) => {
         </div>
       </div>
     </aside>
-    <div v-if="isProducts" relative overflow-x-hidden overflow-y-scroll class="w-[calc(100%-265px)] h-[calc(100vh-114px)] pt-40px pl-51px pr-118px bg-#26262C ">
+    <div v-if="isProducts" relative overflow-x-auto overflow-y-scroll class="w-[calc(100%-265px)] h-[calc(100vh-114px)] pt-40px pl-51px pr-118px bg-#26262C ">
       <h3 class="text-30px">
         Products <span ml-30px>{{ totalProducts }}</span>
       </h3>
@@ -221,7 +221,7 @@ const clickLikes = (index: number, likes) => {
         <el-pagination background layout="prev, pager, next" :page-size="10" :total="totalProducts" @current-change="handleCurrentChange" />
       </div>
     </div>
-    <div v-else relative overflow-x-hidden overflow-y-scroll class="w-[calc(100%-265px)] h-[calc(100vh-114px)] pt-40px pl-51px pr-118px bg-#26262C ">
+    <div v-else relative overflow-x-auto overflow-y-scroll class="w-[calc(100%-265px)] h-[calc(100vh-114px)] pt-40px pl-51px pr-118px bg-#26262C ">
       <h3 class="text-30px">
         Registers <span ml-30px> {{ totalProducts }}</span>
       </h3>

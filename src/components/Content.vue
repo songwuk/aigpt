@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import type { ReturnData, ReturnPageData } from '../types'
-import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsPage } from '../url'
+import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsMemberFavorite, productsPage } from '../url'
 import Left from './img/left.png'
 import LeftOff from './img/leftoff.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -23,7 +23,9 @@ import Start from './img/start.png'
 import StartOff from './img/startOff.png'
 import NoHistory from './img/no_history.png'
 import NoFavorite from './img/no_favorite.png'
+import { useUserStore } from '@/store'
 import { NumUtils } from '@/utils'
+const userStore = useUserStore()
 const stable = ref([
   {
     name: 'Categories',
@@ -75,8 +77,8 @@ const clickBarStatus = ref('')
 const clickBarText = ref('')
 const getPageList = ref([])
 const product_categry = ref('')
+const isEmpty = ref(false)
 const product_model = ref('')
-const currentPage = ref(1)
 const pageInfo = reactive({
   page: 1,
   size: 10,
@@ -87,8 +89,8 @@ const product_generative_ai = ref('')
 const isPageChange = ref(false)
 const getPage = async () => {
   if (!isPageChange.value) {
-    currentPage.value = 1
     pageInfo.page = 1
+    getPageList.value = []
   }
   const { data } = await productsPage<ReturnPageData>({
     page: pageInfo.page,
@@ -103,7 +105,7 @@ const getPage = async () => {
   })
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
-    getPageList.value = dataSource.data.productList.map((item) => {
+    const nowData = dataSource.data.productList.map((item) => {
       const strlikes = NumUtils.formatWithK(item.likes)
       const strviews = NumUtils.formatWithK(item.views)
       return {
@@ -114,6 +116,12 @@ const getPage = async () => {
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
     })
+    if (nowData.length === 0)
+      isEmpty.value = true
+    else
+      isEmpty.value = false
+
+    getPageList.value.push(...nowData)
     total.value = dataSource.data.total
   }
   isPageChange.value = false
@@ -141,6 +149,7 @@ const goInto = (id) => {
   window.location.href = '/detail'
 }
 const showdot = ref(null)
+
 const clickButton = ref([])
 const trendingDotShow = ref(false)
 const categoriesShow = ref(false)
@@ -165,7 +174,7 @@ const favoriteShowf = async () => {
   showdot.value = null
   historyShow.value = false
   clickBarStatus.value = 'Favorite'
-  const { data } = await favoriteOfPage<ReturnPageData>()
+  const { data } = await favoriteOfPage<ReturnPageData>(pageInfo.page)
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
@@ -193,7 +202,7 @@ const historyShowf = async () => {
   favoriteShow.value = false
   showdot.value = null
   clickBarStatus.value = 'History'
-  const { data } = await historyOfPage<ReturnPageData>()
+  const { data } = await historyOfPage<ReturnPageData>(pageInfo.page)
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
@@ -237,7 +246,13 @@ const dotfn = async (idx) => {
   product_model.value = ''
   product_applications.value = ''
   product_generative_ai.value = ''
+  isPageChange.value = false
   await getPage()
+}
+
+const handleCurrentChange = () => {
+  pageInfo.page++
+  isPageChange.value = true
 }
 onMounted(async () => {
   const { data } = await productsLoadCateg<ReturnData>()
@@ -257,6 +272,11 @@ onMounted(async () => {
     showdot.value = 0
     await getPage()
   }
+
+  window.addEventListener('scroll', debounce(() => {
+    if ((document.documentElement.scrollHeight - 200 <= document.documentElement.scrollTop + window.innerHeight) && !isEmpty.value)
+      handleCurrentChange()
+  }, 500))
 })
 const itemRefs = ref([])
 const inputModule = debounce(async () => {
@@ -281,14 +301,12 @@ const useCase = async (name) => {
   await getPage()
   categoriesShow.value = false
 }
-watch(() => pageInfo.page, async () => {
-  await getPage()
+watch(() => pageInfo.page, async (newPage) => {
+  if (newPage === 1)
+    getPageList.value = []
+  if (newPage > 1)
+    await getPage()
 })
-
-const handleCurrentChange = (val: number) => {
-  isPageChange.value = true
-  pageInfo.page = val
-}
 </script>
 
 <template>
@@ -405,11 +423,21 @@ const handleCurrentChange = (val: number) => {
                   sm:cursor-pointer
                   :src="item.status ? Start : StartOff"
                   class="w-16px ml-8px"
-                  @click.stop.prevent="() => {
+                  @click.stop.prevent="async () => {
                     if (!item.status){
+                      await productsMemberFavorite({
+                        user_id: userStore.userInfo._id,
+                        product_id: item.id,
+                        type: 1,
+                      })
                       item.status = true
                     }
                     else {
+                      await productsMemberFavorite({
+                        user_id: userStore.userInfo._id,
+                        product_id: item.id,
+                        type: 0,
+                      })
                       item.status = false
                     }
                   }"
@@ -522,15 +550,9 @@ const handleCurrentChange = (val: number) => {
             </div>
           </div>
         </div>
-        <div v-if="(trendingShow || historyShowList || favoriteShowList) && getPageList.length > 0" class="page" relative c-white w-full text-right>
-          <el-pagination
-            v-model:current-page="currentPage"
-            absolute
-            right-5
-            background layout="prev, pager, next" :page-size="pageInfo.size" :total="total"
-            @current-change="handleCurrentChange"
-          />
-        </div>
+        <!-- <div v-if="(trendingShow || historyShowList || favoriteShowList) && getPageList.length > 0" class="page" relative c-white w-full text-center>
+          loading
+        </div> -->
       </section>
     </div>
   </div>
@@ -546,19 +568,5 @@ const handleCurrentChange = (val: number) => {
 
 ::-webkit-scrollbar {
   display: none;
-}
-.page :deep(.el-pagination .el-pager li){
-  background-color: #26262C !important;
-  border: 1px solid #FFFFFF;
-  border-radius: 4px;
-  color: white
-}
-.page :deep(.el-pagination .el-pager .is-active){
-  background-color:#004699 !important;
-}
-.page :deep(.el-pagination .is-first), :deep(.el-pagination .is-last)  {
-  background-color: #26262C !important;
-  border: 1px solid #FFFFFF;
-  color: white
 }
 </style>
