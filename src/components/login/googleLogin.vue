@@ -148,6 +148,13 @@ const createAccount = async () => {
       if (props.jumpBack === '/chat')
         return window.location.href = '/chat'
     }
+    else {
+      ElMessage({
+        showClose: true,
+        message: dataSource.msg,
+        type: 'error',
+      })
+    }
   }
 }
 

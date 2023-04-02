@@ -1,4 +1,4 @@
-import { createFetch, useFetch } from '@vueuse/core'
+import { createFetch } from '@vueuse/core'
 import { ref, unref } from 'vue'
 import type { UseFetchReturn } from '@vueuse/core'
 import type { OpenaiComletions, ProductsPageCondition } from './types'
