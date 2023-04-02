@@ -14,7 +14,9 @@ import ShareConversation from '../img/ShareConversation.png'
 import Right from '../img/right.png'
 import Right1 from '../img/right_1.png'
 import Left1 from '../img/left_1.png'
+import { useUserStore } from '@/store'
 import { NumUtils } from '@/utils'
+const userStore = useUserStore()
 const leftStatus = ref([
   {
     name: 'Model',
@@ -107,7 +109,7 @@ const backward = () => {
 }
 onMounted(async () => {
   const id = localStorage.getItem('detail')
-  const { data } = await productsQuery(id)
+  const { data } = await productsQuery(id, userStore.userInfo._id)
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
     listData.product_logo = productsImage(dataSource.data.product_logo)

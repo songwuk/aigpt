@@ -241,8 +241,8 @@ export function historyOfPage<T>(page: number): Pick<UseFetchReturn<T>, 'data'> 
  * @param user_id
  * @returns
  */
-export function productsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
-  return useFetchOptions(`/products/query/${id}`, {
+export function productsQuery<T>(id, user_id): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/products/query/${id}?user_id=${user_id}`, {
     method: 'GET',
   })
 }
