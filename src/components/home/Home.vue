@@ -41,7 +41,7 @@ const submit = async (event) => {
 </script>
 
 <template>
-  <div flex sm:items-center justify-start flex-col items-start class="w-full sm:h-[652px]" :style="{ 'background-image': `url(${BgMergeImage})`, 'background-image': `url(${BgMergeImage}),linear-gradient(269deg, #1C82FE 0%, #5106FE 100%)` }">
+  <div flex sm:items-center justify-start flex-col items-start class="w-full sm:h-[652px]" :style="{ 'background-image': `url(${BgMergeImage})`, 'background-image': `url(${BgMergeImage}),linear-gradient(269deg, #1C82FE 0%, #5106FE 100%)`, 'background-size': 'cover' }">
     <div class="mt-[90px] mb-[26px]" text-center>
       <span style="font-size: 48px;font-weight: bold;color: #FFFFFF;">Connect ChatGPT & AIGC to Web3</span>
     </div>

@@ -105,10 +105,6 @@ const tags = ref([
     href: '/chat',
   },
   {
-    name: 'GAI MAP',
-    href: 'javascript:void()',
-  },
-  {
     name: 'Pricing',
     href: 'javascript:void()',
   },
