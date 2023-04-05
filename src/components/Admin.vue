@@ -119,7 +119,6 @@ const clickBtn = async (id) => {
   await productsEditProductStat()
 }
 const reviewPRD = (id) => {
-  localStorage.setItem('submit', id)
   window.open(`/submit?id=${id}`, '_blank')
 }
 const creditgifts = ref()

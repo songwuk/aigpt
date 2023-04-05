@@ -12,12 +12,13 @@ import Discord_2 from '../img/discord_2.png'
 import Facebook_2 from '../img/facebook_2.png'
 import Instagram_2 from '../img/instagram_2.png'
 import Twitter_2 from '../img/twitter_2.png'
+import { parseQuery } from '@/utils'
 function urlToBlob(url, fileName) {
   return fetch(url)
     .then(response => response.blob())
     .then(blob => new File([blob], fileName, { type: 'image/png' }))
 }
-
+const orderSearch = window.location.search
 const submitId = ref('')
 const isOwner = ref(true)
 const email = ref('')
@@ -174,7 +175,6 @@ const submitProductsSave = async () => {
     alert('Submitted successfully')
   else
     alert(data.value.msg)
-  localStorage.removeItem('submit')
   // window.reload()
   loading.value = false
 }
@@ -214,7 +214,8 @@ const product_generative_aiArr = ref([
   'Text to 3D',
 ])
 onMounted(async () => {
-  submitId.value = localStorage.getItem('submit')
+  const { id } = parseQuery(orderSearch)
+  submitId.value = id
   const { data: dataCate } = await getCateAll()
   const dataSources = dataCate.value
   if (dataSources && dataSources.code === 0) {
