@@ -162,7 +162,8 @@ function Init() {
   // 如果用户安装了MetaMask，你可以要求他们授权应用登录并获取其账号
     ethereum.enable()
       .catch((reason) => {
-      // 如果用户拒绝了登录请求
+        console.log(reason, 'fail')
+        // 如果用户拒绝了登录请求
         if (reason === 'User rejected provider access') {
         // 用户拒绝登录后执行语句；
         }
@@ -175,9 +176,11 @@ function Init() {
           })
         }
       }).then((accounts) => {
-        walletStatus.value = false
-        connectList.value[0].name = accounts[0]
-        uploadAccountProfile()
+        if (accounts) {
+          walletStatus.value = false
+          connectList.value[0].name = accounts[0]
+          uploadAccountProfile()
+        }
       })
   }
 }
