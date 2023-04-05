@@ -412,13 +412,14 @@ onMounted(async () => {
       <div w-full flex items-center justify-between class="pr-101px pl-56px mb-83px">
         <div
           class="w-435px h-258px border border-dashed border-[#979797] rounded-6px"
+          overflow-hidden
           flex items-center justify-center flex-col cursor-pointer
           shrink-1
           relative
           @click.stop.prevent="uploadImg_2"
         >
-          <img v-if="upload_2" w-full object-fill :src="upload_2" alt="upload_2">
-          <img v-if="!upload_2" :src="Upload" alt="Upload" class="w-160px mb-20px">
+          <img v-if="upload_2" class="w-435px" object-fill :src="upload_2" alt="upload_2">
+          <img v-if="!upload_2" object-fill :src="Upload" alt="Upload" class="w-160px mb-20px">
           <img absolute class="w-24px right-[20px] top-[20px] z-10" :src="Del" alt="Del" @click.stop="deleteFn1">
           <div v-if="!upload_2" class="text-[16px] " flex items-center justify-center flex-col>
             <span class="c-#6A6A6E">Ideal dimensions 750*450 px.</span>
@@ -427,12 +428,13 @@ onMounted(async () => {
         <div
           class="w-435px h-258px border border-dashed border-[#979797] rounded-6px"
           flex items-center justify-center flex-col cursor-pointer
+          overflow-hidden
           shrink-1
           relative
           @click.stop.prevent="uploadImg_3"
         >
-          <img v-if="upload_3" w-full object-fill :src="upload_3" alt="upload_3">
-          <img v-if="!upload_3" :src="Upload" alt="Upload" class="w-160px mb-20px">
+          <img v-if="upload_3" class="w-435px" object-fill :src="upload_3" alt="upload_3">
+          <img v-if="!upload_3" object-fill :src="Upload" alt="Upload" class="w-160px mb-20px">
           <img absolute class="w-24px right-[20px] top-[20px] z-10" :src="Del" alt="Del" @click.stop="deleteFn2">
           <div v-if="!upload_3" class="text-[16px] " flex items-center justify-center flex-col>
             <span class="c-#6A6A6E">Ideal dimensions 750*450 px.</span>
