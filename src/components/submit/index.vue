@@ -288,7 +288,6 @@ onMounted(async () => {
     >
       Submit Your AI Products
     </h2>
-    <span class="text-16px font400 text-left">AIGPT.me is the largest generative All use cases category navigation platform. Submit your products today and get more exposure</span>
   </div>
   <section
     w-full
