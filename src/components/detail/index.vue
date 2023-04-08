@@ -2,7 +2,7 @@
 import { Carousel, Slide } from '@jambonn/vue-concise-carousel'
 import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
 import { onMounted, reactive, ref } from 'vue'
-import { productsImage, productsQuery } from '../../url'
+import { productsImage, productsMemberFavorite, productsQuery } from '../../url'
 import See from '../img/see.png'
 import Like from '../img/like.png'
 import Facebook from '../img/facebook.png'
@@ -14,81 +14,10 @@ import ShareConversation from '../img/ShareConversation.png'
 import Right from '../img/right.png'
 import Right1 from '../img/right_1.png'
 import Left1 from '../img/left_1.png'
+import Start from '../img/start.png'
 import { useUserStore } from '@/store'
 import { NumUtils } from '@/utils'
 const userStore = useUserStore()
-const leftStatus = ref([
-  {
-    name: 'Model',
-    children: [
-      {
-        name: 'ChatGPT',
-        num: 1,
-      },
-      {
-        name: 'OpenAI CLIP',
-        num: 22,
-      },
-      {
-        name: 'DALL·E',
-        num: 1,
-      },
-    ],
-    bar: false,
-  },
-  {
-    name: 'Generative AI',
-    children: [
-      {
-        name: 'Text to Text',
-        num: 1,
-      },
-      {
-        name: 'Text to Image',
-        num: 22,
-      },
-      {
-        name: 'Text to Video',
-        num: 22,
-      },
-      {
-        name: 'Text to Code',
-        num: 22,
-      },
-      {
-        name: 'Text to Audio',
-        num: 22,
-      },
-      {
-        name: 'Text to 3D',
-        num: 22,
-      },
-    ],
-    bar: false,
-  },
-  {
-    name: 'Application',
-    children: [
-      {
-        name: 'Website',
-        num: 1,
-      },
-      {
-        name: 'Apps',
-        num: 22,
-      },
-      {
-        name: 'Web3',
-        num: 22,
-      },
-      {
-        name: 'Chrome Extension',
-        num: 1,
-      },
-    ],
-    bar: false,
-  },
-])
 const forList = ref([])
 const listData = reactive({
   views: 0,
@@ -98,7 +27,13 @@ const listData = reactive({
   product_url: '',
   product_short_desc: '',
   product_imgs: [],
-  social_media: {},
+  isFavorite: false,
+  social_media: {
+    facebook: '',
+    instagram: '',
+    discord: '',
+    twitter: '',
+  },
 })
 const carousel = ref('')
 const forward = () => {
@@ -107,8 +42,10 @@ const forward = () => {
 const backward = () => {
   carousel.value.handleNavigation('backward')
 }
+const id = localStorage.getItem('detail')
+const idDetail = ref('')
+idDetail.value = id
 onMounted(async () => {
-  const id = localStorage.getItem('detail')
   const { data } = await productsQuery(id, userStore.userInfo._id)
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
@@ -117,10 +54,13 @@ onMounted(async () => {
     listData.views = NumUtils.formatWithK(dataSource.data.views)
     listData.likes = NumUtils.formatWithK(dataSource.data.likes)
     listData.product_name = dataSource.data.product_name
+    listData.isFavorite = dataSource.data.isFavorite
     listData.product_detail = dataSource.data.product_detail
     listData.product_url = dataSource.data.product_url
     listData.product_short_desc = dataSource.data.product_short_desc
-    listData.social_media = dataSource.data.social_media
+    if (dataSource.data.social_media)
+      listData.social_media = dataSource.data.social_media
+
     listData.product_model = dataSource.data.product_model
     if (typeof dataSource.data.product_categry === 'object')
       forList.value.push(...dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
@@ -132,11 +72,6 @@ onMounted(async () => {
   }
 })
 const shareConversationShow = ref(false)
-const startOff = ref(false)
-
-const setFavorite = () => {
-  startOff.value = !startOff.value
-}
 </script>
 
 <template>
@@ -168,31 +103,47 @@ const setFavorite = () => {
       <div class="mt-21px mb-[17px]" flex items-center justify-between>
         <span class="text-26px">{{ listData.product_name }}</span>
         <aside flex items-center justify-center class="shareImg">
-          <i>
+          <i v-show="listData.social_media.facebook">
             <a :href="listData.social_media?.facebook ? listData.social_media.facebook : 'javascript:void(0) '">
               <img class="w-13px" :src="Facebook" alt="Facebook">
             </a>
           </i>
-          <i>
+          <i v-show="listData.social_media.instagram">
             <a :href="listData.social_media?.instagram ? listData.social_media.instagram : 'javascript:void(0) '">
               <img class="w-22px" :src="Instagram" alt="Instagram">
             </a>
           </i>
-          <i>
+          <i v-show="listData.social_media.discord">
             <a :href="listData.social_media?.discord ? listData.social_media.discord : 'javascript:void(0) '">
               <img class="w-24px" :src="Discord" alt="Discord">
             </a>
           </i>
-          <i>
+          <i v-show="listData.social_media.twitter">
             <a :href="listData.social_media?.twitter ? listData.social_media.twitter : 'javascript:void(0) '">
               <img class="w-22px" :src="Twitter" alt="Twitter">
             </a>
           </i>
-          <i relative style=" font-style: normal;" @click="startOff = !startOff">
-            <div v-show="startOff" absolute class="right-50% top-50% translate-x-50% -translate-y-150% text-center -top-50px w-140px h-43px leading-43px text-16px bg-#33333E border rounded-5px border-transparent" @click="setFavorite">
-              Add to Favorite
-            </div>
-            <img class="w-22px" :src="StartOff" alt="StartOff">
+          <i relative style=" font-style: normal;">
+            <img
+              class="w-22px" :src="listData.isFavorite ? Start : StartOff" alt="StartOff" @click.stop.prevent="async () => {
+                if (!listData.isFavorite){
+                  await productsMemberFavorite({
+                    user_id: userStore.userInfo._id,
+                    product_id: idDetail,
+                    type: 0,
+                  })
+                  listData.isFavorite = true
+                }
+                else {
+                  await productsMemberFavorite({
+                    user_id: userStore.userInfo._id,
+                    product_id: idDetail,
+                    type: 1,
+                  })
+                  listData.isFavorite = false
+                }
+              }"
+            >
           </i>
           <i relative style=" font-style: normal;" @click="shareConversationShow = !shareConversationShow">
             <div v-show="shareConversationShow" flex items-center justify-center flex-col absolute class="right-50% top-50% translate-x-0% translate-y-15% text-center -top-50px w-204px text-16px bg-#33333E border rounded-5px border-transparent">
@@ -225,11 +176,13 @@ const setFavorite = () => {
       </aside>
       <section class="2xl:ml-[22px] mt-[18px]" sm:w-full w-auto>
         <div flex items-center justify-start>
-          <span class="c-#979797 text-14px">APPS</span>
+          <a href="/">
+            <span class="c-#979797 text-14px hover:c-#05D4FD">APPS</span>
+          </a>
           <i class="mx-6px">
             <img class="w-8px" :src="Right" alt="Right">
           </i>
-          <span class="c-#05D4FD text-14px">GEN-1</span>
+          <span class="c-#05D4FD text-14px">{{ listData.product_name }}</span>
         </div>
         <h2 class="mt-35px text-26px mb-19px">
           {{ listData.product_model }}
