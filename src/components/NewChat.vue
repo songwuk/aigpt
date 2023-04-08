@@ -210,8 +210,7 @@ const toPng = async () => {
   alink.click()
 }
 const copyLink = (link) => {
-  const isSafari = navigator.userAgent.match(/iPad|iPhone|iPod|Macintosh/i)
-  if (navigator.clipboard && isSafari) {
+  if (navigator.clipboard) {
     navigator.clipboard
       .writeText(link)
       .then((_) => {
@@ -266,6 +265,7 @@ const stopGenerating = async () => {
     stopClick.value = false
     errorValue.value = false
     chatValue.value = list.value[list.value.length - 1].prompt
+    list.value.splice(list.value.length - 1, 1)
     await openaiChat()
   }
 }
@@ -558,7 +558,7 @@ const removeByUserFn = async () => {
               AIGPT Discord</a>
             <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
               <img class="w-18px" :src="faq" alt="faq">Updates &amp; FAQ</a>
-            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+            <a href="/" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
               <img class="w-16px" :src="SignOut" alt="faq">Log out</a>
           </nav>
         </div>
