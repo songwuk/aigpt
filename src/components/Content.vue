@@ -306,7 +306,16 @@ onMounted(async () => {
   const { data } = await productsLoadCateg<ReturnData>()
   const chatDataSource = data.value
   if (chatDataSource && chatDataSource.code === 0) {
-    clickButton.value = chatDataSource.data.categry
+    // eslint-disable-next-line array-callback-return
+    clickButton.value = chatDataSource.data.categry.sort((a, b) => {
+      const nameA = a.name.toUpperCase() // ignore upper and lowercase
+      const nameB = b.name.toUpperCase() // ignore upper and lowercase
+      if (nameA < nameB)
+        return -1
+
+      if (nameA > nameB)
+        return 1
+    })
     leftStatus.value[0].children = chatDataSource.data.model.map((item, index) => {
       return { key: `${item.name}model${index}`, ...item }
     })
