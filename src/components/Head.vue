@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems, TransitionRoot } from '@headlessui/vue'
 import { ElMessage } from 'element-plus'
+import { debounce } from 'lodash-es'
 import AiGPT from './img/AiGPT.png'
 import Global from './img/global.png'
 import GlobalHover from './img/global_1.png'
@@ -18,12 +19,15 @@ import Disconnect from './img/disconnect.png'
 import Twitter from './img/twitter.png'
 import Chain from './img/chain.png'
 import MetaMask from './img/fork.png'
+import UploadImg from './img/up_img.png'
 import GoogleLogin from './login/googleLogin.vue'
-import { accountEditProfile } from '@/url'
+import { accountEditProfile, productsImage } from '@/url'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
 const isLogin = ref(false)
-const userInfo = reactive({})
+const userInfo = reactive({
+  credits: 0,
+})
 function checkUserInfo(user) {
   if (typeof user === 'object' && '_id' in user && user._id) {
     for (const key in user)
@@ -47,6 +51,10 @@ const personalList = ref([
     img: Avatar,
     icon: IconBottom,
     type: 'b',
+  },
+  {
+    name: 'uploadImg',
+
   },
   {
     name: 'Airdrop Plan',
@@ -112,21 +120,47 @@ const tags = ref([
 const submitPath = () => {
   window.location.href = '/submit'
 }
+function updateUserInfoMa(options) {
+  userStore.updateUserInfo(options)
+}
+const imgFile = ref('')
 const uploadAccountProfile = async () => {
-  await accountEditProfile({
-    userId: userStore.getuserstate._id,
-    // nickName: 'Vicar',
-    // avatar: 'https://www.mktvio.com/avatar001.png',
+  const { data } = await accountEditProfile({
+    user_id: userStore.getuserstate._id,
+    nickName: userStore.getuserstate.nick_name,
     address: connectList.value[0].name,
-    email: userStore.getuserstate.email,
+  }, {
+    avatar: imgFile.value,
   })
+  const dataSource = data.value
+  if (dataSource && dataSource.code === 0) {
+    const dataInfo = {
+      avatar: productsImage(dataSource.data.avatar),
+      email: dataSource.data.email,
+      family_name: dataSource.data.family_name,
+      given_name: dataSource.data.given_name,
+      credits: dataSource.data.credits,
+      nick_name: dataSource.data.nick_name,
+      wallet_address: dataSource.data.wallet_address,
+      _id: dataSource.data.id,
+    }
+    updateUserInfoMa(dataInfo)
+    window.location.reload()
+  }
+  if (dataSource && dataSource.code === -1) {
+    ElMessage({
+      showClose: true,
+      message: dataSource.msg,
+      type: 'error',
+    })
+  }
 }
 onMounted(() => {
   const pathname = window.location.pathname
   if (pathname)
     pathnameRef.value = pathname
   gptCheckLogin(pathname)
-  Init()
+  // isLogin.value && pathname.includes('/sss') && Init()
 })
 const jumpBack = ref('')
 function gptCheckLogin(item) {
@@ -144,7 +178,6 @@ const updateUserInfo = (userinfo) => {
 function Init() {
   if (!isLogin.value)
     return
-
   // 判断用户是否安装MetaMask钱包插件
   if (typeof window.ethereum === 'undefined') {
     // 没安装MetaMask钱包进行弹框提示
@@ -172,10 +205,11 @@ function Init() {
           })
         }
       }).then((accounts) => {
+        console.log(accounts, 'accounts')
         if (accounts) {
           walletStatus.value = false
           connectList.value[0].name = accounts[0]
-          uploadAccountProfile()
+          // uploadAccountProfile()
         }
       })
   }
@@ -183,15 +217,44 @@ function Init() {
 const sendMessage = () => {
   isWaiting.value = false
 }
+const isOnWallet = ref(false)
+const mouseOut = debounce(() => {
+  if (wallet.value && isOnWallet.value)
+    wallet.value = true
+  else
+    wallet.value = false
+}, 200)
+const uploadFile = ref(null)
+const uploadClick = () => {
+  if (uploadFile.value)
+    uploadFile.value.click()
+}
+async function handleFileUpload() {
+  const fileEle = uploadFile.value.files
+  for (let i = 0; i < fileEle.length; i++) {
+    imgFile.value = fileEle[i]
+    uploadAccountProfile()
+  }
+}
+
+function readAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
 </script>
 
 <template>
+  <input ref="uploadFile" type="file" hidden @change="handleFileUpload">
   <div class="head" w-full flex="~" items-center sm:justify-center justify-start>
     <section sm:flex-1 class="sm:ml-[61px] ml-[20px]" flex items-center justify-start>
       <a href="/" block>
         <div relative>
           <img sm:cursor-pointer class="w-[101px]" :src="AiGPT" alt="logo">
-          <span style="line-height: 10px;" absolute class="top-[-4px] right-[-46px] text-[10px] c-[#05D4FD] rounded-[8px] border-1 border-[#05D4FD] px-[6px] py-[3px]">BELA</span>
+          <span style="line-height: 10px;" absolute class="top-[-4px] right-[-46px] text-[10px] c-[#05D4FD] rounded-[8px] border-1 border-[#05D4FD] px-[6px] py-[3px]">Beta</span>
         </div>
       </a>
       <div class="ml-[67px]" sm:block hidden>
@@ -206,12 +269,12 @@ const sendMessage = () => {
         Submit
       </button>
       <div class="p-[1px] box-border rounded-[6px] mr-[20px]" style="background: linear-gradient(135deg, rgba(71, 21, 254, 1), rgba(9, 190, 253, 1))">
-        <button style="border: 1px solid transparent" class=" rounded-[6px] bg-black w-[109px] h-[32px] ">
-          892 Credits
+        <button style="border: 1px solid transparent" class=" rounded-[6px] bg-black px-10px h-[32px] hover:c-[#05D4FD]">
+          {{ userInfo.credits < 0 ? 0 : userInfo.credits }} Credits
         </button>
       </div>
       <template v-if="isLogin">
-        <img cursor-pointer class="w-[32px] mr-[10px] mr-[20px] " :src="userInfo.avatar ? userInfo.avatar : Walletpng" alt="Walletpng" @click="wallet = !wallet">
+        <img cursor-pointer class="w-[32px] h-[32px] mr-[10px] mr-[20px] border rounded-50% border-transparent hover:border-[#05D4FD]" :src="userInfo.avatar ? userInfo.avatar : Walletpng" alt="Walletpng" @mouseleave="mouseOut" @mouseenter.stop.prevent="wallet = true" @click=" wallet = !wallet">
       </template>
       <template v-else>
         <button class="mr-[20px] w-[109px] h-[32px] rounded-[6px]" style="background: linear-gradient(135deg, #5106FE 0%, #2A4DFF 100%);" @click="getStart">
@@ -222,9 +285,9 @@ const sendMessage = () => {
         <img ref="eng" class="w-[20px] mr-[10px]" :src="Global" alt="language">
         English
       </button>
-      <aside v-show="wallet" flex items-center justify-start flex-col absolute class="w-[290px] h-[auto] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]">
+      <aside v-show="wallet" flex items-center justify-start flex-col absolute class="w-[290px] h-[auto] top-[49px] right-[89px] rounded-[10px] bg-[#202123] z-3 p-[20px]" @mouseleave="wallet = false; isOnWallet = false" @mouseenter="wallet = true; isOnWallet = true">
         <div flex items-center justify-start w-full>
-          <img class="w-[32px] mr-[10px]" :src="userInfo.avatar ? userInfo.avatar : Walletpng" alt="Walletpng">
+          <img class="w-[32px] h-[32px] mr-[10px]  rounded-50%" :src="userInfo.avatar ? userInfo.avatar : Walletpng" alt="Walletpng">
           <span style="font-size: 14px;">{{ userInfo.email }}</span>
         </div>
         <button v-if="walletStatus" style="width: 136px;height: 36px;background: linear-gradient(315deg, #1C82FE 0%, #5106FE 100%);border-radius: 8px;" class="mt-[10px] mb-[11px]" @click="connectWallet">
@@ -239,16 +302,24 @@ const sendMessage = () => {
             </i>
           </div>
         </div>
-
-        <span v-if="walletStatus" style="font-size: 12px; color: #C1C1C1;">Connect wallet to ask ChatGPT,Earn $AiGPT</span>
-        <div v-for="(item, index) in personalList" :key="index" cursor-pointer relative class="mt-[19px]" w-full flex items-center justify-start>
-          <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
-          <span>{{ item.name }}</span>
-          <i absolute right-0>
-            <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
-          </i>
+        <div v-for="(item, index) in personalList" :key="index" cursor-pointer relative class="mt-[19px]" w-full flex items-center :class="[item.name !== 'uploadImg' ? 'justify-start hover:c-[#05D4FD]' : 'justify-center']">
+          <template v-if="item.name === 'uploadImg'">
+            <div class="w-87px h-87px border border-dashed rounded-6px border-#979797 flex items-center justify-center flex-col" @click="uploadClick">
+              <img class="w-29px" :src="UploadImg" alt="UploadImg">
+              <p class="font-400 c-#79797B text-10px text-center">
+                Ideal dimensions 400 x 400 px
+              </p>
+            </div>
+          </template>
+          <template v-else>
+            <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
+            <span>{{ item.name }}</span>
+            <i absolute right-0>
+              <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
+            </i>
+          </template>
         </div>
-        <button v-if="!walletStatus" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;" @click="disconnectWallet">
+        <button v-if="!walletStatus" class="hover:!bg-[#05D4FD]" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;" @click="disconnectWallet">
           <img class="w-[14px] mr-[3px]" :src="Disconnect" alt="Disconnect">
           Disconnect
         </button>
@@ -256,9 +327,11 @@ const sendMessage = () => {
           <img class="w-[14px] mr-[3px]" :src="SignOut" alt="SignOut">
           Sign Out
         </button>
-        <p cursor-pointer flex items-center justify-center class="mt-[14px]">
+        <p v-if="walletStatus" cursor-pointer flex items-center justify-center class="mt-[14px]">
           <img class="w-[19px] mr-[3px]" :src="Twitter" alt="Twitter">
-          <span underline>AIGBT DAO</span>
+          <a href="https://t.me/aigptdao">
+            <span underline>AIGBT DAO</span>
+          </a>
         </p>
       </aside>
     </section>

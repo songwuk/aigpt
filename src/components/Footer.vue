@@ -19,9 +19,15 @@ const leftFooter = ref([
     </section>
     <span sm:my-0 flex items-center justify-center flex-1 class="c-[#6D6D6D] my-[10px]">Copyright © 2023 AIGPT.me All Rights Reserved</span>
     <section flex-1 class="sm:mr-[64px]" flex items-center justify-end>
-      <img cursor-pointer class="w-[30px] mr-[24px]" :src="Twitter" alt="Twitter">
-      <img cursor-pointer class="w-[26px] mr-[24px]" :src="Discord" alt="Discord">
-      <img cursor-pointer class="w-[26px]" :src="Telegram" alt="Telegram">
+      <a href="https://twitter.com/AiGPTme">
+        <img cursor-pointer class="w-[30px] mr-[24px]" :src="Twitter" alt="Twitter">
+      </a>
+      <a href="https://discord.gg/aigpt">
+        <img cursor-pointer class="w-[26px] mr-[24px]" :src="Discord" alt="Discord">
+      </a>
+      <a href="https://t.me/aigptdao">
+        <img cursor-pointer class="w-[26px]" :src="Telegram" alt="Telegram">
+      </a>
     </section>
   </div>
 </template>

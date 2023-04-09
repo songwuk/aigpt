@@ -212,12 +212,16 @@ export function productsImage(id) {
  * 获取喜爱的列表
  * @returns
  */
-export function favoriteOfPage<T>(page: number): Pick<UseFetchReturn<T>, 'data'> {
+export function favoriteOfPage<T>(page: number, user_id: string): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/member/favoriteOfPage', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify({
       page,
       size: 1000,
+      condition: user_id,
     }),
   })
 }
@@ -226,12 +230,16 @@ export function favoriteOfPage<T>(page: number): Pick<UseFetchReturn<T>, 'data'>
  * 获取历史的列表
  * @returns
  */
-export function historyOfPage<T>(page: number): Pick<UseFetchReturn<T>, 'data'> {
+export function historyOfPage<T>(page: number, user_id: string): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions('/products/member/historyOfPage', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
     body: JSON.stringify({
       page,
       size: 1000,
+      condition: user_id,
     }),
   })
 }
@@ -432,10 +440,26 @@ export function productsMemberFavorite(...params) {
  * @param params
  * @returns
  */
-export function accountEditProfile<T>(params): Pick<UseFetchReturn<T>, 'data'> {
-  return useFetchOptions('/account/editProfile', {
+export function accountEditProfile<T>(params, files: any): Pick<UseFetchReturn<T>, 'data'> {
+  const fd = new FormData()
+  let url = ''
+  if (files.avatar)
+    fd.append('avatar', files.avatar)
+  for (const key in params)
+    url += `&${key}=${params[key]}`
+  return useFetchOptions(`/account/editProfile?${url.substring(1)}`, {
     method: 'POST',
-    body: JSON.stringify(params),
+    body: fd,
+  })
+}
+/**
+ * 历史清除
+ * @param user_id
+ * @returns
+ */
+export function productsMemberClearHistory<T>(user_id: string): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/products/member/clearHistory?user_id=${user_id}`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },

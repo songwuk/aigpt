@@ -47,6 +47,7 @@ export interface ProductsPage {
   product_applications: string
   product_generative_ai: string
   sort: string
+  user_id: string
 }
 
 export interface ProductsPageCondition {

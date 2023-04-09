@@ -4,7 +4,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { googleTokenLogin } from 'vue3-google-login'
 import { ElMessage } from 'element-plus'
 import AiGPT_1 from '../img/AiGPT_1.png'
-import { accountLogin, accountRegister, accountUserId } from '../../url'
+import { accountLogin, accountRegister, accountUserId, productsImage } from '../../url'
 import Password from '../img/password.png'
 import Check from '../img/check.png'
 import PasswordOn from '../img/password_on.png'
@@ -45,10 +45,11 @@ const login = async () => {
   isLoading.value = false
   if (dataSource && dataSource.code === 0) {
     const dataInfo = {
-      avatar: dataSource.data.avatar,
+      avatar: productsImage(dataSource.data.avatar),
       email: dataSource.data.email,
       family_name: dataSource.data.family_name,
       given_name: dataSource.data.given_name,
+      credits: dataSource.data.credits,
       nick_name: dataSource.data.nick_name,
       wallet_address: dataSource.data.wallet_address,
       _id: dataSource.data.id,
@@ -93,11 +94,12 @@ const signIn = async () => {
   isLoading.value = false
   if (dataSource && dataSource.code === 0) {
     const dataInfo = {
-      avatar: dataSource.data.avatar,
+      avatar: productsImage(dataSource.data.avatar),
       email: dataSource.data.email,
       family_name: dataSource.data.family_name,
       given_name: dataSource.data.given_name,
       nick_name: dataSource.data.nick_name,
+      credits: dataSource.data.credits,
       wallet_address: dataSource.data.wallet_address,
       _id: dataSource.data.id,
     }
@@ -133,11 +135,12 @@ const createAccount = async () => {
     if (dataSource && dataSource.code === 0) {
       const { data: dataOne } = await accountUserId<any>(dataSource.data._id)
       const dataInfo = {
-        avatar: dataOne.value.data.avatar,
+        avatar: productsImage(dataOne.value.data.avatar),
         email: dataOne.value.data.email,
         family_name: dataOne.value.data.family_name,
         given_name: dataOne.value.data.given_name,
         nick_name: dataOne.value.data.nick_name,
+        credits: dataOne.value.data.credits,
         wallet_address: dataOne.value.data.wallet_address,
         _id: dataOne.value.data.id,
       }

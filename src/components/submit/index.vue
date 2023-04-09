@@ -20,7 +20,7 @@ function urlToBlob(url, fileName) {
 }
 const orderSearch = window.location.search
 const submitId = ref('')
-const isOwner = ref(true)
+const isOwner = ref('true')
 const email = ref('')
 const given_name = ref('')
 const family_name = ref('')
@@ -35,12 +35,52 @@ const product_model_options = ref([
     label: 'ChatGPT',
   },
   {
-    value: 'OpenAI CLIP',
-    label: 'OpenAI CLIP',
+    value: 'GPT-2',
+    label: 'GPT-2',
   },
   {
-    value: 'DALL·E',
-    label: 'DALL·E',
+    value: 'GPT-3',
+    label: 'GPT-3',
+  },
+  {
+    value: 'GPT-4',
+    label: 'GPT-4',
+  },
+  {
+    value: 'Midjourney',
+    label: 'Midjourney',
+  },
+  {
+    value: 'OpenAI Codex',
+    label: 'OpenAI Codex',
+  },
+  {
+    value: 'Stable Diffusion',
+    label: 'Stable Diffusion',
+  },
+  {
+    value: 'DALL.E',
+    label: 'DALL.E',
+  },
+  {
+    value: 'DALL.E 2',
+    label: 'DALL.E 2',
+  },
+  {
+    value: 'Claude',
+    label: 'Claude',
+  },
+  {
+    value: 'OpenAi CLIP',
+    label: 'OpenAi CLIP',
+  },
+  {
+    value: 'GPT-J',
+    label: 'GPT-J',
+  },
+  {
+    value: 'WebGPT',
+    label: 'WebGPT',
   },
 ])
 const product_applications = ref('')
@@ -99,13 +139,51 @@ const handleFiles = async () => {
   }
   reader.readAsDataURL(fileElem.value.files[0])
 }
+
+const emailError = ref(false)
+const product_nameError = ref(false)
+const upload_1Error = ref(false)
+const product_urlError = ref(false)
+const product_short_descError = ref(false)
+const product_detailError = ref(false)
+const product_review_urlError = ref(false)
+const resetP = () => {
+  emailError.value = false
+  product_nameError.value = false
+  upload_1Error.value = false
+  product_urlError.value = false
+  product_short_descError.value = false
+  product_detailError.value = false
+  product_review_urlError.value = false
+}
 const submitProject = async () => {
-  console.log(product_categry.value, product_model.value)
+  resetP()
   if (!Policies.value || !Privacy.value) {
     alert('must agree')
     return false
   }
-  loading.value = true
+  if (!email.value) {
+    emailError.value = true
+    return false
+  }
+  if (!product_name.value) {
+    product_nameError.value = true
+    return false
+  }
+  if (!upload_1.value) {
+    upload_1Error.value = true
+    return false
+  }
+  if (!product_url.value)
+    return product_urlError.value = true
+  if (!product_short_desc.value)
+    return product_short_descError.value = true
+  if (!product_detail.value)
+    return product_detailError.value = true
+  if (!product_review_url.value)
+    return product_review_urlError.value = true
+
+  // loading.value = true
   const product_logo = file1.value
   const files = {
     product_logo,
@@ -131,12 +209,11 @@ const submitProject = async () => {
     discord: discord.value,
     instagram: instagram.value,
   }, files)
+  // loading.value = false
   if (data.value && data.value.code === 0)
     alert('Submitted successfully')
   else
     alert(data.value.msg)
-
-  loading.value = false
 }
 
 const submitProductsSave = async () => {
@@ -144,7 +221,7 @@ const submitProductsSave = async () => {
     alert('must agree')
     return false
   }
-  loading.value = true
+  // loading.value = true
   const product_logo = file1.value
   const files = {
     product_logo,
@@ -176,7 +253,7 @@ const submitProductsSave = async () => {
   else
     alert(data.value.msg)
   // window.reload()
-  loading.value = false
+  // loading.value = false
 }
 const passOrNO = async (status) => {
   const { data } = await panelProductsAudite({
@@ -210,7 +287,8 @@ const product_generative_aiArr = ref([
   'Text to Code',
   'Text to Image',
   'Text to Video',
-  'Text to Audio',
+  'Text to Speech',
+  'Text to Music',
   'Text to 3D',
 ])
 onMounted(async () => {
@@ -266,6 +344,12 @@ onMounted(async () => {
     }
   }
 })
+const PoliciesClick = () => {
+  document.querySelector('#Policies').click()
+}
+const PrivacyClick = () => {
+  document.querySelector('#Privacy').click()
+}
 </script>
 
 <template>
@@ -314,17 +398,17 @@ onMounted(async () => {
       </h4>
       <div flex items-center justify-center sm:flex-row flex-col class="mb-34px">
         <RadioGroup v-model="isOwner " w-full flex sm:items-center items-start justify-start sm:flex-row flex-col>
-          <RadioGroupOption v-slot="{ checked }" cursor-pointer :value="true" flex sm:items-center items-start justify-start sm:flex-row flex-col class="sm:mr-100px">
+          <RadioGroupOption v-slot="{ checked }" cursor-pointer value="true" flex sm:items-center items-start justify-start sm:flex-row flex-col class="sm:mr-100px">
             <span :class="checked ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" />
             <span>Yes I'm the admin/owner.</span>
           </RadioGroupOption>
-          <RadioGroupOption v-slot="{ checked }" cursor-pointer :value="false" flex sm:items-center items-start justify-start sm:flex-row flex-col>
+          <RadioGroupOption v-slot="{ checked }" cursor-pointer value="false" flex sm:items-center items-start justify-start sm:flex-row flex-col>
             <span :class="checked ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" />
             <span>No. I'm just a supporter.</span>
           </RadioGroupOption>
         </RadioGroup>
       </div>
-      <h4 class="mb-18px">
+      <h4 class="mb-18px" :class="[emailError ? 'c-red' : '']">
         * Your email Address
       </h4>
       <div mb-34px>
@@ -362,7 +446,7 @@ onMounted(async () => {
       w-full style=" background: #2A2A33;border-radius: 23px;"
       class="pt-22px pb-29px pl-45px"
     >
-      <h4 class="text-18px mb-24px">
+      <h4 class="text-18px mb-24px" :class="[upload_1Error ? 'c-red' : '']">
         * Product Logo
       </h4>
       <div w-full flex items-center justify-start class="mb-40px">
@@ -380,7 +464,7 @@ onMounted(async () => {
           </div>
         </div>
         <div class="ml-44px w-[calc(100%-260px)]">
-          <h4 class="mb-18px">
+          <h4 class="mb-18px" :class="[product_nameError ? 'c-red' : '']">
             * Product Name
           </h4>
           <div mb-30px>
@@ -390,7 +474,7 @@ onMounted(async () => {
               placeholder="product Name"
             >
           </div>
-          <h4 class="mb-18px">
+          <h4 class="mb-18px" :class="[product_urlError ? 'c-red' : '']">
             * Website / Apps / Web3 / Chrome Extention
           </h4>
           <div>
@@ -486,45 +570,47 @@ onMounted(async () => {
         </div>
         <div>
           <h4 class="mb-18px">
-            * Applications
+            * Use Case
           </h4>
-          <div mb-34px>
-            <select
-              v-model="product_applications" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
-              placeholder="Select one of application that best fit your product"
+          <div mb-34px class="select_bg">
+            <el-select
+              v-model="product_applications"
+              placeholder=" Select one of application that best fit your product"
+              style=" width:501px; height:34px; border: 1px solid #979797;width: 240px"
             >
-              <option value="" disabled selected hidden>
-                Select one of application that best fit your product
-              </option>
-              <option v-for="(item, index) in product_applicationsArr" :key="index" :value="item">
-                {{ item }}
-              </option>
-            </select>
+              <el-option
+                v-for="item in product_applicationsArr"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
           </div>
         </div>
         <div>
-          <h4 class="mb-18px">
+          <h4 class="mb-18px ">
             Generative AI
           </h4>
-          <div mb-34px>
-            <select
-              v-model="product_generative_ai" class="w-501px h-34px rounded-6px indent-16px bg-[#2A2A33] c-#979797" style="border: 1px solid #979797;"
+          <div mb-34px class="select_bg">
+            <el-select
+              v-model="product_generative_ai"
               placeholder="Select one of generative AI that best fit your product"
+              style=" width:501px; height:34px; border: 1px solid #979797;width: 240px"
             >
-              <option value="" disabled selected hidden>
-                Select one of generative AI that best fit your product
-              </option>
-              <option v-for="(item, index) in product_generative_aiArr" :key="index" :value="item">
-                {{ item }}
-              </option>
-            </select>
+              <el-option
+                v-for="item in product_generative_aiArr"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
           </div>
         </div>
       </div>
       <div class="pr-45px">
         <div>
           <h4 class="mb-18px flex items-center justify-between">
-            <span> * Short Description</span>
+            <span :class="[product_short_descError ? 'c-red' : '']"> * Short Description</span>
             <span class="text-16px c-#80809F font-400">Max of 150 Characters</span>
           </h4>
           <div w-full relative>
@@ -538,17 +624,17 @@ onMounted(async () => {
         </div>
         <div mt-28px>
           <h4 class="mb-18px flex items-center justify-between">
-            <span>* Detail Description</span>
+            <span :class="[product_detailError ? 'c-red' : '']">* Detail Description</span>
             <span class="text-16px c-#80809F font-400">Max of 2500 Characters</span>
           </h4>
           <div w-full relative>
-            <textarea v-model="product_detail" class="max-h-115px resize-none w-full h-115px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" placeholder="A detailed summary will better explain your products to the audi ences.Our users will see this in your dedicated product page." />
+            <textarea v-model="product_detail" class="pt-10px max-h-115px resize-none w-full h-115px rounded-6px indent-16px bg-[#2A2A33] placeholder-#979797 c-#979797 " style="border: 1px solid #979797;" placeholder="A detailed summary will better explain your products to the audi ences.Our users will see this in your dedicated product page." />
             <span absolute class=" right-12px bottom-12px c-[#979797] text-16px">0/70</span>
           </div>
         </div>
         <div mt-28px>
           <h4 class="mb-18px flex items-center justify-between">
-            <span>* Product Review Article</span>
+            <span :class="[product_review_urlError ? 'c-red' : '']">* Product Review Article</span>
           </h4>
           <div w-full>
             <input
@@ -608,18 +694,18 @@ onMounted(async () => {
         * Policies
       </h4>
       <div class="mb-34px">
-        <RadioGroup v-model="Policies" w-full flex items-start justify-start flex-col>
-          <RadioGroupOption v-slot="{ checked }" cursor-pointer value="Policies" flex sm:items-center items-start justify-start sm:flex-row flex-col class="sm:mr-100px mb-22px">
-            <span :class="checked ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" />
-            <span>I agree with the Terms & Conditions</span>
-          </RadioGroupOption>
-        </RadioGroup>
-        <RadioGroup v-model="Privacy" w-full flex items-start justify-start flex-col>
-          <RadioGroupOption v-slot="{ checked }" cursor-pointer value="Privacy" flex sm:items-center items-start justify-start sm:flex-row flex-col>
-            <span :class="checked ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" />
-            <span>I agree with the Privacy Policy</span>
-          </RadioGroupOption>
-        </RadioGroup>
+        <div w-full flex items-start justify-start flex-col>
+          <div cursor-pointer class="mb10px">
+            <span :class="Policies ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" @click="PoliciesClick" />
+            <input id="Policies" v-model="Policies" type="checkbox" value="Policies" hidden>
+            <label for="Policies" cursor-pointer>I agree with the Terms & Conditions</label>
+          </div>
+          <div cursor-pointer>
+            <span :class="Privacy ? 'bg-#05D4FD' : ''" inline-block class="w-17px h-17px border border-[#979797] rounded-50% mr-10px" @click="PrivacyClick" />
+            <input id="Privacy" v-model="Privacy" type="checkbox" value="Privacy" hidden>
+            <label for="Privacy" cursor-pointer>I agree with the Privacy Policy</label>
+          </div>
+        </div>
       </div>
     </aside>
     <div v-if="submitId">

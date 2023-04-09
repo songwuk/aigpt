@@ -2,13 +2,14 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import type { ReturnData, ReturnPageData } from '../types'
-import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsMemberFavorite, productsPage } from '../url'
-import Left from './img/left.png'
-import LeftOff from './img/leftoff.png'
+import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsMemberClearHistory, productsMemberFavorite, productsPage } from '../url'
+import Left from './img/left_off.png'
+import LeftOff from './img/left.png'
 import FenLeiOff from './img/fenleioff.png'
 import FenLei from './img/fenlei.png'
 import Filter from './img/filter.png'
 import FilterOff from './img/filteroff.png'
+import AddSub from './img/addSub.png'
 import Shoucang from './img/shoucang.png'
 import ShoucangOff from './img/shoucangoff.png'
 import JurassicWait from './img/jurassicwait.png'
@@ -16,7 +17,7 @@ import JurassicWaitOff from './img/jurassicwaitoff.png'
 import Bottom from './img/bottom.png'
 import Right from './img/right.png'
 import Search from './img/search.png'
-import Quest from './img/quest.png'
+import DeleteImg from './img/clear.png'
 import See from './img/see.png'
 import Like from './img/like.png'
 import Start from './img/start.png'
@@ -46,6 +47,8 @@ const leftStatus = ref([
 ])
 const keyword = ref('')
 const leftshow = ref(true)
+const historyOrFavorite = ref(false)
+const getPageShow = ref(true)
 const leftOff = () => {
   leftshow.value = !leftshow.value
 }
@@ -60,13 +63,14 @@ const isEmpty = ref(false)
 const product_model = ref('')
 const pageInfo = reactive({
   page: 1,
-  size: 10,
+  size: 12,
 })
-const total = ref(0)
 const product_applications = ref('')
 const product_generative_ai = ref('')
 const isPageChange = ref(false)
 const getPage = async () => {
+  historyOrFavorite.value = false
+  getPageShow.value = true
   if (!isPageChange.value) {
     pageInfo.page = 1
     getPageList.value = []
@@ -80,7 +84,9 @@ const getPage = async () => {
       product_applications: product_applications.value,
       product_generative_ai: product_generative_ai.value,
       sort: sort.value,
+      user_id: userStore.userInfo._id,
     },
+
   })
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
@@ -101,26 +107,23 @@ const getPage = async () => {
       isEmpty.value = false
 
     getPageList.value.push(...nowData)
-    total.value = dataSource.data.total
   }
   isPageChange.value = false
 }
 
 const goInto = (id) => {
   localStorage.setItem('detail', id)
-  window.location.href = '/detail'
+  window.location.href = `/detail?id=${id}`
 }
 const showdot = ref(null)
 const clickButton = ref([])
-const trendingDotShow = ref(false)
 const categoriesShow = ref(false)
 const trendingShow = ref(false)
 const favoriteShow = ref(false)
 const historyShow = ref(false)
 const trendingShowf = async () => {
-  trendingShow.value = true
+  trendingShow.value = !trendingShow.value
   favoriteShow.value = false
-  trendingDotShow.value = true
   historyShow.value = false
   clickBarStatus.value = 'Trending'
 }
@@ -144,13 +147,18 @@ const searchAll = async (name, text, itemName) => {
 }
 const topAndBottom = ref(-1)
 const favoriteShowf = async () => {
+  historyOrFavorite.value = true
+  getPageShow.value = false
+  isEmpty.value = true
+  pageInfo.page = 1
   getPageList.value = []
   clickBarText.value = ''
   trendingShow.value = false
   showdot.value = null
   historyShow.value = false
+  favoriteShow.value = true
   clickBarStatus.value = 'Favorite'
-  const { data } = await favoriteOfPage<ReturnPageData>(pageInfo.page)
+  const { data } = await favoriteOfPage<ReturnPageData>(pageInfo.page, userStore.userInfo._id)
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
@@ -164,20 +172,21 @@ const favoriteShowf = async () => {
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
     })
-    favoriteShow.value = false
-  }
-  else {
-    favoriteShow.value = true
   }
 }
 const historyShowf = async () => {
+  historyOrFavorite.value = true
+  getPageShow.value = false
+  isEmpty.value = true
+  pageInfo.page = 1
   getPageList.value = []
   clickBarText.value = ''
   trendingShow.value = false
   favoriteShow.value = false
+  historyShow.value = true
   showdot.value = null
   clickBarStatus.value = 'History'
-  const { data } = await historyOfPage<ReturnPageData>(pageInfo.page)
+  const { data } = await historyOfPage<ReturnPageData>(pageInfo.page, userStore.userInfo._id)
   const dataSource = data.value
   if (dataSource && dataSource.code === 0 && dataSource.data.productList.length > 0) {
     getPageList.value = dataSource.data.productList.map((item) => {
@@ -191,10 +200,6 @@ const historyShowf = async () => {
         product_imgs: item.product_imgs.map(it => productsImage(it)),
       }
     })
-    historyShow.value = false
-  }
-  else {
-    historyShow.value = true
   }
 }
 
@@ -220,21 +225,21 @@ const trending = ref([
     key: 'like',
   },
 ])
+const handleCurrentChange = () => {
+  pageInfo.page++
+  isPageChange.value = true
+}
+clickBarText.value = 'A-Z'
 const dotfn = async (idx) => {
   sort.value = trending.value[idx].key
+  clickBarText.value = trending.value[idx].name
   showdot.value = idx
-  trendingShow.value = true
-  trendingDotShow.value = false
+  trendingShow.value = false
   product_model.value = ''
   product_applications.value = ''
   product_generative_ai.value = ''
   isPageChange.value = false
   await getPage()
-}
-
-const handleCurrentChange = () => {
-  pageInfo.page++
-  isPageChange.value = true
 }
 
 const itemRefs = ref([])
@@ -269,7 +274,7 @@ const getSearchPage = async () => {
 }
 const inputModule = debounce(async () => {
   await getSearchPage()
-}, 1000)
+}, 500)
 
 const onmouseover = (index) => {
   itemRefs.value[index].querySelectorAll('div')[2].style.display = 'flex'
@@ -286,6 +291,9 @@ const mouseOut = debounce(() => {
 }, 100)
 
 const useCase = async (name) => {
+  // product_model.value = ''
+  // product_applications.value = ''
+  // product_generative_ai.value = ''
   product_categry.value = name
   await getPage()
   categoriesShow.value = false
@@ -325,13 +333,16 @@ onMounted(async () => {
     leftStatus.value[2].children = chatDataSource.data.applications.map((item, index) => {
       return { key: `${item.name}applications${index}`, ...item }
     })
-    trendingShow.value = true
     showdot.value = 0
     await getPage()
   }
-
   window.addEventListener('scroll', debounce(() => {
     if ((document.documentElement.scrollHeight - 200 <= document.documentElement.scrollTop + window.innerHeight) && !isEmpty.value)
+      handleCurrentChange()
+  }, 500))
+  const cardDom = document.querySelector('.cardDom') as HTMLElement
+  cardDom.addEventListener('scroll', debounce(() => {
+    if ((cardDom.scrollHeight - 200 <= cardDom.scrollTop + 750) && !isEmpty.value)
       handleCurrentChange()
   }, 500))
   window.addEventListener('keydown', (ev: KeyboardEvent) => {
@@ -357,18 +368,26 @@ onMounted(async () => {
     keyword.value = ''
   })
 })
+const deletFn = async () => {
+  const { data } = await productsMemberClearHistory<any>(userStore.userInfo._id)
+  if (data.value.code === 0)
+    getPageList.value = []
+}
+const submitPath = () => {
+  window.location.href = '/submit'
+}
 </script>
 
 <template>
   <div class="bg-[#201f24] 2xl:pl-[158px] 2xl:pr-[161px] pl-[2vw] pr-[2vw]" w-full>
     <div class="leftBottom pt-[27px] pb-[19px]" flex sm:items-center justify-start relative sm:flex-row flex-col items-start>
       <div flex items-center justify-center @click="leftOff">
-        <span sm:cursor-pointer flex items-center justify-center block class=" bg-[#475369] rounded-[23px] 2xl:w-[72px] 2xl:h-[46px] w-12 h-8">
+        <span sm:cursor-pointer flex items-center justify-center block class=" hover:bg-[#475369] bg-[#3C3C3E] rounded-[23px] 2xl:w-[72px] 2xl:h-[46px] w-12 h-8">
           <img class="w-[20px] h-[20px]" :src="leftshow ? LeftOff : Left" alt="Left">
         </span>
       </div>
       <div flex items-center justify-center sm:flex-nowrap flex-wrap class="2xl:ml-36px sm:ml-1 ml-0 sm:my-0 my-10px">
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @mouseleave="mouseOut" @mouseenter.stop.prevent="categoriesShow = true" @click="categoriesShow = !categoriesShow">
+        <span class="2xl:mr-36px mr-1 hover:bg-[#475369] bg-[#3C3C3E] rounded-[26px] 2xl:w-[190px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @mouseleave="mouseOut" @mouseenter.stop.prevent="categoriesShow = true" @click="categoriesShow = !categoriesShow">
           <img class="w-[16px]" :src="categoriesShow ? FenLei : FenLeiOff" alt="FenLei">
           <span class="ml-[16px] mr-[9px]" :class="categoriesShow ? 'c-[#05D4FD]' : 'c-white' ">Categories</span>
           <i>
@@ -376,7 +395,7 @@ onMounted(async () => {
             <img v-else class="w-[8px]" :src="Right" alt="Right">
           </i>
         </span>
-        <span relative class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click.stop="trendingShowf">
+        <span relative class=" hover:bg-[#475369] 2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[184px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click.stop="trendingShowf">
           <img class="w-[20px]" :src="trendingShow || showdot !== null ? Filter : FilterOff" alt="FilterOff">
           <span class="ml-[16px] mr-[9px]" :class="trendingShow || showdot !== null ? 'c-[#05D4FD]' : 'c-white' ">Trending</span>
           <div
@@ -385,7 +404,7 @@ onMounted(async () => {
             c-white bg-zinc-800 shadow-xl ring-black focus:outline-none divide-zinc-400 dark:divide-zinc-700"
           >
             <div className="py-1">
-              <div v-for="(item, index) in trending" v-show="trendingDotShow" :key="index">
+              <div v-for="(item, index) in trending" :key="index">
                 <div>
                   <a
                     class="block px-4 py-2 text-sm hover:c-[#05D4FD] hover:dark:c-zinc-700"
@@ -400,11 +419,11 @@ onMounted(async () => {
             </div>
           </div>
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
+        <span class="2xl:mr-36px mr-1 hover:bg-[#475369] bg-[#3C3C3E] rounded-[26px] 2xl:w-[194px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="favoriteShowf">
           <img class="w-[27px]" :src=" favoriteShow ? Shoucang : ShoucangOff" alt="ShoucangOff">
           <span class="ml-[16px] mr-[9px]" :class="favoriteShow ? 'c-[#05D4FD]' : 'c-white' ">Favorite</span>
         </span>
-        <span class="2xl:mr-36px mr-1 bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="historyShowf">
+        <span class="2xl:mr-36px mr-1 hover:bg-[#475369] bg-[#3C3C3E] rounded-[26px] 2xl:w-[197px] 2xl:h-[46px] w-45 h-10 sm:my-0 my-5px" sm:cursor-pointer flex items-center justify-center c-white @click="historyShowf">
           <img class="w-[26px]" :src="historyShow ? JurassicWait : JurassicWaitOff" alt="JurassicWaitOff">
           <span class="ml-[16px] mr-[9px]" :class="historyShow ? 'c-[#05D4FD]' : 'c-white' ">History</span>
         </span>
@@ -414,7 +433,7 @@ onMounted(async () => {
           <el-icon v-if="isLoading" class="is-loading mr-5px !c-white">
             <Loading />
           </el-icon>
-          <input v-model="keyword" class="c-white" placeholder="Search for apps,categories" style="background: #3C3C3E;" outline-none border-none w-full type="text" @click.stop="() => {}" @input="inputModule">
+          <input v-model="keyword" class="c-white" placeholder="Search for apps,categories" style="background: #3C3C3E; text-indent: 10px" outline-none border-none w-full type="text" @click.stop="() => {}" @input="inputModule">
           <img
             sm:cursor-pointer
             class="w-[20px]"
@@ -457,7 +476,7 @@ onMounted(async () => {
     <div
       flex items-start justify-start style="font-family: Helvetica;"
     >
-      <aside v-show="leftshow" class="pr-[19px] w-50 2xl:text-lg 2xl:w-[355px] border-r b-r-[#6D6D6D] h-750px" c-white>
+      <aside v-show="leftshow" class="pr-[19px] w-75 2xl:text-lg 2xl:w-[400px] border-r b-r-[#6D6D6D] h-750px sm:mr-[22px] mr-[5px]" c-white>
         <div v-for="(item, index) in leftStatus" :key="index" sm:sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
           <div flex items-center justify-between>
             <span>{{ item.name }}</span>
@@ -471,9 +490,76 @@ onMounted(async () => {
           </aside>
         </div>
       </aside>
-      <section class="sm:ml-[22px] sm:mt-[25px] ml-[5px] h-750px  overflow-scroll" w-full relative>
+      <section class="cardDom sm:mt-[25px]  h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarText }}</span>
-        <div v-if="getPageList.length > 0" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
+        <div v-if="getPageShow" overflow-y-auto flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap class="mt-24px card">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
+            <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
+              <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
+                <span flex items-center justify-center><img
+                  :src="See"
+                  class="w-16px mr-4px"
+                >{{ item.views }}</span>
+                <span sm:cursor-pointer flex items-center justify-center><img
+                  :src="Like"
+                  class="w-14px mr-4px ml-8px"
+                >{{ item.likes }}</span>
+                <img
+                  sm:cursor-pointer
+                  :src="item.isFavorite ? Start : StartOff"
+                  class="w-16px ml-8px"
+                  @click.stop.prevent="async () => {
+                    if (!item.isFavorite){
+                      await productsMemberFavorite({
+                        user_id: userStore.userInfo._id,
+                        product_id: item.id,
+                        type: 0,
+                      })
+                      item.isFavorite = true
+                    }
+                    else {
+                      await productsMemberFavorite({
+                        user_id: userStore.userInfo._id,
+                        product_id: item.id,
+                        type: 1,
+                      })
+                      item.isFavorite = false
+                    }
+                  }"
+                >
+              </div>
+              <div class="ml-18px" flex items-center justify-start>
+                <img
+                  class="w-[32px]"
+                  loading="lazy"
+                  :src="item.product_logo"
+                >
+                <span class="ml-11px">{{ item.product_name }}</span>
+              </div>
+              <div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical" class="ml-18px mt-12px py-5px ">
+                {{ item.product_short_desc }}
+              </div>
+            </div>
+          </div>
+          <div v-show="getPageList.length > 0" flex items-center justify-center flex-col cursor-pointer class="border-1 b-[#97979754] sm:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px py-20px" @click=" submitPath">
+            <img class="w-50px" :src="AddSub" alt="AddSub">
+            <p class="text-14px c-#C9C9C9">
+              Submit Your Project
+            </p>
+          </div>
+        </div>
+        <img v-show="historyShow" absolute class="right-0 top-0 bottom-0 w-28px" cursor-pointer :src="DeleteImg" alt="DeleteImg" @click.stop="deletFn">
+        <div absolute class="left-50% top-50% " style=" transform: translate(-50%,-50%);">
+          <div v-if="getPageList.length === 0 && historyShow" flex items-center justify-center flex-col>
+            <img class="sm:w-110px w-40px" :src="NoHistory" alt="">
+            <span class="sm:text-20px text-16px mt-16px" c-white>No History</span>
+          </div>
+          <div v-if="getPageList.length === 0 && favoriteShow" flex items-center justify-center flex-col>
+            <img class="sm:w-110px w-40px" :src="NoFavorite" alt="">
+            <span class="sm:text-20px text-16px mt-16px" c-white>No Favorite</span>
+          </div>
+        </div>
+        <div v-if="historyOrFavorite" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
           <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
@@ -487,16 +573,16 @@ onMounted(async () => {
                 >{{ item.likes }}</span>
                 <img
                   sm:cursor-pointer
-                  :src="item.status ? Start : StartOff"
+                  :src="item.isFavorite ? Start : StartOff"
                   class="w-16px ml-8px"
                   @click.stop.prevent="async () => {
-                    if (!item.status){
+                    if (!item.isFavorite){
                       await productsMemberFavorite({
                         user_id: userStore.userInfo._id,
                         product_id: item.id,
                         type: 0,
                       })
-                      item.status = true
+                      item.isFavorite = true
                     }
                     else {
                       await productsMemberFavorite({
@@ -504,7 +590,8 @@ onMounted(async () => {
                         product_id: item.id,
                         type: 1,
                       })
-                      item.status = false
+                      getPageList.splice(index, 1)
+                      item.isFavorite = false
                     }
                   }"
                 >
@@ -524,19 +611,6 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <div absolute class="left-50% top-50% " style=" transform: translate(-50%,-50%);">
-          <div v-if="historyShow" flex items-center justify-center flex-col>
-            <img class="sm:w-110px w-40px" :src="NoHistory" alt="">
-            <span class="sm:text-20px text-16px mt-16px" c-white>No History</span>
-          </div>
-          <div v-if="favoriteShow" flex items-center justify-center flex-col>
-            <img class="sm:w-110px w-40px" :src="NoFavorite" alt="">
-            <span class="sm:text-20px text-16px mt-16px" c-white>No Favorite</span>
-          </div>
-        </div>
-        <!-- <div v-if="(trendingShow || historyShowList || favoriteShowList) && getPageList.length > 0" class="page" relative c-white w-full text-center>
-          loading
-        </div> -->
       </section>
     </div>
   </div>
@@ -552,5 +626,13 @@ onMounted(async () => {
 
 ::-webkit-scrollbar {
   display: none;
+}
+@media (min-width: 640px) {
+  .card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 380px);
+    justify-content: center;
+    grid-gap: 20px
+  }
 }
 </style>

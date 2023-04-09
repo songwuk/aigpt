@@ -16,7 +16,11 @@ import Right1 from '../img/right_1.png'
 import Left1 from '../img/left_1.png'
 import Start from '../img/start.png'
 import { useUserStore } from '@/store'
-import { NumUtils } from '@/utils'
+import { NumUtils, parseQuery } from '@/utils'
+const categoriesC = ref('bg-#BEE3F8')
+const applicationC = ref('bg-#FFB9B7')
+const generativeC = ref('bg-#B7FBF0')
+const modelC = ref('bg-#E9D8FD')
 const userStore = useUserStore()
 const forList = ref([])
 const listData = reactive({
@@ -42,7 +46,8 @@ const forward = () => {
 const backward = () => {
   carousel.value.handleNavigation('backward')
 }
-const id = localStorage.getItem('detail')
+const orderSearch = window.location.search
+const id = parseQuery(orderSearch).id
 const idDetail = ref('')
 idDetail.value = id
 onMounted(async () => {
@@ -62,16 +67,90 @@ onMounted(async () => {
       listData.social_media = dataSource.data.social_media
 
     listData.product_model = dataSource.data.product_model
-    if (typeof dataSource.data.product_categry === 'object')
-      forList.value.push(...dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
+    if (typeof dataSource.data.product_categry === 'object') {
+      dataSource.data.product_categry.forEach((x) => {
+        forList.value.push({
+          name: x,
+          key: 'categry',
+        })
+      })
+    }
+    else {
+      dataSource.data.product_categry && dataSource.data.product_categry.split(',').forEach((x) => {
+        forList.value.push({
+          name: x,
+          key: 'categry',
+        })
+      })
+    }
 
-    else
-      forList.value.push(dataSource.data.product_categry, dataSource.data.product_model, dataSource.data.product_applications, dataSource.data.product_generative_ai)
-
-    forList.value = forList.value.filter(value => (value !== '' && value !== undefined && value !== null))
+    if (dataSource.data.product_applications) {
+      forList.value.push({
+        name: dataSource.data.product_applications,
+        key: 'application',
+      })
+    }
+    dataSource.data.product_model && dataSource.data.product_model.split(',').forEach((x) => {
+      forList.value.push({
+        name: x,
+        key: 'model',
+      })
+    })
+    if (dataSource.data.product_generative_ai) {
+      forList.value.push({
+        name: dataSource.data.product_generative_ai,
+        key: 'generative',
+      })
+    }
   }
 })
 const shareConversationShow = ref(false)
+const copyLink = () => {
+  const link = `${import.meta.env.PUBLIC_WEB}/detail?id=${idDetail.value}`
+  if (navigator.clipboard) {
+    navigator.clipboard
+      .writeText(link)
+      .then((_) => {
+        // eslint-disable-next-line no-console
+        console.log('复制成功', link)
+        alert('copy successfully')
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log('复制失败', err)
+      })
+  }
+  else {
+    // 创建text area
+    const textArea = document.createElement('textarea')
+    textArea.value = link
+    // 使text area不在viewport，同时设置不可见
+    textArea.style.position = 'absolute'
+    textArea.style.opacity = '0'
+    textArea.style.left = '-999999px'
+    textArea.style.top = '-999999px'
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+    new Promise((resolve, reject) => {
+      if (document.execCommand('copy'))
+        resolve(true)
+      else
+        reject(new Error('error'))
+      // 执行复制命令并移除文本框
+      textArea.remove()
+    })
+      .then((res) => {
+        // eslint-disable-next-line no-console
+        console.log('复制成功')
+        alert('copy successfully')
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log(err, '复制失败')
+      })
+  }
+}
 </script>
 
 <template>
@@ -147,7 +226,7 @@ const shareConversationShow = ref(false)
           </i>
           <i relative style=" font-style: normal;" @click="shareConversationShow = !shareConversationShow">
             <div v-show="shareConversationShow" flex items-center justify-center flex-col absolute class="right-50% top-50% translate-x-0% translate-y-15% text-center -top-50px w-204px text-16px bg-#33333E border rounded-5px border-transparent">
-              <div class="py-12px w-full">Copy link</div>
+              <div class="py-12px w-full" @click.stop="copyLink">Copy link</div>
               <div class="py-12px  w-full border border-t-#5C5C60 border-transparent">Share on Facebook</div>
               <div class="py-12px w-full border border-t-#5C5C60 border-transparent">Share on Twitter</div>
             </div>
@@ -163,7 +242,7 @@ const shareConversationShow = ref(false)
       <aside sm:shrink-0 class="2xl:text-lg mt-18px mb-11px xl:w-300px sm:w-50" c-white>
         <span block class="text-18px mb-11px">TAGS</span>
         <aside flex item-center justify-start flex-wrap>
-          <span v-for="(item, index) in forList" :key="index" cursor-pointer block :class="item === 'Application' ? 'Application' : ''" class="mb-17px mr-10px bg-[#BEE3F8]  rounded-15px py-5px px-12px text-16px">{{ item }}</span>
+          <span v-for="(item, index) in forList" :key="index" cursor-pointer block :class="item.key === 'categry' ? categoriesC : item.key === 'model' ? modelC : item.key === 'application' ? applicationC : generativeC" class="mb-17px mr-10px bg-[#BEE3F8]  rounded-15px py-5px px-12px text-16px c-black">{{ item.name }}</span>
         </aside>
         <a :href="listData.product_url" target="_blank">
           <button
