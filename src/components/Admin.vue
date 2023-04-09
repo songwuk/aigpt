@@ -139,8 +139,8 @@ const clickLikes = (index: number, likes) => {
   listProducts.value[index].likes = likes
 }
 const isLogin = ref(true)
-const username = ref('Tavnet')
-const password = ref('tav001')
+const username = ref('')
+const password = ref('')
 const isLoading = ref(false)
 const signIn = async () => {
   isLoading.value = true
