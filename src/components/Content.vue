@@ -476,7 +476,7 @@ const submitPath = () => {
     <div
       flex items-start justify-start style="font-family: Helvetica;"
     >
-      <aside v-show="leftshow" class="pr-[19px] w-75 2xl:text-lg 2xl:w-[400px] border-r b-r-[#6D6D6D] h-750px sm:mr-[22px] mr-[5px]" c-white>
+      <aside v-show="leftshow" overflow-y-scroll class="pr-[19px] w-75 2xl:text-lg 2xl:w-[400px] border-r b-r-[#6D6D6D] h-750px sm:mr-[22px] mr-[5px]" c-white>
         <div v-for="(item, index) in leftStatus" :key="index" sm:sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
           <div flex items-center justify-between>
             <span>{{ item.name }}</span>
