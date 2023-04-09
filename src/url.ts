@@ -443,6 +443,17 @@ export function productsMemberFavorite(...params) {
 }
 
 /**
+ * 喜欢
+ * @param params
+ * @returns
+ */
+export function productsMemberLike(...params) {
+  const url = getParams(params)
+  return useFetchOptions(`/products/member/like?${url}`, {
+    method: 'GET',
+  })
+}
+/**
  * 编辑
  * @param params
  * @returns

@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import type { ReturnData, ReturnPageData } from '../types'
-import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsMemberClearHistory, productsMemberFavorite, productsPage } from '../url'
+import { favoriteOfPage, historyOfPage, productsImage, productsLoadCateg, productsMemberClearHistory, productsMemberFavorite, productsMemberLike, productsPage } from '../url'
 import Left from './img/left_off.png'
 import LeftOff from './img/left.png'
 import FenLeiOff from './img/fenleioff.png'
@@ -500,7 +500,27 @@ const submitPath = () => {
                   :src="See"
                   class="w-16px mr-4px"
                 >{{ item.views }}</span>
-                <span sm:cursor-pointer flex items-center justify-center><img
+                <span
+                  :class="[item.isLike ? 'c-#05D4FD' : '']"
+                  sm:cursor-pointer flex items-center justify-center @click.stop="async () => {
+                    if (!item.isLike){
+                      await productsMemberLike({
+                        user_id: userStore.userInfo._id ?? '',
+                        product_id: item.id,
+                        type: 0,
+                      })
+                      item.isLike = true
+                    }
+                    else {
+                      await productsMemberLike({
+                        user_id: userStore.userInfo._id ?? '',
+                        product_id: item.id,
+                        type: 1,
+                      })
+                      item.isLike = false
+                    }
+                  }"
+                ><img
                   :src="Like"
                   class="w-14px mr-4px ml-8px"
                 >{{ item.likes }}</span>
@@ -511,7 +531,7 @@ const submitPath = () => {
                   @click.stop.prevent="async () => {
                     if (!item.isFavorite){
                       await productsMemberFavorite({
-                        user_id: userStore.userInfo._id,
+                        user_id: userStore.userInfo._id ?? '',
                         product_id: item.id,
                         type: 0,
                       })
@@ -519,7 +539,7 @@ const submitPath = () => {
                     }
                     else {
                       await productsMemberFavorite({
-                        user_id: userStore.userInfo._id,
+                        user_id: userStore.userInfo._id ?? '',
                         product_id: item.id,
                         type: 1,
                       })
@@ -568,7 +588,27 @@ const submitPath = () => {
                   :src="See"
                   class="w-16px mr-4px"
                 >{{ item.views }}</span>
-                <span sm:cursor-pointer flex items-center justify-center><img
+                <span
+                  :class="[item.isLike ? 'c-#05D4FD' : '']"
+                  sm:cursor-pointer flex items-center justify-center @click.stop="async () => {
+                    if (!item.isLike){
+                      await productsMemberLike({
+                        user_id: userStore.userInfo._id ?? '',
+                        product_id: item.id,
+                        type: 0,
+                      })
+                      item.isLike = true
+                    }
+                    else {
+                      await productsMemberLike({
+                        user_id: userStore.userInfo._id ?? '',
+                        product_id: item.id,
+                        type: 1,
+                      })
+                      item.isLike = false
+                    }
+                  }"
+                ><img
                   :src="Like"
                   class="w-14px mr-4px ml-8px"
                 >{{ item.likes }}</span>
@@ -579,7 +619,7 @@ const submitPath = () => {
                   @click.stop.prevent="async () => {
                     if (!item.isFavorite){
                       await productsMemberFavorite({
-                        user_id: userStore.userInfo._id,
+                        user_id: userStore.userInfo._id ?? '',
                         product_id: item.id,
                         type: 0,
                       })
@@ -587,7 +627,7 @@ const submitPath = () => {
                     }
                     else {
                       await productsMemberFavorite({
-                        user_id: userStore.userInfo._id,
+                        user_id: userStore.userInfo._id ?? '',
                         product_id: item.id,
                         type: 1,
                       })
