@@ -161,7 +161,7 @@ onMounted(async () => {
 })
 const deleteProduct = async (ids: string) => {
   const { data } = await panelProductsRemove<any>(ids)
-  if (data.value.code === 200)
+  if (data.value.code === 0)
     await productsPage()
 }
 </script>

@@ -40,7 +40,7 @@ const leftStatus = ref([
     bar: true,
   },
   {
-    name: 'Application',
+    name: 'Use Case',
     children: [],
     bar: true,
   },

@@ -6,11 +6,18 @@ import { productsImage, productsMemberFavorite, productsQuery } from '../../url'
 import See from '../img/see.png'
 import Like from '../img/like.png'
 import Facebook from '../img/facebook.png'
-import Instagram from '../img/instagram.png'
+import InstagramOff from '../img/instagram_1.png'
 import Discord from '../img/discord.png'
 import Twitter from '../img/twitter.png'
+
+import Instagram from '../img/instagram.png'
+import FacebookOff from '../img/facebook_1.png'
+import DiscordOff from '../img/discord_1.png'
+import TwitterOff from '../img/twitter_1.png'
 import StartOff from '../img/shoucang_2.png'
 import ShareConversation from '../img/ShareConversation.png'
+import ShareConversationStatusOff from '../img/share.png'
+import shoucang from '../img/shoucang.png'
 import Right from '../img/right.png'
 import Right1 from '../img/right_1.png'
 import Left1 from '../img/left_1.png'
@@ -151,6 +158,12 @@ const copyLink = () => {
       })
   }
 }
+const FacebookStatus = ref(true)
+const InstagramStatus = ref(true)
+const DiscordStatus = ref(true)
+const TwitterStatus = ref(true)
+const ShareConversationStatus = ref(true)
+const isFavoriteStatus = ref(true)
 const URL = `${import.meta.env.PUBLIC_WEB}/detail?id=${idDetail.value}`
 const ORIGIN = 'AiGPTme'
 </script>
@@ -185,28 +198,28 @@ const ORIGIN = 'AiGPTme'
         <span class="text-26px">{{ listData.product_name }}</span>
         <aside flex items-center justify-center class="shareImg">
           <i v-show="listData.social_media.facebook">
-            <a :href="listData.social_media?.facebook ? listData.social_media.facebook : 'javascript:void(0) '">
-              <img class="w-13px" :src="Facebook" alt="Facebook">
+            <a target="_blank" :href="listData.social_media?.facebook ? listData.social_media.facebook : 'javascript:void(0) '">
+              <img class="w-13px" :src="!FacebookStatus ? FacebookOff : Facebook" alt="Facebook" @mouseleave="FacebookStatus = true" @mouseenter.stop.prevent="FacebookStatus = false">
             </a>
           </i>
           <i v-show="listData.social_media.instagram">
-            <a :href="listData.social_media?.instagram ? listData.social_media.instagram : 'javascript:void(0) '">
-              <img class="w-22px" :src="Instagram" alt="Instagram">
+            <a target="_blank" :href="listData.social_media?.instagram ? listData.social_media.instagram : 'javascript:void(0) '">
+              <img class="w-22px" :src="!InstagramStatus ? Instagram : InstagramOff" alt="Instagram" @mouseleave="InstagramStatus = true" @mouseenter.stop.prevent="InstagramStatus = false">
             </a>
           </i>
           <i v-show="listData.social_media.discord">
-            <a :href="listData.social_media?.discord ? listData.social_media.discord : 'javascript:void(0) '">
-              <img class="w-24px" :src="Discord" alt="Discord">
+            <a target="_blank" :href="listData.social_media?.discord ? listData.social_media.discord : 'javascript:void(0) '">
+              <img class="w-24px" :src="DiscordStatus ? Discord : DiscordOff" alt="Discord" @mouseleave="DiscordStatus = true" @mouseenter.stop.prevent="DiscordStatus = false">
             </a>
           </i>
           <i v-show="listData.social_media.twitter">
-            <a :href="listData.social_media?.twitter ? listData.social_media.twitter : 'javascript:void(0) '">
-              <img class="w-22px" :src="Twitter" alt="Twitter">
+            <a target="_blank" :href="listData.social_media?.twitter ? listData.social_media.twitter : 'javascript:void(0) '">
+              <img class="w-22px" :src="TwitterStatus ? Twitter : TwitterOff" alt="Twitter" @mouseleave="TwitterStatus = true" @mouseenter.stop.prevent="TwitterStatus = false">
             </a>
           </i>
           <i relative style=" font-style: normal;">
             <img
-              class="w-22px" :src="listData.isFavorite ? Start : StartOff" alt="StartOff" @click.stop.prevent="async () => {
+              class="w-22px" :src="!isFavoriteStatus ? shoucang : listData.isFavorite ? Start : StartOff" alt="StartOff" @mouseleave="isFavoriteStatus = true" @mouseenter.stop.prevent="isFavoriteStatus = false" @click.stop.prevent="async () => {
                 if (!listData.isFavorite){
                   await productsMemberFavorite({
                     user_id: userStore.userInfo._id ?? '',
@@ -240,7 +253,7 @@ const ORIGIN = 'AiGPTme'
               </a>
 
             </div>
-            <img class="w-22px" :src="ShareConversation" alt="ShareConversation">
+            <img class="w-22px" :src="!ShareConversationStatus ? ShareConversationStatusOff : ShareConversation" alt="ShareConversation" @mouseleave="ShareConversationStatus = true" @mouseenter.stop.prevent="ShareConversationStatus = false">
           </i>
         </aside>
       </div>
