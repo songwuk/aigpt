@@ -92,6 +92,11 @@ const connectWallet = () => {
 }
 const disconnectWallet = () => {
   walletStatus.value = true
+  if (typeof window.ethereum !== 'undefined') {
+    ethereum.on('disconnect', () => {
+
+    })
+  }
 }
 const eng = ref('')
 const GlobalHoverf = () => {
@@ -124,11 +129,11 @@ function updateUserInfoMa(options) {
   userStore.updateUserInfo(options)
 }
 const imgFile = ref('')
-const uploadAccountProfile = async () => {
+const uploadAccountProfile = async (address = '') => {
   const { data } = await accountEditProfile({
     user_id: userStore.getuserstate._id,
     nickName: userStore.getuserstate.nick_name,
-    address: connectList.value[0].name,
+    address,
   }, {
     avatar: imgFile.value,
   })
@@ -160,7 +165,7 @@ onMounted(() => {
   if (pathname)
     pathnameRef.value = pathname
   gptCheckLogin(pathname)
-  // isLogin.value && pathname.includes('/sss') && Init()
+  // isLogin.value && Init()
 })
 const jumpBack = ref('')
 function gptCheckLogin(item) {
@@ -179,19 +184,10 @@ function Init() {
   if (!isLogin.value)
     return
   // 判断用户是否安装MetaMask钱包插件
-  if (typeof window.ethereum === 'undefined') {
-    // 没安装MetaMask钱包进行弹框提示
-    ElMessage({
-      showClose: true,
-      message: 'Please install MetaMask',
-      type: 'error',
-    })
-  }
-  else {
-  // 如果用户安装了MetaMask，你可以要求他们授权应用登录并获取其账号
-    ethereum.enable()
+  if (typeof window.ethereum !== 'undefined') {
+    // 如果用户安装了MetaMask，你可以要求他们授权应用登录并获取其账号
+    ethereum.request({ method: 'eth_requestAccounts' })
       .catch((reason) => {
-        console.log(reason, 'fail')
         // 如果用户拒绝了登录请求
         if (reason === 'User rejected provider access') {
         // 用户拒绝登录后执行语句；
@@ -205,11 +201,10 @@ function Init() {
           })
         }
       }).then((accounts) => {
-        console.log(accounts, 'accounts')
         if (accounts) {
           walletStatus.value = false
           connectList.value[0].name = accounts[0]
-          // uploadAccountProfile()
+          // uploadAccountProfile(connectList.value[0].name)
         }
       })
   }
@@ -233,7 +228,7 @@ async function handleFileUpload() {
   const fileEle = uploadFile.value.files
   for (let i = 0; i < fileEle.length; i++) {
     imgFile.value = fileEle[i]
-    uploadAccountProfile()
+    uploadAccountProfile(connectList.value[0].name === 'MetaMask' ? '' : connectList.value[0].name)
   }
 }
 
@@ -296,7 +291,7 @@ function readAsDataURL(file) {
         <div v-if="!walletStatus" w-full>
           <div v-for="(item, index) in connectList" :key="index" cursor-pointer relative class="mt-[19px]" w-full flex items-center justify-start>
             <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
-            <span truncate>{{ item.name }}</span>
+            <span truncate>{{ item.name.toString().replace(/^(.{6})(?:\w+)(.{4})$/, '$1...$2') }}</span>
             <i absolute right-0>
               <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
             </i>
