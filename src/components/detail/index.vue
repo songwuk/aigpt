@@ -151,6 +151,8 @@ const copyLink = () => {
       })
   }
 }
+const URL = `${import.meta.env.PUBLIC_WEB}/detail?id=${idDetail.value}`
+const ORIGIN = 'AiGPTme'
 </script>
 
 <template>
@@ -227,8 +229,16 @@ const copyLink = () => {
           <i relative style=" font-style: normal;" @click="shareConversationShow = !shareConversationShow">
             <div v-show="shareConversationShow" flex items-center justify-center flex-col absolute class="right-50% top-50% translate-x-0% translate-y-15% text-center -top-50px w-204px text-16px bg-#33333E border rounded-5px border-transparent">
               <div class="py-12px w-full" @click.stop="copyLink">Copy link</div>
-              <div class="py-12px  w-full border border-t-#5C5C60 border-transparent">Share on Facebook</div>
-              <div class="py-12px w-full border border-t-#5C5C60 border-transparent">Share on Twitter</div>
+              <a
+                id="J-share-facebook" class="facebook"
+                :href="`https://www.facebook.com/sharer/sharer.php?u=${URL}`" target="_blank"
+              >
+                <div class="py-12px  w-full border border-t-#5C5C60 border-transparent">Share on Facebook</div>
+              </a>
+              <a id="J-share-twitter" class="twitter" :href="`https://twitter.com/intent/tweet?text=${listData.product_name}&url=${URL}&via=${ORIGIN}`" target="_blank">
+                <div class="py-12px w-full border border-t-#5C5C60 border-transparent" @click.stop="shareTwitter">Share on Twitter</div>
+              </a>
+
             </div>
             <img class="w-22px" :src="ShareConversation" alt="ShareConversation">
           </i>
