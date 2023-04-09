@@ -530,7 +530,7 @@ const submitPath = () => {
               </div>
               <div class="ml-18px" flex items-center justify-start>
                 <img
-                  class="w-[32px]"
+                  class="w-[32px] rounded-50%"
                   loading="lazy"
                   :src="item.product_logo"
                 >
@@ -598,7 +598,7 @@ const submitPath = () => {
               </div>
               <div class="ml-18px" flex items-center justify-start>
                 <img
-                  class="w-[32px]"
+                  class="w-[32px] rounded-50%"
                   loading="lazy"
                   :src="item.product_logo"
                   alt="Quest"
