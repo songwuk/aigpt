@@ -331,6 +331,7 @@ export function panelProductsPage<T>(param: ProductsPageCondition): Pick<UseFetc
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
     },
     body: JSON.stringify(param),
   })
@@ -344,6 +345,7 @@ export function panelUsersPage<T>(param: ProductsPageCondition): Pick<UseFetchRe
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
     },
     body: JSON.stringify(param),
   })
@@ -360,6 +362,7 @@ export function panelProductsEditProductStat<T>(...param): Pick<UseFetchReturn<T
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
     },
   })
 }
@@ -372,6 +375,9 @@ export function panelProductsEditProductStat<T>(...param): Pick<UseFetchReturn<T
 export function panelProductsQuery<T>(id): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions(`/panel/products/query/${id}`, {
     method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+    },
   })
 }
 
@@ -384,6 +390,7 @@ export function panelProductsAudite<T>(...param): Pick<UseFetchReturn<T>, 'data'
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
     },
   })
 }
@@ -408,9 +415,9 @@ export function panelProductsSave(params: any, files: any) {
   return useFetchOptions(`/panel/products/save?${url.substring(1)}`, {
     method: 'POST',
     body: fd,
-    // headers: {
-    //   'Content-Type': 'application/x-www-form-urlencoded',
-    // },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+    },
   })
 }
 /**
@@ -460,6 +467,20 @@ export function accountEditProfile<T>(params, files: any): Pick<UseFetchReturn<T
 export function productsMemberClearHistory<T>(user_id: string): Pick<UseFetchReturn<T>, 'data'> {
   return useFetchOptions(`/products/member/clearHistory?user_id=${user_id}`, {
     method: 'GET',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  })
+}
+/**
+ * 后台登录api
+ * @param params
+ * @returns
+ */
+export function authLogin<T>(params): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(params),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },

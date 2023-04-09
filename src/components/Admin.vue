@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash-es'
-import { panelProductsEditProductStat, panelProductsPage, panelUsersPage } from '../url'
+import { authLogin, panelProductsEditProductStat, panelProductsPage, panelUsersPage } from '../url'
 import Write from './img/write.png'
 import AiGPT from './img/AiGPT_1.png'
 import type { ReturnPageData } from '@/types'
@@ -71,9 +71,7 @@ const productsPage = async () => {
     totalProducts.value = dataSource.data.total
   }
 }
-onMounted(async () => {
-  await productsPage()
-})
+
 const idRef = ref('')
 const viewsModel = ref('')
 const likesModel = ref('')
@@ -139,6 +137,27 @@ const clickLikes = (index: number, likes) => {
   inputLikesRef.value[index].focus()
   listProducts.value[index].likes = likes
 }
+const isLogin = ref(true)
+const username = ref('Tavnet')
+const password = ref('tav001')
+const isLoading = ref(false)
+const signIn = async () => {
+  isLoading.value = true
+  const { data } = await authLogin<any>({
+    username: username.value,
+    password: password.value,
+  })
+  if (data.value) {
+    isLoading.value = false
+    localStorage.setItem('access_token', data.value.access_token)
+    window.location.reload()
+  }
+}
+onMounted(async () => {
+  if (localStorage.getItem('access_token'))
+    isLogin.value = false
+  await productsPage()
+})
 </script>
 
 <template>
@@ -258,6 +277,29 @@ const clickLikes = (index: number, likes) => {
       </div>
     </div>
   </section>
+  <div v-if="isLogin">
+    <div class="fixed inset-0 bg-zinc-900 bg-opacity-40 z-40 " style="pointer-events: auto;" data-aria-hidden="true" aria-hidden="true" />
+    <div class="bg-zinc-800 items-center fixed shadow-xl rounded-2xl z-50 px-8 py-8 text-sm drop-shadow-lg border border-zinc-700 fadeInAndScale" tabindex="-1" style="top: 50%; transform: translate(-50%, -50%); left: 50%; max-width: 330px; width: 100%; max-height: 85vh; pointer-events: auto;">
+      <div class="flex flex-col text-zinc-200 text-center items-center">
+        <img class="h-6 mb-8" :src="AiGPT">
+        <form>
+          <input v-model="username" autocomplete="email" placeholder="Email address" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="email">
+          <input v-model="password" :maxlength="8" mt3 autocomplete="password" placeholder="Password" class="w-64 px-3 py-2 bg-zinc-700! focus:outline-none focus:ring-1 focus:ring-white rounded-lg border border-zinc-600 hover:brightness-110" type="password">
+          <button type="submit" class="bg-gradient-to-r from-#1C82FE to-#5106FE hover:brightness-110 px-4 py-1.5 rounded-lg shadow h-9 w-full drop-shadow flex items-center justify-center mt-3" @click.stop.prevent="signIn">
+            <el-icon v-if="isLoading" class="is-loading mr-5px">
+              <Loading />
+            </el-icon>
+            Sign In
+          </button>
+        </form>
+        <!-- <p w-full text-left mt2>
+            <span mr-10>No account?</span>
+            <span cursor-pointer class="c-[#79797B]" @click="createOrSign = !createOrSign">Create one</span>
+          </p> -->
+      </div>
+    </div>
+    <div />
+  </div>
 </template>
 
 <style scoped>
