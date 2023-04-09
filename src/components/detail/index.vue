@@ -51,7 +51,7 @@ const id = parseQuery(orderSearch).id
 const idDetail = ref('')
 idDetail.value = id
 onMounted(async () => {
-  const { data } = await productsQuery(id, userStore.userInfo._id)
+  const { data } = await productsQuery(id, userStore.userInfo._id ?? '')
   const dataSource = data.value
   if (dataSource && dataSource.code === 0) {
     listData.product_logo = productsImage(dataSource.data.product_logo)
@@ -207,7 +207,7 @@ const copyLink = () => {
               class="w-22px" :src="listData.isFavorite ? Start : StartOff" alt="StartOff" @click.stop.prevent="async () => {
                 if (!listData.isFavorite){
                   await productsMemberFavorite({
-                    user_id: userStore.userInfo._id,
+                    user_id: userStore.userInfo._id ?? '',
                     product_id: idDetail,
                     type: 0,
                   })
@@ -215,7 +215,7 @@ const copyLink = () => {
                 }
                 else {
                   await productsMemberFavorite({
-                    user_id: userStore.userInfo._id,
+                    user_id: userStore.userInfo._id ?? '',
                     product_id: idDetail,
                     type: 1,
                   })
