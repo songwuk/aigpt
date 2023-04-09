@@ -265,7 +265,7 @@ function readAsDataURL(file) {
     </section>
     <section relative sm:flex-1 sm:block hidden class="mr-[61px]" sm:flex sm:items-center sm:justify-end>
       <button :class="pathnameRef.indexOf('/submit') !== -1 ? 'c-[#05D4FD]' : ''" flex items-center justify-center class="mr-[20px] hover:c-[#05D4FD]" @click="submitPath" @mouseover="UploadHoverf" @mouseout="UploadUnhoverf">
-        <img ref="sub" class="w-[22px] mr-[10px]" :src="Upload" alt="language">
+        <img ref="sub" class="w-[22px] mr-[10px]" :src="pathnameRef.indexOf('/submit') !== -1 ? UploadHover : Upload" alt="language">
         Submit
       </button>
       <div class="p-[1px] box-border rounded-[6px] mr-[20px]" style="background: linear-gradient(135deg, rgba(71, 21, 254, 1), rgba(9, 190, 253, 1))">
