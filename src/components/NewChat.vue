@@ -555,7 +555,7 @@ const removeByUserFn = async () => {
               <div v-if="theme === 'light'" flex class=" w-16px" i-carbon-sun />
               <div v-else-if="theme === 'dark'" flex class=" w-16px" i-carbon-moon />
               Light mode</a>
-            <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+            <a target="_blank" href="https://discord.gg/aigpt" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
               <img class="w-18px" :src="Discord" alt="Discord">
               AIGPT Discord</a>
             <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
@@ -598,7 +598,7 @@ const removeByUserFn = async () => {
                       <div v-if="theme === 'light'" flex class=" w-16px" i-carbon-sun />
                       <div v-else-if="theme === 'dark'" flex class=" w-16px" i-carbon-moon />
                       Light mode</a>
-                    <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+                    <a target="_blank" href="https://discord.gg/aigpt" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
                       <img class="w-18px" :src="Discord" alt="Discord">
                       AIGPT Discord</a>
                     <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
