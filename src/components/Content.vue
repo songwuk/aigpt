@@ -530,8 +530,9 @@ const submitPath = () => {
               </div>
               <div class="ml-18px" flex items-center justify-start>
                 <img
-                  class="w-[32px] rounded-50%"
+                  class="w-[32px] h-[32px] rounded-50%"
                   loading="lazy"
+                  object-fill
                   :src="item.product_logo"
                 >
                 <span class="ml-11px">{{ item.product_name }}</span>
@@ -598,8 +599,9 @@ const submitPath = () => {
               </div>
               <div class="ml-18px" flex items-center justify-start>
                 <img
-                  class="w-[32px] rounded-50%"
+                  class="w-[32px]  h-[32px] rounded-50%"
                   loading="lazy"
+                  object-fill
                   :src="item.product_logo"
                   alt="Quest"
                 >
