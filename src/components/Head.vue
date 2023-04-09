@@ -54,7 +54,6 @@ const personalList = ref([
   },
   {
     name: 'uploadImg',
-
   },
   {
     name: 'Airdrop Plan',
@@ -69,6 +68,7 @@ const personalList = ref([
     type: 'r',
   },
 ])
+
 const connectList = ref([
   {
     name: 'MetaMask',
@@ -240,6 +240,20 @@ function readAsDataURL(file) {
     reader.readAsDataURL(file)
   })
 }
+const isShowImg = ref(true)
+const changeType = (name, idx) => {
+  if (name === 'Change Avatar') {
+    isShowImg.value = !isShowImg.value
+    if (isShowImg.value) {
+      personalList.value[idx].icon = IconBottom
+      personalList.value[idx].type = 'b'
+    }
+    else {
+      personalList.value[idx].icon = IconRight
+      personalList.value[idx].type = 'r'
+    }
+  }
+}
 </script>
 
 <template>
@@ -299,7 +313,7 @@ function readAsDataURL(file) {
         </div>
         <div v-for="(item, index) in personalList" :key="index" cursor-pointer relative class="mt-[19px]" w-full flex items-center :class="[item.name !== 'uploadImg' ? 'justify-start hover:c-[#05D4FD]' : 'justify-center']">
           <template v-if="item.name === 'uploadImg'">
-            <div class="w-87px h-87px border border-dashed rounded-6px border-#979797 flex items-center justify-center flex-col" @click="uploadClick">
+            <div v-if="isShowImg" class="w-87px h-87px border border-dashed rounded-6px border-#979797 flex items-center justify-center flex-col" @click="uploadClick">
               <img class="w-29px" :src="UploadImg" alt="UploadImg">
               <p class="font-400 c-#79797B text-10px text-center">
                 Ideal dimensions 400 x 400 px
@@ -308,7 +322,7 @@ function readAsDataURL(file) {
           </template>
           <template v-else>
             <img class="w-[18px] mr-[7px]" :src="item.img" alt="">
-            <span>{{ item.name }}</span>
+            <span @click="changeType(item.name, index)">{{ item.name }}</span>
             <i absolute right-0>
               <img :class="item.type === 'b' ? 'w-[12px]' : 'w-[7px]'" :src="item.icon" alt="">
             </i>
