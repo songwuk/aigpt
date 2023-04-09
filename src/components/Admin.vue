@@ -2,9 +2,10 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash-es'
-import { authLogin, panelProductsEditProductStat, panelProductsPage, panelUsersPage } from '../url'
+import { authLogin, panelProductsEditProductStat, panelProductsPage, panelProductsRemove, panelUsersPage } from '../url'
 import Write from './img/write.png'
 import AiGPT from './img/AiGPT_1.png'
+import deleteImg from './img/del.png'
 import type { ReturnPageData } from '@/types'
 import { NumUtils } from '@/utils'
 const searchValue = ref('')
@@ -158,6 +159,11 @@ onMounted(async () => {
     isLogin.value = false
   await productsPage()
 })
+const deleteProduct = async (ids: string) => {
+  const { data } = await panelProductsRemove<any>(ids)
+  if (data.value.code === 200)
+    await productsPage()
+}
 </script>
 
 <template>
@@ -231,6 +237,7 @@ onMounted(async () => {
             </span>
             <span flex items-center justify-center text-center inline-block class=" w-145px">
               <span cursor-pointer inline-block class="w-93px h-40px leading-40px bg-#004699 border rounded-8px border-transparent" @click="reviewPRD(item.id)">Review</span>
+              <img cursor-pointer class="w-24px ml5px" :src="deleteImg" alt="" @click="deleteProduct(item.id)">
             </span>
           </div>
         </div>

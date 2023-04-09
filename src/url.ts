@@ -497,3 +497,16 @@ export function authLogin<T>(params): Pick<UseFetchReturn<T>, 'data'> {
     },
   })
 }
+/**
+ * 删除产品
+ * @param ids
+ * @returns
+ */
+export function panelProductsRemove<T>(ids: string): Pick<UseFetchReturn<T>, 'data'> {
+  return useFetchOptions(`/panel/products/remove?ids=${ids}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+    },
+  })
+}
