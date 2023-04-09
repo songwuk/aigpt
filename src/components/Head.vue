@@ -319,11 +319,11 @@ function readAsDataURL(file) {
             </i>
           </template>
         </div>
-        <button v-if="!walletStatus" class="hover:!bg-[#05D4FD]" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;" @click="disconnectWallet">
+        <button v-if="!walletStatus" class="hover:!bg-gradient-to-r hover:from-#1C82FE hover:to-#5106FE" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;margin-top: 29px;" @click="disconnectWallet">
           <img class="w-[14px] mr-[3px]" :src="Disconnect" alt="Disconnect">
           Disconnect
         </button>
-        <button :class="!walletStatus ? 'mt-[14px]' : 'mt-[29px]'" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;" @click="signout">
+        <button class="hover:!bg-gradient-to-r hover:from-#1C82FE hover:to-#5106FE" :class="!walletStatus ? 'mt-[14px]' : 'mt-[29px]'" flex items-center justify-center style="width: 136px;height: 36px;background: #3C3C3E;border-radius: 8px;" @click="signout">
           <img class="w-[14px] mr-[3px]" :src="SignOut" alt="SignOut">
           Sign Out
         </button>
