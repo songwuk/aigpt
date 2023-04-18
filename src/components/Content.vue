@@ -493,7 +493,7 @@ const submitPath = () => {
       <section class="cardDom sm:mt-[25px]  h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarText }}</span>
         <div v-if="getPageShow" overflow-y-auto flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap class="mt-24px card">
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] 3xl:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -580,8 +580,8 @@ const submitPath = () => {
             <span class="sm:text-20px text-16px mt-16px" c-white>No Favorite</span>
           </div>
         </div>
-        <div v-if="historyOrFavorite" class="mt-24px" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
+        <div v-if="historyOrFavorite" class="mt-24px card" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] 3xl:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -670,6 +670,14 @@ const submitPath = () => {
   display: none;
 }
 @media (min-width: 640px) {
+  .card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 320px);
+    justify-content: center;
+    grid-gap: 25px
+  }
+}
+@media (min-width: 1900px) {
   .card {
     display: grid;
     grid-template-columns: repeat(auto-fit, 380px);
