@@ -476,7 +476,7 @@ const submitPath = () => {
     <div
       flex items-start justify-start style="font-family: Helvetica;"
     >
-      <aside v-show="leftshow" overflow-y-scroll class="pr-[19px] w-75 2xl:text-lg 2xl:w-[400px] border-r b-r-[#6D6D6D] h-750px sm:mr-[22px] mr-[5px]" c-white>
+      <aside v-show="leftshow" overflow-y-scroll class="pr-[19px] w-75 2xl:text-lg border-r b-r-[#6D6D6D] h-750px sm:mr-[22px] mr-[5px]" c-white>
         <div v-for="(item, index) in leftStatus" :key="index" sm:sm:cursor-pointer class="p-b-[15px] pt-[19px] leftBar " @click.stop="clickBar(index)">
           <div flex items-center justify-between>
             <span>{{ item.name }}</span>
@@ -493,7 +493,7 @@ const submitPath = () => {
       <section class="cardDom sm:mt-[25px]  h-750px  overflow-scroll" w-full relative>
         <span c-white>{{ clickBarText }}</span>
         <div v-if="getPageShow" overflow-y-auto flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap class="mt-24px card">
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] 3xl:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[260px] xl-w[300px] 3xl:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -581,7 +581,7 @@ const submitPath = () => {
           </div>
         </div>
         <div v-if="historyOrFavorite" class="mt-24px card" flex items-start justify-start sm:flex-row flex-col sm:flex-wrap flex-nowrap>
-          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[320px] 3xl:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
+          <div v-for="(item, index) in getPageList" :key="index" sm:cursor-pointer c-white class=" hover:bg-#131313 hover:b-[transparent] border-1 b-[#97979754] sm:w-[260px] xl-w[300px] 3xl:w-[380px] w-full h-auto rounded-[10px] sm:mr-20px mr-0 sm:my-0 my-10px sm:mb-20px" @mouseover="onmouseover(index)" @mouseout="onmouseout(index)" @click="goInto(item.id)">
             <div ref="itemRefs" class="hover:bg-#131313 border-1  rounded-[10px] b-[transparent] ">
               <div flex items-center justify-end class="mt-[12px] mr-[18px] text-sm">
                 <span flex items-center justify-center><img
@@ -672,9 +672,17 @@ const submitPath = () => {
 @media (min-width: 640px) {
   .card {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 320px);
+    grid-template-columns: repeat(auto-fit, 260px);
     justify-content: center;
     grid-gap: 25px
+  }
+}
+@media (min-width: 1280px) {
+  .card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 300px);
+    justify-content: center;
+    grid-gap: 20px
   }
 }
 @media (min-width: 1900px) {
