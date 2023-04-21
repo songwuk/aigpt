@@ -43,7 +43,10 @@ const userList = async () => {
     })
   }
 }
-
+const isLogin = ref(true)
+const username = ref('')
+const password = ref('')
+const isLoading = ref(false)
 const productsPage = async () => {
   const { data } = await panelProductsPage<ReturnPageData>({
     ...pageInfo,
@@ -70,6 +73,9 @@ const productsPage = async () => {
     })
     console.log(listProducts.value)
     totalProducts.value = dataSource.data.total
+  }
+  else {
+    isLogin.value = true
   }
 }
 
@@ -138,10 +144,7 @@ const clickLikes = (index: number, likes) => {
   inputLikesRef.value[index].focus()
   listProducts.value[index].likes = likes
 }
-const isLogin = ref(true)
-const username = ref('')
-const password = ref('')
-const isLoading = ref(false)
+
 const signIn = async () => {
   isLoading.value = true
   const { data } = await authLogin<any>({
