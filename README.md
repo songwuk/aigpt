@@ -9,5 +9,6 @@
 ```sh
 pnpm i
 pnpm run buildTest
+pnpm run buildPrd
 ```
 
